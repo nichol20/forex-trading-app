@@ -1,0 +1,29 @@
+version: "3.8"
+
+services:
+    mongo:
+        image: mongo:${MONGO_VERSION}
+        restart: always
+        ports:
+            - "27017:27017"
+        environment:
+            MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERNAME}
+            MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+        volumes:
+            - mongo-data:/data/db
+
+    mongo-express:
+        image: mongo-express:${ME_VERSION}
+        restart: always
+        ports:
+            - "8081:8081"
+        environment:
+            ME_CONFIG_BASICAUTH_USERNAME: ${ME_USERNAME}
+            ME_CONFIG_BASICAUTH_PASSWORD: ${ME_PASSWORD}
+            ME_CONFIG_MONGODB_ADMINUSERNAME: ${ME_ADMINUSERNAME}
+            ME_CONFIG_MONGODB_ADMINPASSWORD: ${ME_ADMINPASSWORD}
+            ME_CONFIG_MONGODB_URL: mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongo:27017/
+            ME_CONFIG_MONGODB_SERVER: mongo
+
+volumes:
+    mongo-data:
