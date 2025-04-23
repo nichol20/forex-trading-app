@@ -1,0 +1,61 @@
+@use "../../styles/" as *;
+
+.inputField {
+    position: relative;
+    width: 100%;
+    @include display-flex(center, flex-start);
+    gap: 5px;
+    flex-direction: column;
+
+    > label {
+        font-weight: 600;
+    }
+}
+
+.inputBox {
+    width: 100%;
+    padding: 10px 14px;
+    border: 2px solid $colors-stroke;
+    border-radius: 8px;
+    line-height: 100%;
+    @include display-flex(flex-start);
+    color: $colors-text-primary;
+    
+    .prefix {
+        font: inherit;
+        padding-right: 5px;
+        font-weight: bold;
+    }
+
+
+    > input, > textarea {
+        font: inherit;
+        background-color: transparent;
+        outline: none;
+        border: none;
+        width: 100%;
+        color: inherit;
+        resize: none;
+
+        &::placeholder {
+            color: $colors-text-secondary;
+        }
+    }
+
+    .showPasswordBtn {
+        background-color: transparent;
+        width: 20px;
+        height: 20px;
+        outline: none;
+        border: none;
+
+        > img {
+            width: 100%;
+            height: 100%;
+        }
+    }
+}
+
+.inputField:has(> .prefix) > input {
+    padding-left: 44px;
+}

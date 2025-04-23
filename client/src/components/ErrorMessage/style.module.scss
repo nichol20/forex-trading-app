@@ -1,0 +1,6 @@
+@use '../../styles/' as *;
+
+.errorMessage {
+    font-size: 1em;
+    color: $colors-error-message;
+}

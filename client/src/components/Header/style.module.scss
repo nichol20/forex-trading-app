@@ -1,0 +1,17 @@
+@use '../../styles/' as *;
+
+.header {
+    width: 100%;
+    padding: 10px 20px;
+    background-color: $colors-bg-primary;
+}
+
+.logo {
+    text-align: left;
+    background-color: $colors-bg-primary;
+
+    > a {
+        color: $colors-text-primary;
+        text-decoration: none;
+    }
+}

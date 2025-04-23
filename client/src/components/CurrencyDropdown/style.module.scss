@@ -1,0 +1,28 @@
+@use "../../styles/" as *;
+
+.dropdown {
+    position: relative;
+    width: 100%;
+    @include display-flex();
+    height: 48px;
+}
+
+.select {
+    border-bottom-left-radius: 5px;
+    border-top-left-radius: 5px;
+    padding: 10px 14px;
+    border: 2px solid $colors-stroke;
+    border-right: 0;
+    height: 45px;
+    outline: none;
+    font-size: 1em;
+}
+
+.currencyInput {
+    > div {
+        height: 45px;
+        background-color: $colors-bg-secondary;
+        border-bottom-left-radius: 0px;
+        border-top-left-radius: 0px;
+    }
+}

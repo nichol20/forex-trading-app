@@ -1,0 +1,19 @@
+@use "./colors";
+
+@mixin display-flex($justifyContent: center, $alignItems: center) {
+    display: flex;
+    justify-content: $justifyContent;
+    align-items: $alignItems;
+}
+
+@mixin button-primary() {
+    background-color: colors.$button-bg-primary;
+    color: colors.$button-text-primary;
+    border-radius: 5px;
+    @include light-box-shadow();
+
+}
+
+@mixin light-box-shadow() {
+    box-shadow: 0px 2px 5px 0px colors.$light-shadow;
+}

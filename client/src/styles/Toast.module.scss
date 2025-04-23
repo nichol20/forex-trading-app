@@ -1,0 +1,76 @@
+@use './' as *;
+
+.toastContainer {
+    position: fixed;
+    display: flex;
+    flex-direction: column-reverse;
+    margin: 10px;
+    width: 400px;
+    gap: 10px;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10000;
+    pointer-events: none;
+}
+
+.toast {
+    position: relative;
+    cursor: pointer;
+    transition: transform 300ms ease-in-out;
+    transform: translateX(110%);
+    width: 100%;
+    padding: 15px 30px;
+    border-radius: 8px;
+    animation: slide-out 500ms ease-in-out forwards;
+    @include display-flex(flex-start);
+    @include light-box-shadow();
+    gap: 13px;
+    pointer-events: all;
+
+    &.active {
+        animation: bounce-in-right 600ms ease-in-out forwards;
+    }
+
+    &::after {
+        content: "\00D7";
+        position: absolute;
+        top: 50%;
+        right: 20px;
+        transform: translateY(-50%);
+    }
+}
+
+.toast[data-status="success"] {
+    background-color: $colors-toast-success-bg;
+    color: $colors-toast-success-text;
+}
+
+.toast[data-status="error"] {
+    background-color: $colors-toast-error-bg;
+    color: $colors-toast-error-text;
+}
+
+@keyframes bounce-in-right {
+    0% {
+        opacity: 0;
+        transform: translateX(2000px);
+    }
+    60% {
+        opacity: 1;
+        transform: translateX(-60px);
+    }
+    80% { transform: translateX(20px); }
+    100% { transform: translateX(0); }
+}
+
+@keyframes slide-out {
+    0% {
+        opacity: 1;
+        transform: translateX(0px);
+    }
+    100% {
+        opacity: 0;
+        transform: translateX(110%);
+    }
+}
