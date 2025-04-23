@@ -7,6 +7,7 @@ import { BadRequestError, InternalServerError } from "../../helpers/apiError";
 import { fetchExchangeRate } from "../../utils/exchangeRateApi";
 import { exchangeCurrencySchema } from "../../validators/exchange";
 import { ExchangeDocument } from "../../types/exchange";
+import { getAllCurrencies } from "../../utils/currency";
 
 export const exchangeCurrency = async (req: Request, res: Response<Wallet>) => {
     const parsed = exchangeCurrencySchema.safeParse(req.body);
@@ -28,8 +29,8 @@ export const exchangeCurrency = async (req: Request, res: Response<Wallet>) => {
         throw new InternalServerError();
     }
 
-    const rates = await fetchExchangeRate(fromCurrency);
-    const currentRate = rates.conversion_rates[toCurrency];
+    const data = await fetchExchangeRate(fromCurrency, getAllCurrencies());
+    const currentRate = data.rates[toCurrency];
     const convertedCurrency = amount * currentRate;
 
     user.wallet[fromCurrency] -= amount;

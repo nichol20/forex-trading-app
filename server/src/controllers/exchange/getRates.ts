@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 
-import { isCurrency } from "../../utils/currency";
+import { getAllCurrencies, isCurrency } from "../../utils/currency";
 import { fetchExchangeRate } from "../../utils/exchangeRateApi";
 import { BadRequestError } from "../../helpers/apiError";
 
@@ -15,7 +15,7 @@ export const getRates = async (req: Request, res: Response) => {
         throw new BadRequestError("We do not support this currency");
     }
 
-    const exchangeRate = await fetchExchangeRate(base);
+    const exchangeRate = await fetchExchangeRate(base, getAllCurrencies());
 
-    res.status(200).json(exchangeRate.conversion_rates);
+    res.status(200).json(exchangeRate.rates);
 };

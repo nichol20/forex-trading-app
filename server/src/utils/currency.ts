@@ -6,3 +6,7 @@ export enum Currency {
 export const isCurrency = (value: any): value is Currency => {
     return Object.values(Currency).includes(value);
 };
+
+export const getAllCurrencies = (): Currency[] => {
+    return Object.values(Currency);
+};
