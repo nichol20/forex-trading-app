@@ -1,0 +1,59 @@
+@use "./" as *;
+
+.tradeHistoryPage {
+    width: 100%;
+    height: 100vh;
+    padding: 20px;
+    padding-top: 0;
+    @include display-flex(flex-start);
+    flex-direction: column;
+}
+
+.content {
+    @include display-flex(flex-start);
+    flex-direction: column;
+    background-color: $colors-bg-secondary;
+    @include light-box-shadow();
+    border-radius: 5px;
+    max-width: 1400px;
+    width: 100%;
+    padding: 20px;
+    min-height: 85%;
+}
+
+.title {
+    text-align: left;
+    width: 100%;
+    padding: 10px 30px;
+    font-size: 1.5em;
+    margin-bottom: 20px;
+}
+
+.table {
+    width: 100%;
+    @include display-flex();
+    flex-direction: column;
+
+    .header, .row {
+        grid-template-columns:
+            [Date] minmax(100px, 1fr) 
+            [From] minmax(50px, 1fr) 
+            [To] minmax(50px, 1fr) 
+            [Amount] minmax(120px, 1fr) 
+            [Rate] minmax(75px, 1fr) 
+            [Output] minmax(120px, 1fr);
+        grid-template-rows: 30px; 
+        display: grid;
+        gap: 16px;
+    }
+
+    .col {
+        font-weight: bold;
+    }
+
+    .row {
+        color: $colors-text-tertiary;
+        border-top: 1px solid $colors-text-tertiary;
+        padding-top: 5px;
+    }
+}

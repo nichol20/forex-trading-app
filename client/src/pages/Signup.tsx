@@ -41,7 +41,6 @@ export default function SignupPage() {
         } catch (error: any) {
             if (error.response?.status === 400 || error.response?.status === 409) {
                 const message = error?.response?.data?.message
-                console.log(message)
                 setFormErrors(prev => ({
                     ...prev,
                     emailExists: message.includes("email already exists"),
