@@ -37,7 +37,7 @@ export default function Dashboard() {
             updateUser();
             setShowAddForms(false);
             toast({ message: "Funds added successfully", status: "success" });
-        } catch (error) {
+        } catch (error: any) {
             toast({ message: "Something went wrong", status: "error" });
         }
     };
@@ -58,7 +58,11 @@ export default function Dashboard() {
             );
             updateUser();
             toast({ message: "Exchange made successfully", status: "success" });
-        } catch (error) {
+        } catch (error: any) {
+            if (error?.response?.data?.message?.includes("Insufficient amount")) {
+                toast({ message: "Insufficient amount for exchange", status: "error" });
+                return
+            }
             toast({ message: "Something went wrong", status: "error" });
         }
     };
