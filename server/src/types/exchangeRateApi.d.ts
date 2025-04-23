@@ -1,5 +1,9 @@
 import { Currency } from "../utils/currency";
 
+export type Rates = {
+    [key in Currency]: number;
+};
+
 export interface SuccessfulExchangeRateResponse {
     success: true;
     terms: string;
@@ -7,9 +11,7 @@ export interface SuccessfulExchangeRateResponse {
     timestamp: number;
     date: string;
     base: Currency;
-    rates: {
-        [key in Currency]: number;
-    };
+    rates: Rates;
 }
 
 export interface FailedExchangeRateResponse {

@@ -3,10 +3,10 @@ export enum Currency {
     USD = "USD",
 }
 
-export const isCurrency = (value: any): value is Currency => {
-    return Object.values(Currency).includes(value);
-};
-
 export const getAllCurrencies = (): Currency[] => {
     return Object.values(Currency);
+};
+
+export const isCurrency = (value: any): value is Currency => {
+    return getAllCurrencies().includes(value);
 };

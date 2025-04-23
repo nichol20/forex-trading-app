@@ -1,15 +1,18 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
 import { rightArrow } from "../assets";
 import { Header } from "../components/Header";
 import { Modal } from "../components/Modal";
-
-import styles from "../styles/Dashboard.module.scss";
 import { CurrencyDropdown } from "../components/CurrencyDropdown";
 import { addToWallet, exchangeCurrencies } from "../utils/api";
 import { Currency, isCurrency } from "../utils/currency";
 import { useAuth } from "../contexts/Auth";
 import { InputField } from "../components/InputField";
 import { useToast } from "../contexts/Toast";
+import { Rates } from "../types/exchange";
+import * as api from "../utils/api";
+import styles from "../styles/Dashboard.module.scss";
+import { socket } from "../socket";
 
 export default function Dashboard() {
     const toast = useToast();
@@ -17,6 +20,7 @@ export default function Dashboard() {
     const [showAddFundsForm, setShowAddForms] = useState(false);
     const [exchangeFrom, setExchangeFrom] = useState<Currency>(Currency.USD);
     const [addFundsTo, setAddFundsTo] = useState<Currency>(Currency.USD);
+    const [USDBasedRates, setUSDBasedRates] = useState<Rates | null>();
     const toCurrency =
         exchangeFrom === Currency.USD ? Currency.GBP : Currency.USD;
 
@@ -59,9 +63,14 @@ export default function Dashboard() {
             updateUser();
             toast({ message: "Exchange made successfully", status: "success" });
         } catch (error: any) {
-            if (error?.response?.data?.message?.includes("Insufficient amount")) {
-                toast({ message: "Insufficient amount for exchange", status: "error" });
-                return
+            if (
+                error?.response?.data?.message?.includes("Insufficient amount")
+            ) {
+                toast({
+                    message: "Insufficient amount for exchange",
+                    status: "error",
+                });
+                return;
             }
             toast({ message: "Something went wrong", status: "error" });
         }
@@ -72,6 +81,21 @@ export default function Dashboard() {
         setAddFundsTo(currency);
     };
 
+    useEffect(() => {
+        const fetchRates = async () => {
+            const exchangeRates = await api.getExchangeRates(Currency.USD);
+            setUSDBasedRates(exchangeRates);
+        };
+
+        fetchRates();
+
+        socket.on("exchange-rates:USD", setUSDBasedRates)
+
+        return () => {
+            socket.off("exchange-rates:USD")
+        }
+    }, []);
+
     return (
         <div className={styles.dashboardPage}>
             <Header />
@@ -79,7 +103,7 @@ export default function Dashboard() {
                 <section className={styles.walletContainer}>
                     <div className={styles.wallet}>
                         <h2 className={styles.amount}>
-                            ${user?.wallet.USD.toFixed(2)}
+                            ${user ? user.wallet.USD.toFixed(2) : "0.00"}
                         </h2>
                         <span className={styles.type}>USD wallet</span>
                         <button
@@ -93,7 +117,7 @@ export default function Dashboard() {
                     </div>
                     <div className={styles.wallet}>
                         <h2 className={styles.amount}>
-                            £{user?.wallet.GBP.toFixed(2)}
+                            £{user ? user.wallet.GBP.toFixed(2) : "0.00"}
                         </h2>
                         <span className={styles.type}>GBP wallet</span>
                         <button
@@ -131,7 +155,9 @@ export default function Dashboard() {
 
                 <section className={styles.liveExchangeRateBox}>
                     <h3>Live Exchange Rate</h3>
-                    <span className={styles.rate}>1 USD = 0.80 GBP</span>
+                    <span className={styles.rate}>
+                        {USDBasedRates ? `${USDBasedRates.USD} USD = ${USDBasedRates.GBP} GBP` : "..."}
+                    </span>
                 </section>
 
                 <section className={styles.exchangeCurrencyContainer}>

@@ -1,4 +1,4 @@
-import { Exchange } from "../types/exchange";
+import { Exchange, Rates } from "../types/exchange";
 import { User, Wallet } from "../types/user";
 import { Currency } from "./currency";
 import { http } from "./http";
@@ -50,5 +50,10 @@ export const exchangeCurrencies = async (
 
 export const getExchangeHistory = async (): Promise<Exchange[]> => {
     const res = await http.get<Exchange[]>("/history");
+    return res.data;
+};
+
+export const getExchangeRates = async (base: Currency): Promise<Rates> => {
+    const res = await http.get<Rates>(`/rates?base=${base}`);
     return res.data;
 };

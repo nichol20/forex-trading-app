@@ -1,3 +1,5 @@
+import { Currency } from "../utils/currency";
+
 export interface Exchange {
     id: string;
     userId: string;
@@ -8,3 +10,7 @@ export interface Exchange {
     exchangeRate: number;
     exchangedAt: string;
 }
+
+export type Rates = {
+    [key in Currency]: number;
+};

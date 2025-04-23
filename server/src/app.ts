@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import "dotenv/config";
 import cookieParser from "cookie-parser";
+import http from "http";
 
 import { checkEnv } from "./config/env";
 export const env = checkEnv();
@@ -12,9 +13,11 @@ import { authRoutes } from "./routes/auth";
 import { mustBeAuthenticated } from "./middlewares/mustBeAuthenticated";
 import { exchangeRoutes } from "./routes/exchange";
 import { userRoutes } from "./routes/user";
-import { Currency, isCurrency } from "./utils/currency";
+import { startWebSocketServer } from "./config/socket";
+import { startBroadcasts } from "./utils/socket";
 
 const app = express();
+const server = http.createServer(app);
 const port = process.env.PORT || 5000;
 
 const corsOptions: cors.CorsOptions = {
@@ -43,8 +46,10 @@ app.use(errorHandler);
 const main = async () => {
     try {
         await db.connectToServer();
+        const io = await startWebSocketServer(server);
+        startBroadcasts(io);
 
-        app.listen(port, () => {
+        server.listen(port, () => {
             console.log(`Server running at http://localhost:${port}`);
         });
     } catch (error: any) {

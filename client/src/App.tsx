@@ -5,8 +5,15 @@ import Dashboard from "./pages/Dashboard";
 import { AuthProvider } from "./contexts/Auth";
 import TradeHistory from "./pages/TradeHistory";
 import { ToastProvider } from "./contexts/Toast";
+import { socket } from "./socket";
+import { useEffect } from "react";
 
 function App() {
+
+  useEffect(() => {
+    socket.on("connect_error", (err) => { console.log("error on connection: " + err) })
+  }, [])
+
   return (
     <BrowserRouter>
       <ToastProvider>

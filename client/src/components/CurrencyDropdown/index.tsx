@@ -1,6 +1,6 @@
 import styles from "./style.module.scss";
 import { InputField } from "../InputField";
-import { Currency } from "../../utils/currency";
+import { Currency, getAllCurrencies } from "../../utils/currency";
 
 interface CurrencyDropdownProps {
     selectName: string;
@@ -40,7 +40,7 @@ export const CurrencyDropdown = ({
                 defaultValue={defaultValue}
                 onChange={onChange}
             >
-                {Object.values(Currency).map((c) => (
+                {getAllCurrencies().map((c) => (
                     <option key={c} value={c}>
                         {c}
                     </option>

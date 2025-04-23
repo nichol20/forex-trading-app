@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { User } from "../types/user";
 import { http } from "../utils/http";
 import * as api from "../utils/api";
+import { useNavigate } from "react-router-dom";
 
 interface AuthContextProps {
     user: User | null
@@ -23,6 +24,7 @@ export const useAuth = () => useContext(AuthContext)
 export const AuthProvider = ({ children }: AuthProviderProps) => {
     const [user, setUser] = useState<User | null>(null)
     const [isLoading, setIsLoading] = useState(true)
+    const navigate = useNavigate()
 
     const login = async (email: string, password: string) => {
         const user = await api.login(email, password)
@@ -45,8 +47,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
                 const user = await api.getUser()
                 setUser(user)
             }
-            catch (err) {
-                console.error(err)
+            catch (error: any) {
+                const status = error?.response?.status
+                if (status === 403 || status === 401) {
+                    navigate("/login")
+                }
+                console.error(error)
             }
             finally {
                 setIsLoading(false)
@@ -54,14 +60,15 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         }
 
         refreshUser()
-    }, [])
+    }, [navigate])
 
     useEffect(() => {
         const responseIntercept = http.interceptors.response.use(
             response => response,
             async error => {
+                console.log("test")
                 if (error?.response?.status === 403 || error?.response?.status === 401) {
-                    window.location.assign("/login")
+                    navigate("/login")
                 }
                 return Promise.reject(error)
             }
@@ -70,7 +77,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         return () => {
             http.interceptors.response.eject(responseIntercept)
         }
-    }, [])
+    }, [navigate])
 
     if (isLoading) return <>Loading...</>
 
