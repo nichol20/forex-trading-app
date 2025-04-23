@@ -29,13 +29,13 @@ export const exchangeCurrency = async (req: Request, res: Response<Wallet>) => {
         throw new InternalServerError();
     }
 
-    const data = await fetchExchangeRate(fromCurrency, getAllCurrencies());
-    const currentRate = data.rates[toCurrency];
-    const convertedCurrency = amount * currentRate;
-
     if (user.wallet[fromCurrency] < amount) {
         throw new BadRequestError("Insufficient amount for exchange");
     }
+
+    const data = await fetchExchangeRate(fromCurrency, getAllCurrencies());
+    const currentRate = data.rates[toCurrency];
+    const convertedCurrency = amount * currentRate;
 
     user.wallet[fromCurrency] -= amount;
     user.wallet[toCurrency] += convertedCurrency;
