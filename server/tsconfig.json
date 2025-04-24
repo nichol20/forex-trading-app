@@ -5,7 +5,8 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
+    "types": ["jest", "node"]
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "index.ts", "jest.setup-env.ts"],
   "files": ["src/types/express.d.ts", "src/app.ts"],
 }

@@ -1,14 +1,9 @@
 import { Document, MongoClient } from "mongodb";
 import { env } from "../app";
 
-const uri = env.MONGO_URI;
+const uri = process.env.MONGO_URI!;
 const dbname = process.env.MONGO_DBNAME || "forex";
-const client = new MongoClient(uri, {
-    auth: {
-        username: env.MONGO_USERNAME,
-        password: env.MONGO_PASSWORD,
-    },
-});
+const client = new MongoClient(uri);
 
 export default {
     connectToServer: async () => {
@@ -18,4 +13,8 @@ export default {
 
     getCollection: <T extends Document>(collection: string) =>
         client.db(dbname).collection<T>(collection),
+
+    close: () => client.close(),
+
+    dropDB: () => client.db(dbname).dropDatabase(),
 };

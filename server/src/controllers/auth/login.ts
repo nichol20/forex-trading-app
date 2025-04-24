@@ -2,8 +2,8 @@ import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
-import { BadRequestError, UnauthorizedError } from "../../helpers/apiError";
 import db from "../../config/db";
+import { BadRequestError, UnauthorizedError } from "../../helpers/apiError";
 import { User, UserDocument } from "../../types/user";
 import { loginSchema } from "../../validators/auth";
 
