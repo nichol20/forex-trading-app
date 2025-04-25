@@ -31,7 +31,7 @@ export const AddFundsForm = ({ close, defaultValue = Currency.USD }: AddFundsFor
         if (!isCurrency(currency)) return;
 
         try {
-            await addToWallet(parseInt(amount), currency);
+            await addToWallet(parseFloat(amount), currency);
             updateUser();
             toast({ message: "Funds added successfully", status: "success" });
             close();
