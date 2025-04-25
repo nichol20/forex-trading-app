@@ -152,11 +152,7 @@ export default function Dashboard() {
                         </div>
                     </form>
 
-                    <button
-                        form="myform"
-                        type="submit"
-                        className={styles.exchangeBtn}
-                    >
+                    <button form="myform" type="submit" className={styles.exchangeBtn}>
                         Exchange
                     </button>
                     <a href="/trade-history">See history</a>

@@ -24,6 +24,14 @@
     flex-direction: column;
     padding: 40px 56px;
     width: 100%;
+
+    @include media("tablet") {
+        padding: 20px;
+    }
+
+    @include media("phone-lg") {
+        padding: 10px;
+    }
 }
 
 .closeBtn {

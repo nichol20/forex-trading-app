@@ -7,6 +7,10 @@
     padding-top: 0;
     @include display-flex(flex-start);
     flex-direction: column;
+    
+    @include media("phone") {
+        padding: 10px;
+    }
 }
 
 .content {
@@ -27,12 +31,26 @@
     padding: 10px 30px;
     font-size: 1.5em;
     margin-bottom: 20px;
+
+    @include media("tablet") {
+        text-align: center;
+    }
+
+    @include media("phone") {
+        font-size: 1.2em;
+    }
 }
 
 .table {
     width: 100%;
     @include display-flex();
     flex-direction: column;
+    
+    @include media("tablet") {
+        overflow-x: scroll;
+        justify-content: flex-start;
+        align-items: flex-start;
+    }
 
     .header, .row {
         grid-template-columns:

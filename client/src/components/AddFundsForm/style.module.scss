@@ -4,6 +4,7 @@
 .addFundsForm {
     @include display-flex();
     flex-direction: column;
+    gap: 10px;
 
     > h3 {
         font-size: 2em;
@@ -15,5 +16,10 @@
         margin-top: 10px;
         font-weight: bold;
         font-size: 1.2em;
+
+        @include media("phone-lg") {
+            font-size: 1em;
+            padding: 8px 25px;
+        }
     }
 }
