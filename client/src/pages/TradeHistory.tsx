@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { Header } from "../components/Header";
 import styles from "../styles/TradeHistory.module.scss";
 import { Exchange } from "../types/exchange";
-import * as api from "../utils/api";
+import { getExchangeHistory } from "../utils/api";
 import { sortRecordsByDate } from "../utils/exchange";
 
 export default function TradeHistory() {
@@ -11,7 +11,7 @@ export default function TradeHistory() {
 
     useEffect(() => {
         const fetchHistory = async () => {
-            const exHistory = await api.getExchangeHistory();
+            const exHistory = await getExchangeHistory();
             const sortedHistory = sortRecordsByDate(exHistory, "descendant")
             setHistory(sortedHistory);
         };
@@ -45,7 +45,7 @@ export default function TradeHistory() {
                             <span className={styles.name}>Output</span>
                         </div>
                     </div>
-                    <div className={styles.rows}>
+                    <div className={styles.rows} data-testid="rows">
                         {history.map((exchange) => (
                             <div key={exchange.id} className={styles.row}>
                                 <div className={styles.item}>

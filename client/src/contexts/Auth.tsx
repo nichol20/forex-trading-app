@@ -1,10 +1,9 @@
-'use client'
 import { createContext, useContext, useEffect, useState } from "react";
 
 import { User } from "../types/user";
 import { http } from "../utils/http";
 import * as api from "../utils/api";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 
 interface AuthContextProps {
     user: User | null

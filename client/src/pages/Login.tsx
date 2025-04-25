@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 
 import { useAuth } from "../contexts/Auth"
 import { ErrorMessage } from "../components/ErrorMessage"
@@ -44,18 +44,20 @@ export default function LoginPage() {
                 <form className={styles.loginForm} onSubmit={handleSubmit}>
                     <h1 className={styles.title}>Login</h1>
                     <InputField
-                        inputId='email'
                         title='E-mail'
                         name="email"
                         type='email'
+                        inputId='email'
+                        testId="email"
                         placeholder='Type your e-mail'
                         required
                     />
                     <InputField
                         title="Password"
+                        name='password'
                         type="password"
                         inputId='password'
-                        name='password'
+                        testId="password"
                         placeholder="••••••••"
                         className={styles.fieldInput}
                         onChange={resetErrors}

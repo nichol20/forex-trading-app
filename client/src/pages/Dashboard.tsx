@@ -2,10 +2,9 @@ import { useEffect, useState } from "react";
 
 import { rightArrow } from "../assets";
 import { Header } from "../components/Header";
-import { Modal } from "../components/Modal";
 import { CurrencyDropdown } from "../components/CurrencyDropdown";
-import { addToWallet, exchangeCurrencies } from "../utils/api";
-import { Currency, isCurrency } from "../utils/currency";
+import { exchangeCurrencies } from "../utils/api";
+import { Currency } from "../utils/currency";
 import { useAuth } from "../contexts/Auth";
 import { InputField } from "../components/InputField";
 import { useToast } from "../contexts/Toast";
@@ -13,6 +12,7 @@ import { Rates } from "../types/exchange";
 import * as api from "../utils/api";
 import styles from "../styles/Dashboard.module.scss";
 import { socket } from "../socket";
+import { AddFundsForm } from "../components/AddFundsForm";
 
 export default function Dashboard() {
     const toast = useToast();
@@ -21,30 +21,7 @@ export default function Dashboard() {
     const [exchangeFrom, setExchangeFrom] = useState<Currency>(Currency.USD);
     const [addFundsTo, setAddFundsTo] = useState<Currency>(Currency.USD);
     const [USDBasedRates, setUSDBasedRates] = useState<Rates | null>();
-    const toCurrency =
-        exchangeFrom === Currency.USD ? Currency.GBP : Currency.USD;
-
-    const handleAddFundsForm = async (
-        event: React.FormEvent<HTMLFormElement>
-    ) => {
-        event.preventDefault();
-
-        const formData = new FormData(event.currentTarget);
-
-        const amount = formData.get("amount") as string;
-        const currency = formData.get("currency") as string;
-
-        if (!isCurrency(currency)) return;
-
-        try {
-            await addToWallet(parseInt(amount), currency);
-            updateUser();
-            setShowAddForms(false);
-            toast({ message: "Funds added successfully", status: "success" });
-        } catch (error: any) {
-            toast({ message: "Something went wrong", status: "error" });
-        }
-    };
+    const toCurrency = exchangeFrom === Currency.USD ? Currency.GBP : Currency.USD;
 
     const handleExchangeForm = async (
         event: React.FormEvent<HTMLFormElement>
@@ -89,11 +66,11 @@ export default function Dashboard() {
 
         fetchRates();
 
-        socket.on("exchange-rates:USD", setUSDBasedRates)
+        socket.on("exchange-rates:USD", setUSDBasedRates);
 
         return () => {
-            socket.off("exchange-rates:USD")
-        }
+            socket.off("exchange-rates:USD");
+        };
     }, []);
 
     return (
@@ -108,9 +85,7 @@ export default function Dashboard() {
                         <span className={styles.type}>USD wallet</span>
                         <button
                             className={styles.addFundsBtn}
-                            onClick={() =>
-                                handleAddFundsButtonClick(Currency.USD)
-                            }
+                            onClick={() => handleAddFundsButtonClick(Currency.USD)}
                         >
                             Add Funds
                         </button>
@@ -122,41 +97,25 @@ export default function Dashboard() {
                         <span className={styles.type}>GBP wallet</span>
                         <button
                             className={styles.addFundsBtn}
-                            onClick={() =>
-                                handleAddFundsButtonClick(Currency.GBP)
-                            }
+                            onClick={() => handleAddFundsButtonClick(Currency.GBP)}
                         >
                             Add Funds
                         </button>
                     </div>
                     {showAddFundsForm && (
-                        <Modal close={() => setShowAddForms(false)}>
-                            <form
-                                className={styles.addFundsForm}
-                                onSubmit={handleAddFundsForm}
-                            >
-                                <h3>Add funds</h3>
-                                <CurrencyDropdown
-                                    selectName="currency"
-                                    inputName="amount"
-                                    defaultValue={addFundsTo}
-                                    prefix={
-                                        addFundsTo === Currency.USD ? "$" : "£"
-                                    }
-                                    onChange={() => setAddFundsTo}
-                                />
-                                <button className={styles.submitBtn}>
-                                    Add
-                                </button>
-                            </form>
-                        </Modal>
+                        <AddFundsForm
+                            close={() => setShowAddForms(false)}
+                            defaultValue={addFundsTo}
+                        />
                     )}
                 </section>
 
                 <section className={styles.liveExchangeRateBox}>
                     <h3>Live Exchange Rate</h3>
                     <span className={styles.rate}>
-                        {USDBasedRates ? `${USDBasedRates.USD} USD = ${USDBasedRates.GBP} GBP` : "..."}
+                        {USDBasedRates
+                            ? `${USDBasedRates.USD} USD = ${USDBasedRates.GBP} GBP`
+                            : "..."}
                     </span>
                 </section>
 
@@ -171,10 +130,7 @@ export default function Dashboard() {
                         <CurrencyDropdown
                             selectName="fromCurrency"
                             inputName="amount"
-                            prefix={exchangeFrom === Currency.USD ? "$" : "£"}
-                            onChange={(e) =>
-                                setExchangeFrom(e.target.value as Currency)
-                            }
+                            onChange={setExchangeFrom}
                             defaultValue={exchangeFrom}
                         />
                         <img
@@ -189,9 +145,7 @@ export default function Dashboard() {
                             <InputField
                                 className={styles.referenceInput}
                                 type="number"
-                                prefix={
-                                    exchangeFrom === Currency.USD ? "£" : "$"
-                                }
+                                prefix={exchangeFrom === Currency.USD ? "£" : "$"}
                                 value={100}
                                 readOnly
                             />

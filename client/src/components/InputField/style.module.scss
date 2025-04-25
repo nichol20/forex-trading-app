@@ -20,6 +20,10 @@
     line-height: 100%;
     @include display-flex(flex-start);
     color: $colors-text-primary;
+
+    @include media("phone") {
+        padding: 8px;
+    }
     
     .prefix {
         font: inherit;

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 
 import { useAuth } from "../contexts/Auth"
 import { InputField } from "../components/InputField"
@@ -91,6 +91,7 @@ export default function SignupPage() {
                     <h1 className={styles.title}>Sign Up</h1>
                     <InputField
                         inputId='name'
+                        testId='name'
                         title='Name'
                         name="name"
                         type='text'
@@ -99,6 +100,7 @@ export default function SignupPage() {
                     />
                     <InputField
                         inputId='email'
+                        testId='email'
                         title='E-mail'
                         name="email"
                         type='email'
@@ -111,6 +113,7 @@ export default function SignupPage() {
                         title="Password"
                         type="password"
                         inputId='password'
+                        testId='password'
                         name='password'
                         placeholder="••••••••"
                         className={styles.fieldInput}
@@ -120,6 +123,7 @@ export default function SignupPage() {
 
                     <InputField
                         inputId='confirmationPassword'
+                        testId='confirmationPassword'
                         title='Confirm password'
                         name="confirmationPassword"
                         type='password'

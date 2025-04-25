@@ -1,0 +1,19 @@
+@use "../../styles/" as *;
+
+
+.addFundsForm {
+    @include display-flex();
+    flex-direction: column;
+
+    > h3 {
+        font-size: 2em;
+    }
+
+    .submitBtn {
+        @include button-primary();
+        padding: 10px 50px;
+        margin-top: 10px;
+        font-weight: bold;
+        font-size: 1.2em;
+    }
+}

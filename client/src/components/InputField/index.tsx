@@ -1,4 +1,3 @@
-"use client"
 import { CSSProperties, useState } from 'react'
 
 import { eyeIcon, blockedEyeIcon } from '../../assets'
@@ -22,6 +21,7 @@ interface InputFieldProps {
     errorMessage?: string
     readOnly?: boolean
     disabled?: boolean
+    testId?: string
 }
 
 const InputField = ({
@@ -40,7 +40,8 @@ const InputField = ({
     onChange,
     errorMessage = "",
     readOnly = false,
-    disabled
+    disabled,
+    testId
 }: InputFieldProps) => {
     const [showPassword, setShowPassword] = useState(false)
     const isPassword = type === "password"
@@ -73,6 +74,7 @@ const InputField = ({
                     required={required}
                     readOnly={readOnly}
                     disabled={disabled}
+                    data-testid={testId}
                 />
                 {isPassword && (
                     <button

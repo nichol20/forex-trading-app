@@ -70,7 +70,7 @@ export const ToastProvider = ({ children }: ToastProviderProps) => {
                             onClick={() => deleteToast(t.id)}
                             key={index}
                         >
-                            <img src={t.icon} alt="toast" />
+                            <img src={t.icon} alt="icon" />
                             <span>{t.message}</span>
                         </div>
                     ))
