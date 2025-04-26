@@ -1,7 +1,7 @@
 import styles from "./style.module.scss";
 import { InputField } from "../InputField";
 import { Currency, getAllCurrencies } from "../../utils/currency";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface CurrencyDropdownProps {
     selectName: string;
@@ -10,6 +10,7 @@ interface CurrencyDropdownProps {
     defaultValue?: Currency;
     selectId?: string;
     value?: string | number | readonly string[];
+    onInputChange?: (amount: number) => void
 }
 
 export const CurrencyDropdown = ({
@@ -19,6 +20,7 @@ export const CurrencyDropdown = ({
     inputName,
     defaultValue,
     onChange,
+    onInputChange
 }: CurrencyDropdownProps) => {
     const [currentCurrency, setCurrency] = useState<Currency>(defaultValue ?? Currency.USD)
 
@@ -32,8 +34,13 @@ export const CurrencyDropdown = ({
         const currentValue = event.target.value;
         if (currentValue.split(".")[1]?.length > 2) {
             event.target.value = parseFloat(currentValue).toFixed(2);
+            if (onInputChange) onInputChange(parseFloat(event.target.value))
         }
     };
+
+    useEffect(() => {
+        if (onInputChange) onInputChange(100)
+    }, [onInputChange])
 
     return (
         <div className={styles.dropdown}>

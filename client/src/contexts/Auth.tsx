@@ -47,10 +47,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
                 setUser(user)
             }
             catch (error: any) {
-                const status = error?.response?.status
-                if (status === 403 || status === 401) {
-                    navigate("/login")
-                }
                 console.error(error)
             }
             finally {

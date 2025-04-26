@@ -21,6 +21,7 @@ export default function Dashboard() {
     const [exchangeFrom, setExchangeFrom] = useState<Currency>(Currency.USD);
     const [addFundsTo, setAddFundsTo] = useState<Currency>(Currency.USD);
     const [USDBasedRates, setUSDBasedRates] = useState<Rates | null>();
+    const [amountToExchange, setAmountToExchange] = useState<number>(0);
     const toCurrency = exchangeFrom === Currency.USD ? Currency.GBP : Currency.USD;
 
     const handleExchangeForm = async (
@@ -35,7 +36,7 @@ export default function Dashboard() {
             await exchangeCurrencies(
                 exchangeFrom,
                 toCurrency,
-                parseInt(amount)
+                parseFloat(amount)
             );
             updateUser();
             toast({ message: "Exchange made successfully", status: "success" });
@@ -66,10 +67,15 @@ export default function Dashboard() {
 
         fetchRates();
 
-        socket.on("exchange-rates:USD", setUSDBasedRates);
+        socket.connect();
+        socket.on("exchange-rates:USD", data => {
+            console.log(data)
+            setUSDBasedRates(data)
+        });
 
         return () => {
             socket.off("exchange-rates:USD");
+            socket.disconnect();
         };
     }, []);
 
@@ -132,6 +138,7 @@ export default function Dashboard() {
                             inputName="amount"
                             onChange={setExchangeFrom}
                             defaultValue={exchangeFrom}
+                            onInputChange={setAmountToExchange}
                         />
                         <img
                             src={rightArrow}
@@ -146,7 +153,7 @@ export default function Dashboard() {
                                 className={styles.referenceInput}
                                 type="number"
                                 prefix={exchangeFrom === Currency.USD ? "£" : "$"}
-                                value={100}
+                                value={USDBasedRates?.GBP ? 1 * USDBasedRates.GBP * amountToExchange : 0}
                                 readOnly
                             />
                         </div>

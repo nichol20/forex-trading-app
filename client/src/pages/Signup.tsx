@@ -132,10 +132,10 @@ export default function SignupPage() {
                         errorMessage={getErrorMessage("confirmationPassword")}
                         onChange={() => resetError("confirmationPassword")}
                     />
-                    <button type='submit' className={styles.submitBtn}>Login</button>
+                    <button type='submit' className={styles.submitBtn}>Sign up</button>
                     <span className={styles.signupLinkBox}>
-                        {"Don't have an account? "}
-                        <a href='/signup' className={styles.link}>sign up</a>
+                        {"Already have an account? "}
+                        <a href='/login' className={styles.link}>login</a>
                     </span>
                 </form>
             </div>
