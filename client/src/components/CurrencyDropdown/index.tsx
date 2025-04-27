@@ -1,7 +1,7 @@
 import styles from "./style.module.scss";
 import { InputField } from "../InputField";
 import { Currency, getAllCurrencies } from "../../utils/currency";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 interface CurrencyDropdownProps {
     selectName: string;
@@ -30,17 +30,13 @@ export const CurrencyDropdown = ({
         if (onChange) onChange(currency)
     }
 
-    const handleMoneyInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const currentValue = event.target.value;
+    const handleMoneyInputChange = (event: React.FormEvent<HTMLInputElement>) => {
+        const currentValue = event.currentTarget.value;
         if (currentValue.split(".")[1]?.length > 2) {
-            event.target.value = parseFloat(currentValue).toFixed(2);
-            if (onInputChange) onInputChange(parseFloat(event.target.value))
+            event.currentTarget.value = parseFloat(currentValue).toFixed(2);
         }
-    };
-
-    useEffect(() => {
-        if (onInputChange) onInputChange(100)
-    }, [onInputChange])
+        onInputChange && onInputChange(parseFloat(event.currentTarget.value))
+    }
 
     return (
         <div className={styles.dropdown}>
