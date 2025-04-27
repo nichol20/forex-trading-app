@@ -47,6 +47,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
                 setUser(user)
             }
             catch (error: any) {
+                if ([403, 401].includes(error?.response?.status)) return
                 console.error(error)
             }
             finally {
@@ -61,8 +62,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         const responseIntercept = http.interceptors.response.use(
             response => response,
             async error => {
-                console.log("test")
-                if (error?.response?.status === 403 || error?.response?.status === 401) {
+                if ([403, 401].includes(error?.response?.status)) {
                     navigate("/login")
                 }
                 return Promise.reject(error)

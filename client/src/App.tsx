@@ -11,7 +11,7 @@ import { useEffect } from "react";
 function App() {
 
   useEffect(() => {
-    socket.on("connect_error", (err) => { console.log("error on connection: " + err) })
+    socket.on("connect_error", (err) => { console.error("error on connection: " + err) })
   }, [])
 
   return (

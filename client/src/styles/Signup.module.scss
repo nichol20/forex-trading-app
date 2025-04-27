@@ -23,6 +23,7 @@
     width: 100%;
     @include display-flex(flex-start);
     flex-direction: column;
+    gap: 10px;
 }
 
 h1 {

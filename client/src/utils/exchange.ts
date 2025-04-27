@@ -8,3 +8,7 @@ export const sortRecordsByDate = (records: Exchange[], type: OrderType) => {
         return Date.parse(b.exchangedAt) - Date.parse(a.exchangedAt);
     });
 };
+
+export const getInvertedRate = (rate: number): number => {
+    return 1 / rate;
+};

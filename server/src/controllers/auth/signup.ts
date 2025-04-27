@@ -12,7 +12,6 @@ const saltRounds = 10;
 export const signup = async (req: Request, res: Response<User>) => {
     const parsed = signupSchema.safeParse(req.body);
     if (!parsed.success) {
-        console.log(parsed.error.errors);
         throw new BadRequestError(parsed.error.errors[0].message);
     }
 

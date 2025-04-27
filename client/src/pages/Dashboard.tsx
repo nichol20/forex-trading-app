@@ -13,6 +13,7 @@ import * as api from "../utils/api";
 import styles from "../styles/Dashboard.module.scss";
 import { socket } from "../socket";
 import { AddFundsForm } from "../components/AddFundsForm";
+import { getInvertedRate } from "../utils/exchange";
 
 export default function Dashboard() {
     const toast = useToast();
@@ -59,6 +60,16 @@ export default function Dashboard() {
         setAddFundsTo(currency);
     };
 
+    const getReferenceValue = () => {
+        if (!USDBasedRates) return 0
+
+        if (exchangeFrom === Currency.USD) {
+            return (amountToExchange * USDBasedRates.GBP).toFixed(6)
+        }
+
+        return (amountToExchange * getInvertedRate(USDBasedRates.GBP)).toFixed(6)
+    }
+
     useEffect(() => {
         const fetchRates = async () => {
             const exchangeRates = await api.getExchangeRates(Currency.USD);
@@ -68,10 +79,7 @@ export default function Dashboard() {
         fetchRates();
 
         socket.connect();
-        socket.on("exchange-rates:USD", data => {
-            console.log(data)
-            setUSDBasedRates(data)
-        });
+        socket.on("exchange-rates:USD", setUSDBasedRates);
 
         return () => {
             socket.off("exchange-rates:USD");
@@ -153,7 +161,7 @@ export default function Dashboard() {
                                 className={styles.referenceInput}
                                 type="number"
                                 prefix={exchangeFrom === Currency.USD ? "£" : "$"}
-                                value={USDBasedRates?.GBP ? 1 * USDBasedRates.GBP * amountToExchange : 0}
+                                value={getReferenceValue()}
                                 readOnly
                             />
                         </div>
