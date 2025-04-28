@@ -5,18 +5,14 @@ export type Rates = {
 };
 
 export interface SuccessfulExchangeRateResponse {
-    success: true;
-    terms: string;
-    privacy: string;
-    timestamp: number;
-    date: string;
     base: Currency;
-    rates: Rates;
+    results: Rates;
+    updated: string;
+    ms: number;
 }
 
-export interface FailedExchangeRateResponse {
-    success: false;
-}
+// Status codes: 400, 401, 403, 429
+export interface FailedExchangeRateResponse {}
 
 export type ExchangeRateResponse =
     | SuccessfulExchangeRateResponse

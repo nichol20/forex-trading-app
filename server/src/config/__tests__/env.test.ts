@@ -22,6 +22,7 @@ describe("checkEnv", () => {
         process.env.JWT_SECRET = "secret";
         process.env.FRONTEND_URL = "http://localhost:3000";
         process.env.MONGO_URI = "mongodb://localhost:27017";
+        process.env.EXCHANGERATE_API_KEY = "key";
 
         expect(checkEnv()).toEqual({
             JWT_SECRET: "secret",
@@ -49,6 +50,7 @@ describe("checkEnv", () => {
         process.env.JWT_SECRET = "";
         process.env.FRONTEND_URL = "http://localhost:3000";
         process.env.MONGO_URI = "mongodb://localhost:27017";
+        process.env.EXCHANGERATE_API_KEY = "key";
 
         checkEnv();
 

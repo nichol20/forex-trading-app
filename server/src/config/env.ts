@@ -10,6 +10,9 @@ const envSchema = z.object({
     MONGO_URI: z
         .string({ required_error: "MONGO_URI is required" })
         .nonempty("MONGO_URI is required"),
+    EXCHANGERATE_API_KEY: z
+        .string({ required_error: "MONGO_URI is required" })
+        .nonempty("MONGO_URI is required"),
 });
 
 export const checkEnv = () => {
