@@ -7,7 +7,8 @@ interface CurrencyDropdownProps {
     selectName: string;
     inputName: string;
     onChange?: (currency: Currency) => void;
-    defaultValue?: Currency;
+    defaultCurrencyValue?: Currency;
+    defaultAmountValue?: number;
     selectId?: string;
     value?: string | number | readonly string[];
     onInputChange?: (amount: number) => void
@@ -18,11 +19,12 @@ export const CurrencyDropdown = ({
     selectId,
     value,
     inputName,
-    defaultValue,
+    defaultCurrencyValue,
+    defaultAmountValue,
     onChange,
     onInputChange
 }: CurrencyDropdownProps) => {
-    const [currentCurrency, setCurrency] = useState<Currency>(defaultValue ?? Currency.USD)
+    const [currentCurrency, setCurrency] = useState<Currency>(defaultCurrencyValue ?? Currency.USD)
 
     const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const currency = event.target.value as Currency
@@ -45,7 +47,7 @@ export const CurrencyDropdown = ({
                 id={selectId}
                 value={value}
                 className={styles.select}
-                defaultValue={defaultValue}
+                defaultValue={defaultCurrencyValue}
                 onChange={handleSelectChange}
             >
                 {getAllCurrencies().map((c) => (
@@ -59,7 +61,7 @@ export const CurrencyDropdown = ({
                 type="number"
                 name={inputName}
                 prefix={currentCurrency === Currency.USD ? "$" : "£"}
-                defaultValue={100}
+                defaultValue={defaultAmountValue}
                 min="0.01"
                 step="0.01"
                 onChange={handleMoneyInputChange}

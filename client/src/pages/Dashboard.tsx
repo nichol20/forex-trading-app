@@ -22,7 +22,7 @@ export default function Dashboard() {
     const [exchangeFrom, setExchangeFrom] = useState<Currency>(Currency.USD);
     const [addFundsTo, setAddFundsTo] = useState<Currency>(Currency.USD);
     const [USDBasedRates, setUSDBasedRates] = useState<Rates | null>();
-    const [amountToExchange, setAmountToExchange] = useState<number>(0);
+    const [amountToExchange, setAmountToExchange] = useState<number>(100);
     const toCurrency = exchangeFrom === Currency.USD ? Currency.GBP : Currency.USD;
 
     const handleExchangeForm = async (
@@ -145,8 +145,10 @@ export default function Dashboard() {
                             selectName="fromCurrency"
                             inputName="amount"
                             onChange={setExchangeFrom}
-                            defaultValue={exchangeFrom}
+                            defaultCurrencyValue={exchangeFrom}
+                            defaultAmountValue={amountToExchange}
                             onInputChange={setAmountToExchange}
+
                         />
                         <img
                             src={rightArrow}
