@@ -67,6 +67,18 @@
 
     .col {
         font-weight: bold;
+        @include display-flex(flex-start);
+        gap: 5px;
+        cursor: pointer;
+        user-select: none;
+
+        .triangle {
+            @include triangle(8px, 5px,#3A9FF1);
+    
+            &.desc {
+                transform: rotate(180deg);
+            }
+        }
     }
 
     .row {

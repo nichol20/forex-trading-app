@@ -5,8 +5,10 @@ import { useAuth } from "../contexts/Auth"
 import { ErrorMessage } from "../components/ErrorMessage"
 import { InputField } from "../components/InputField"
 import styles from "../styles/Login.module.scss"
+import { useToast } from "../contexts/Toast"
 
 export default function LoginPage() {
+    const toast = useToast()
     const [invalidCredentials, setInvalidCredentials] = useState(false)
     const { login, user } = useAuth()
     const navigate = useNavigate()
@@ -29,6 +31,8 @@ export default function LoginPage() {
             if (error.response?.status === 404 || error.response?.status === 401) {
                 setInvalidCredentials(true)
             }
+
+            toast({ message: "Something went wrong", status: "error" });
         }
     }
 

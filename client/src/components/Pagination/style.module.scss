@@ -1,0 +1,55 @@
+@use "../../styles/" as *;
+
+.pagination {
+    @include display-flex();
+    list-style: none;
+    height: 40px;
+    gap: 2px;
+    margin-top: auto;
+}
+
+.page_item {
+    padding: 4px 14px;
+    cursor: pointer;
+    user-select: none;
+    @include display-flex();
+    height: 100%;
+    width: 45px;
+    border-radius: 5px;
+
+    @include media("tablet") {
+        padding: 2px 2px;
+    }
+
+    @include media("phone") {
+        min-width: 20px;
+    }
+
+    &:first-child {
+        border-top-left-radius: 4px;
+        border-bottom-left-radius: 4px;
+
+        .icon {
+            rotate: -180deg;
+        }
+    }
+    
+    &:last-child {
+        border-top-right-radius: 4px;
+        border-bottom-right-radius: 4px;
+    }
+
+    &:hover, &.active {
+        background-color: $colors-button-bg-primary;
+        color: $colors-button-text-primary;
+
+        .icon {
+            @include white-filter();
+        }
+    }
+
+    .icon {
+        width: 25px;
+        @include blue-filter();
+    }
+}

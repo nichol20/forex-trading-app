@@ -1,5 +1,9 @@
 import { Currency } from "../utils/currency";
 
+export type Rates = {
+    [key in Currency]: number;
+};
+
 export interface Exchange {
     id: string;
     userId: string;
@@ -11,6 +15,12 @@ export interface Exchange {
     exchangedAt: string;
 }
 
-export type Rates = {
-    [key in Currency]: number;
-};
+export type SortableField = keyof Pick<
+    Exchange,
+    | "fromCurrency"
+    | "toCurrency"
+    | "fromAmount"
+    | "toAmount"
+    | "exchangeRate"
+    | "exchangedAt"
+>;

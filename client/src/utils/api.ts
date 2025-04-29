@@ -1,7 +1,8 @@
-import { Exchange, Rates } from "../types/exchange";
+import { Exchange, Rates, SortableField } from "../types/exchange";
 import { User, Wallet } from "../types/user";
 import { Currency } from "./currency";
 import { http } from "./http";
+import { SortBy, sortByToExchangeKeyMap } from "./params";
 
 interface SignupArgs {
     name: string;
@@ -48,8 +49,37 @@ export const exchangeCurrencies = async (
     return res.data;
 };
 
-export const getExchangeHistory = async (): Promise<Exchange[]> => {
-    const res = await http.get<Exchange[]>("/history");
+interface GetExchangeHistoryArgs {
+    page?: number;
+    limit?: number;
+    sortBy?: SortBy;
+    sortOrder?: "asc" | "desc";
+}
+
+interface GetExchangeHistoryResponse {
+    history: Exchange[];
+    totalItems: number;
+    currentPage: number;
+    totalPages: number;
+}
+
+export const getExchangeHistory = async (
+    args?: GetExchangeHistoryArgs
+): Promise<GetExchangeHistoryResponse> => {
+    const sortBy: SortableField = args?.sortBy
+        ? sortByToExchangeKeyMap[args.sortBy]
+        : "exchangedAt";
+    const queryObj = args
+        ? {
+              ...args,
+              sortBy,
+          }
+        : {};
+
+    const searchParams = new URLSearchParams(Object.entries(queryObj));
+    const res = await http.get<GetExchangeHistoryResponse>(
+        "/history?" + searchParams.toString()
+    );
     return res.data;
 };
 
