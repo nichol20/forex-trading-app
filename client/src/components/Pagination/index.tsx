@@ -47,7 +47,7 @@ export const Pagination = ({ currentPage, lastPage }: PaginationProps) => {
                 pages.push(
                     <li
                         key={index}
-                        className={`${styles.page_item} ${currentPage === index ? styles.active : ''}`}
+                        className={`${styles.pageItem} ${currentPage === index ? styles.active : ''}`}
                         onClick={() => handleNavigate(index)}
                     >
                         {index}
@@ -71,7 +71,7 @@ export const Pagination = ({ currentPage, lastPage }: PaginationProps) => {
         <ul className={styles.pagination}>
             {
                 hasPreviousPage && (
-                    <li className={styles.page_item} onClick={() => handleNavigate(currentPage - 1)}>
+                    <li className={styles.pageItem} onClick={() => handleNavigate(currentPage - 1)}>
                         <img src={chevronForwardIcon} alt="chevron" className={styles.icon} />
                     </li>
                 )
@@ -79,7 +79,7 @@ export const Pagination = ({ currentPage, lastPage }: PaginationProps) => {
             {renderPageItems()}
             {
                 hasNextPage && (
-                    <li className={styles.page_item} onClick={() => handleNavigate(currentPage + 1)}>
+                    <li className={styles.pageItem} onClick={() => handleNavigate(currentPage + 1)}>
                         <img src={chevronForwardIcon} alt="chevron" className={styles.icon} />
                     </li>
                 )

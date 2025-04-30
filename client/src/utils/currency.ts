@@ -10,3 +10,8 @@ export const getAllCurrencies = (): Currency[] => {
 export const isCurrency = (value: any): value is Currency => {
     return getAllCurrencies().includes(value);
 };
+
+export const getSign = (currency: Currency) => {
+    if(currency === Currency.USD) return "$"
+    return "£"
+}

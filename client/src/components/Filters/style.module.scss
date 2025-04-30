@@ -1,0 +1,73 @@
+@use "../../styles/" as *;
+
+.filters {
+    @include light-box-shadow();
+    width: 100%;
+    transition: 500ms all ease-in-out;
+    overflow: hidden;
+    max-height: 0px;
+    padding: 0px 30px;
+    margin-bottom: 0px;
+    background-color: $colors-bg-secondary;
+    border-radius: 5px;
+    gap: 15px;
+
+    &.active {
+        padding: 30px;
+        margin-bottom: 60px;
+        max-height: 1000px;
+    }
+}
+
+.sections {
+    @include display-flex(flex-start, flex-start);
+    gap: 30px;
+}
+
+.fromAndToSection {
+    @include display-flex(flex-start);
+    gap: 20px;
+
+    input {
+        font-weight: 500;
+    }
+}
+
+.currencyBox {
+    @include display-flex(flex-start, flex-start);
+    flex-direction: column;
+    gap: 10px;
+
+    .title {
+        font-weight: bold;
+    }
+}
+
+.amountSection {
+    max-width: 200px;
+    
+    .title {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+}
+
+.actions {
+    @include display-flex(flex-start);
+    gap: 10px;
+
+    .applyBtn {
+        @include button-primary();
+        padding: 10px;
+        width: 100px;
+        font-weight: bold;
+    }
+
+    .clearBtn {
+        @include button-secondary();
+        padding: 10px;
+        width: 100px;
+        font-weight: bold;
+    }
+}

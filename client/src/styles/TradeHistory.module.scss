@@ -1,11 +1,11 @@
 @use "./" as *;
 
 .tradeHistoryPage {
+    @include display-flex(flex-start);
     width: 100%;
     height: 100vh;
     padding: 20px;
     padding-top: 0;
-    @include display-flex(flex-start);
     flex-direction: column;
     
     @include media("phone") {
@@ -16,13 +16,50 @@
 .content {
     @include display-flex(flex-start);
     flex-direction: column;
-    background-color: $colors-bg-secondary;
-    @include light-box-shadow();
-    border-radius: 5px;
+    gap: 10px;
+    width: 100%;
+    height: 100%;
+}
+
+section {
     max-width: 1400px;
     width: 100%;
-    padding: 20px;
-    min-height: 85%;
+}
+
+.filterContainer {
+    @include display-flex(flex-start, flex-start);
+    flex-direction: column;
+    gap: 20px;
+}
+
+.filterBtn {
+    @include light-box-shadow();
+    @include display-flex();
+    padding: 8px 14px;
+    border-radius: 8px;
+    background-color: white;
+    gap: 5px;
+    font-weight: bold;
+    
+    > img {
+        width: 14px;
+        height: 14px;
+    }
+    
+    > span {
+        font-size: 0.75rem;
+        font-weight: bold;
+    }
+}
+
+.tableContainer {
+    @include display-flex(flex-start);
+    @include light-box-shadow();
+    flex-direction: column;
+    padding: 10px;
+    background-color: $colors-bg-secondary;
+    border-radius: 5px;
+    min-height: 92%;
 }
 
 .title {
@@ -42,8 +79,8 @@
 }
 
 .table {
-    width: 100%;
     @include display-flex();
+    width: 100%;
     flex-direction: column;
     
     @include media("tablet") {
@@ -66,8 +103,8 @@
     }
 
     .col {
-        font-weight: bold;
         @include display-flex(flex-start);
+        font-weight: bold;
         gap: 5px;
         cursor: pointer;
         user-select: none;

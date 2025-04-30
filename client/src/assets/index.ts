@@ -5,3 +5,4 @@ export { default as closeIcon } from "./images/x.svg";
 export { default as blueCheckMarkIcon } from "./images/blue-check-mark.svg";
 export { default as redXIcon } from "./images/red-x.svg";
 export { default as chevronForwardIcon } from "./images/chevron-forward.svg";
+export { default as funnelIcon } from "./images/filter.png";

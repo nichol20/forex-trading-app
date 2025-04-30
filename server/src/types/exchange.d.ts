@@ -10,3 +10,13 @@ export interface Exchange {
 }
 
 export type ExchangeDocument = Omit<Exchange, "id">;
+
+export type SortableField = keyof Pick<
+    Exchange,
+    | "fromCurrency"
+    | "toCurrency"
+    | "fromAmount"
+    | "toAmount"
+    | "exchangeRate"
+    | "exchangedAt"
+>;

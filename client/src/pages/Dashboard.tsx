@@ -4,7 +4,7 @@ import { rightArrow } from "../assets";
 import { Header } from "../components/Header";
 import { CurrencyDropdown } from "../components/CurrencyDropdown";
 import { exchangeCurrencies } from "../utils/api";
-import { Currency } from "../utils/currency";
+import { Currency, getSign } from "../utils/currency";
 import { useAuth } from "../contexts/Auth";
 import { InputField } from "../components/InputField";
 import { useToast } from "../contexts/Toast";
@@ -94,7 +94,7 @@ export default function Dashboard() {
                 <section className={styles.walletContainer}>
                     <div className={styles.wallet}>
                         <h2 className={styles.amount}>
-                            ${user ? user.wallet.USD.toFixed(2) : "0.00"}
+                        {getSign(Currency.USD)}{user ? user.wallet.USD.toFixed(2) : "0.00"}
                         </h2>
                         <span className={styles.type}>USD wallet</span>
                         <button
@@ -106,7 +106,7 @@ export default function Dashboard() {
                     </div>
                     <div className={styles.wallet}>
                         <h2 className={styles.amount}>
-                            £{user ? user.wallet.GBP.toFixed(2) : "0.00"}
+                            {getSign(Currency.GBP)}{user ? user.wallet.GBP.toFixed(2) : "0.00"}
                         </h2>
                         <span className={styles.type}>GBP wallet</span>
                         <button
@@ -144,7 +144,7 @@ export default function Dashboard() {
                         <CurrencyDropdown
                             selectName="fromCurrency"
                             inputName="amount"
-                            onChange={setExchangeFrom}
+                            onSelectChange={setExchangeFrom}
                             defaultCurrencyValue={exchangeFrom}
                             defaultAmountValue={amountToExchange}
                             onInputChange={setAmountToExchange}
@@ -162,7 +162,7 @@ export default function Dashboard() {
                             <InputField
                                 className={styles.referenceInput}
                                 type="number"
-                                prefix={exchangeFrom === Currency.USD ? "£" : "$"}
+                                prefix={getSign(toCurrency)}
                                 value={getReferenceValue()}
                                 readOnly
                             />

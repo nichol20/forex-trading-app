@@ -16,6 +16,13 @@
     height: 45px;
     outline: none;
     font-size: 1em;
+    font-weight: 500;
+
+    &.onlySelect {
+        border: 2px solid $colors-stroke;
+        border-radius: 5px;
+        width: 100%;
+    }
 }
 
 .currencyInput {

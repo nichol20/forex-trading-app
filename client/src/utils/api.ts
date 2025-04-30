@@ -1,8 +1,9 @@
-import { Exchange, Rates, SortableField } from "../types/exchange";
+import { Exchange, Rates } from "../types/exchange";
 import { User, Wallet } from "../types/user";
 import { Currency } from "./currency";
 import { http } from "./http";
-import { SortBy, sortByToExchangeKeyMap } from "./params";
+import { removeNullsDeep } from "./object";
+import { SortBy } from "./params";
 
 interface SignupArgs {
     name: string;
@@ -49,11 +50,25 @@ export const exchangeCurrencies = async (
     return res.data;
 };
 
+export interface Filters {
+    start?: string | null;
+    end?: string | null;
+    from?: Currency | null;
+    to?: Currency | null;
+    minRate?: number | null;
+    maxRate?: number | null;
+    minAmount?: number | null;
+    maxAmount?: number | null;
+    minOutput?: number | null;
+    maxOutput?: number | null;
+}
+
 interface GetExchangeHistoryArgs {
     page?: number;
     limit?: number;
     sortBy?: SortBy;
     sortOrder?: "asc" | "desc";
+    filters?: Filters;
 }
 
 interface GetExchangeHistoryResponse {
@@ -66,17 +81,10 @@ interface GetExchangeHistoryResponse {
 export const getExchangeHistory = async (
     args?: GetExchangeHistoryArgs
 ): Promise<GetExchangeHistoryResponse> => {
-    const sortBy: SortableField = args?.sortBy
-        ? sortByToExchangeKeyMap[args.sortBy]
-        : "exchangedAt";
-    const queryObj = args
-        ? {
-              ...args,
-              sortBy,
-          }
-        : {};
-
-    const searchParams = new URLSearchParams(Object.entries(queryObj));
+    let query = removeNullsDeep(args ?? {})
+    query = { ...query, ...query.filters, filters: undefined }
+    
+    const searchParams = new URLSearchParams(Object.entries(query as Object));
     const res = await http.get<GetExchangeHistoryResponse>(
         "/history?" + searchParams.toString()
     );

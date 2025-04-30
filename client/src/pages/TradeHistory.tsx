@@ -10,6 +10,9 @@ import { Pagination } from "../components/Pagination";
 import { useToast } from "../contexts/Toast";
 import { isValidSortBy, SortBy } from "../utils/params";
 import { useLocation } from "react-router";
+import { funnelIcon } from "../assets";
+import { Filters } from "../components/Filters";
+import { Currency } from "../utils/currency";
 
 const columns: string[] = [
     "Date",
@@ -24,10 +27,12 @@ export default function TradeHistory() {
     const toast = useToast();
     const location = useLocation();
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
 
     const [history, setHistory] = useState<Exchange[]>([]);
-    const [searchParams] = useSearchParams();
     const [totalPages, setTotalPages] = useState(0);
+    const [showFilters, setShowFilters] = useState(false)
+
     const page = parseInt(searchParams.get("page") ?? "1", 10);
     const limit = parseInt(searchParams.get("limit") ?? "10", 10);
     const sortParam = searchParams.get("sortBy");
@@ -52,13 +57,34 @@ export default function TradeHistory() {
     }
 
     useEffect(() => {
+        const minAmount = parseInt(searchParams.get("minAmount") ?? "0", 10)
+        const maxAmount = parseInt(searchParams.get("maxAmount") ?? "1000", 10)
+        const minOutput = parseInt(searchParams.get("minOutput") ?? "0", 10)
+        const maxOutput = parseInt(searchParams.get("maxOutput") ?? "1000", 10)
+        const minRate = parseFloat(searchParams.get("minRate") ?? "0")
+        const maxRate = parseFloat(searchParams.get("maxRate") ?? "2")
+        const from = searchParams.get("from")
+        const to = searchParams.get("to")
+
         const fetchHistory = async () => {
             try {
                 const res = await getExchangeHistory({
                     page,
                     limit,
                     sortBy,
-                    sortOrder
+                    sortOrder,
+                    filters: {
+                        minAmount,
+                        maxAmount,
+                        minOutput,
+                        maxOutput,
+                        minRate,
+                        maxRate,
+                        start: searchParams.get("start"),
+                        end: searchParams.get("end"),
+                        from: from ? from as Currency : null,
+                        to: to ? to as Currency : null
+                    }
                 });
                 setTotalPages(res.totalPages)
                 setHistory(res.history);
@@ -77,61 +103,70 @@ export default function TradeHistory() {
     return (
         <div className={styles.tradeHistoryPage}>
             <Header />
-            <div className={styles.content}>
-                <h2 className={styles.title}>Trade History</h2>
-                <div className={styles.table}>
-                    <div className={styles.header}>
-                        {columns.map(col => (
-                            <div className={styles.col} key={col} onClick={() => changeOrderBy(col)}>
-                                <span className={styles.name}>{col}</span>
-                                {
-                                    sortBy === col.toLocaleLowerCase()
-                                    && <div className={`${styles.triangle} ${styles[sortOrder]}`}></div>
-                                }
-                            </div>
-                        ))}
+            <main className={styles.content}>
+                <section className={styles.filterContainer}>
+                    <button className={styles.filterBtn} onClick={() => setShowFilters(prev => !prev)}>
+                        <img src={funnelIcon} alt="funnel" />
+                        <span>Filter</span>
+                    </button>
+                    <Filters isOpen={showFilters} />
+                </section>
+                <section className={styles.tableContainer}>
+                    <h2 className={styles.title}>Trade History</h2>
+                    <div className={styles.table}>
+                        <div className={styles.header}>
+                            {columns.map(col => (
+                                <div className={styles.col} key={col} onClick={() => changeOrderBy(col)}>
+                                    <span className={styles.name}>{col}</span>
+                                    {
+                                        sortBy === col.toLocaleLowerCase()
+                                        && <div className={`${styles.triangle} ${styles[sortOrder]}`}></div>
+                                    }
+                                </div>
+                            ))}
+                        </div>
+                        <div className={styles.rows} data-testid="rows">
+                            {history.map((exchange) => (
+                                <div key={exchange.id} className={styles.row}>
+                                    <div className={styles.item}>
+                                        <span className={styles.value}>
+                                            {new Date(
+                                                exchange.exchangedAt
+                                            ).toLocaleDateString()}
+                                        </span>
+                                    </div>
+                                    <div className={styles.item}>
+                                        <span className={styles.value}>
+                                            {exchange.fromCurrency}
+                                        </span>
+                                    </div>
+                                    <div className={styles.item}>
+                                        <span className={styles.value}>
+                                            {exchange.toCurrency}
+                                        </span>
+                                    </div>
+                                    <div className={styles.item}>
+                                        <span className={styles.value}>
+                                            {exchange.fromAmount.toFixed(2)}
+                                        </span>
+                                    </div>
+                                    <div className={styles.item}>
+                                        <span className={styles.value}>
+                                            {exchange.exchangeRate}
+                                        </span>
+                                    </div>
+                                    <div className={styles.item}>
+                                        <span className={styles.value}>
+                                            {exchange.toAmount.toFixed(2)}
+                                        </span>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
                     </div>
-                    <div className={styles.rows} data-testid="rows">
-                        {history.map((exchange) => (
-                            <div key={exchange.id} className={styles.row}>
-                                <div className={styles.item}>
-                                    <span className={styles.value}>
-                                        {new Date(
-                                            exchange.exchangedAt
-                                        ).toLocaleDateString()}
-                                    </span>
-                                </div>
-                                <div className={styles.item}>
-                                    <span className={styles.value}>
-                                        {exchange.fromCurrency}
-                                    </span>
-                                </div>
-                                <div className={styles.item}>
-                                    <span className={styles.value}>
-                                        {exchange.toCurrency}
-                                    </span>
-                                </div>
-                                <div className={styles.item}>
-                                    <span className={styles.value}>
-                                        {exchange.fromAmount.toFixed(2)}
-                                    </span>
-                                </div>
-                                <div className={styles.item}>
-                                    <span className={styles.value}>
-                                        {exchange.exchangeRate}
-                                    </span>
-                                </div>
-                                <div className={styles.item}>
-                                    <span className={styles.value}>
-                                        {exchange.toAmount.toFixed(2)}
-                                    </span>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-                <Pagination currentPage={page} lastPage={totalPages} />
-            </div>
+                    <Pagination currentPage={page} lastPage={totalPages} />
+                </section>
+            </main>
         </div>
     );
 }

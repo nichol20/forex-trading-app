@@ -14,13 +14,3 @@ export interface Exchange {
     exchangeRate: number;
     exchangedAt: string;
 }
-
-export type SortableField = keyof Pick<
-    Exchange,
-    | "fromCurrency"
-    | "toCurrency"
-    | "fromAmount"
-    | "toAmount"
-    | "exchangeRate"
-    | "exchangedAt"
->;
