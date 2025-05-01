@@ -1,5 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
+import * as api from "../utils/api";
+import { socket } from "../socket";
 import { rightArrow } from "../assets";
 import { Header } from "../components/Header";
 import { CurrencyDropdown } from "../components/CurrencyDropdown";
@@ -9,25 +11,28 @@ import { useAuth } from "../contexts/Auth";
 import { InputField } from "../components/InputField";
 import { useToast } from "../contexts/Toast";
 import { Rates } from "../types/exchange";
-import * as api from "../utils/api";
-import styles from "../styles/Dashboard.module.scss";
-import { socket } from "../socket";
 import { AddFundsForm } from "../components/AddFundsForm";
 import { getInvertedRate } from "../utils/exchange";
+import { TimeSeriesChart } from "../components/TimeSeriesChart";
+import { formatDate } from "../utils/date";
+import styles from "../styles/Dashboard.module.scss";
 
 export default function Dashboard() {
     const toast = useToast();
     const { user, updateUser } = useAuth();
+    const chartParentRef = useRef<HTMLDivElement>(null);
+    const [chartWidth, setChartWidth] = useState(0);
+    const [chartHeight, setChartHeight] = useState(350)
+    const [timeSeriesDates, setTimeSeriesDates] = useState<string[]>([])
+    const [timeSeriesValues, setTimeSeriesValues] = useState<number[]>([])
     const [showAddFundsForm, setShowAddForms] = useState(false);
     const [exchangeFrom, setExchangeFrom] = useState<Currency>(Currency.USD);
     const [addFundsTo, setAddFundsTo] = useState<Currency>(Currency.USD);
-    const [USDBasedRates, setUSDBasedRates] = useState<Rates | null>();
+    const [USDBasedRates, setUSDBasedRates] = useState<Rates>();
     const [amountToExchange, setAmountToExchange] = useState<number>(100);
     const toCurrency = exchangeFrom === Currency.USD ? Currency.GBP : Currency.USD;
 
-    const handleExchangeForm = async (
-        event: React.FormEvent<HTMLFormElement>
-    ) => {
+    const handleExchangeForm = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
         const formData = new FormData(event.currentTarget);
@@ -61,22 +66,41 @@ export default function Dashboard() {
     };
 
     const getReferenceValue = () => {
-        if (!USDBasedRates) return 0
+        if (!USDBasedRates) return 0;
 
         if (exchangeFrom === Currency.USD) {
-            return (amountToExchange * USDBasedRates.GBP).toFixed(6)
-        }
+            return (amountToExchange * USDBasedRates.GBP).toFixed(6);
+        };
 
-        return (amountToExchange * getInvertedRate(USDBasedRates.GBP)).toFixed(6)
+        return (amountToExchange * getInvertedRate(USDBasedRates.GBP)).toFixed(6);
     }
 
     useEffect(() => {
-        const fetchRates = async () => {
+        const fetchData = async () => {
             const exchangeRates = await api.getExchangeRates(Currency.USD);
             setUSDBasedRates(exchangeRates);
+
+            const end = new Date()
+            const start = new Date()
+            start.setDate(end.getDate() - 12)
+            const timeSeries = await api.getTimeSeries(
+                Currency.USD, 
+                Currency.GBP,
+                formatDate(start),
+                formatDate(end)
+            )
+
+            console.log(timeSeries)
+            
+            const usdToGbpTimeSeries = timeSeries[Currency.GBP]
+
+            if(usdToGbpTimeSeries) {
+                setTimeSeriesDates(Object.keys(usdToGbpTimeSeries))
+                setTimeSeriesValues(Object.values(usdToGbpTimeSeries))
+            }
         };
 
-        fetchRates();
+        fetchData();
 
         socket.connect();
         socket.on("exchange-rates:USD", setUSDBasedRates);
@@ -87,6 +111,27 @@ export default function Dashboard() {
         };
     }, []);
 
+    useEffect(() => {
+        const parent = chartParentRef.current;
+        if (!parent) return;
+
+        const resizeObserver = new ResizeObserver((entries) => {
+            const newWidth = entries[0].contentRect.width;
+
+            if (newWidth <= 350) {
+                setChartHeight(newWidth);
+            }
+
+            setChartWidth(newWidth);
+        });
+
+        resizeObserver.observe(parent);
+
+        return () => {
+            resizeObserver.disconnect();
+        };
+    }, []);
+
     return (
         <div className={styles.dashboardPage}>
             <Header />
@@ -94,7 +139,7 @@ export default function Dashboard() {
                 <section className={styles.walletContainer}>
                     <div className={styles.wallet}>
                         <h2 className={styles.amount}>
-                        {getSign(Currency.USD)}{user ? user.wallet.USD.toFixed(2) : "0.00"}
+                            {getSign(Currency.USD)}{user ? user.wallet.USD.toFixed(2) : "0.00"}
                         </h2>
                         <span className={styles.type}>USD wallet</span>
                         <button
@@ -125,7 +170,24 @@ export default function Dashboard() {
                 </section>
 
                 <section className={styles.liveExchangeRateBox}>
-                    <h3>Live Exchange Rate</h3>
+                    <div className={styles.titleBox}>
+                        <div className={styles.pingContainer}>
+                            <div className={styles.ping}>
+                                <div></div>
+                            </div>
+                        </div>
+                        <h3>Live Exchange Rate</h3>
+                    </div>
+
+                    <div className={styles.chartContainer} ref={chartParentRef}>
+                        <TimeSeriesChart
+                            data={timeSeriesValues} 
+                            labels={timeSeriesDates} 
+                            width={chartWidth} 
+                            height={chartHeight} 
+                        />
+                    </div>
+
                     <span className={styles.rate}>
                         {USDBasedRates
                             ? `${USDBasedRates.USD} USD = ${USDBasedRates.GBP} GBP`

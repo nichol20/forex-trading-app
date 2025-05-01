@@ -12,19 +12,16 @@
     padding: 0 20px;
 }
 
-section {
-    max-width: 1000px;
-    width: 100%;
-}
-
 .walletContainer {
     @include display-flex();
     gap: 20px;
-
+    max-width: 1000px;
+    width: 100%;
+    
     @include media("phone-lg") {
         gap: 10px;
     }
-
+    
     @include media("phone") {
         flex-direction: column;
     }
@@ -32,6 +29,7 @@ section {
 
 .wallet {
     @include display-flex(flex-start);
+    @include light-box-shadow();
     flex-direction: column;
     background-color: $colors-bg-secondary;
     padding: 20px;
@@ -39,54 +37,53 @@ section {
     max-width: 500px;
     width: 100%;
     border: 1px solid $colors-stroke;
-    @include light-box-shadow();
-
+    
     .amount {
         font-size: 2.5em;
-
+        
         @include media("tablet") {
             font-size: 1.7em;
         }
-
+        
         @include media("phone-lg") {
             font-size: 1.2em;
         }
-
+        
         @include media("phone") {
             font-size: 1.5em;
         }
     }
-
+    
     .type {
         color: $colors-text-secondary;
         font-size: 1.2em;
         margin-top: 10px;
-
+        
         @include media("tablet") {
             font-size: 1em;
         }
-
+        
         @include media("phone-lg") {
             font-size: .8em;
         }
-
+        
         @include media("phone") {
             font-size: 1em;
         }
     }
-
+    
     .addFundsBtn {
         @include button-primary();
         padding: 15px 78px;
         font-size: 1.2em;
         font-weight: bold;
         margin-top: 40px;
-
+        
         @include media("tablet") {
             padding: 12px 40px;
             font-size: 1em;
         }
-
+        
         @include media("phone-lg") {
             padding: 12px 20px;
             font-size: .8em;
@@ -95,37 +92,77 @@ section {
 }
 
 .liveExchangeRateBox {
-    @include display-flex(space-between);
+    @include display-flex(flex-start, flex-start);
+    @include light-box-shadow();
+    flex-direction: column;
     width: 100%;
     background-color: $colors-bg-secondary;
     border-radius: 5px;
     padding: 20px;
     border: 1px solid $colors-stroke;
     font-size: 1.2em;
-    @include light-box-shadow();
+    max-width: 1000px;
+    width: 100%;
 
-    @include media("tablet") {
-        padding: 5px 10px;
-        font-size: 1em;
+    .titleBox {
+        @include display-flex(flex-start);
+        width: 100%;
+        gap: 10px;
+        padding-left: 10px;
+
+        .pingContainer {
+            position: relative;
+            width: 20px;
+            height: 20px;
+        }
+
+        .ping {
+            position: absolute;
+            z-index: 10;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            animation: load 1.2s ease-out infinite;
+            border-radius: 50%;
+            
+            > div {
+                background-color: lime;
+                border-radius: 50%;
+                width: 15px;
+                height: 15px;
+            }
+        }
+
+        @keyframes load {
+            0% {
+                border: 0px solid rgba(0, 255, 0, 0.5);
+           }
+            100% {
+                border: 15px solid rgba(0, 255, 0, 0);
+           }
+        }
     }
 
-    @include media("phone-lg") {
-        flex-direction: column;
+    .chartContainer {
+        width: 100%;
     }
-
+    
     .rate {
+        width: 100%;
         color: $colors-text-tertiary;
+        text-align: right;
     }
 }
 
 .exchangeCurrencyContainer {
     @include display-flex();
+    @include light-box-shadow();
     flex-direction: column;
     padding: 20px;
     background-color: $colors-bg-secondary;
     border-radius: 5px;
     border: 1px solid $colors-stroke;
-    @include light-box-shadow();
+    max-width: 1000px;
+    width: 100%;
 
     > h3 {
         width: 100%;
@@ -191,3 +228,4 @@ section {
         padding: 12px 40px;
     }
 }
+

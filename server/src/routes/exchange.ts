@@ -4,9 +4,11 @@ import { mustBeAuthenticated } from "../middlewares/mustBeAuthenticated";
 import { getRates } from "../controllers/exchange/getRates";
 import { exchangeCurrency } from "../controllers/exchange/exchangeCurrency";
 import { getHistory } from "../controllers/user/getHistory";
+import { getTimeSeries } from "../controllers/exchange/getTimeSeries";
 
 export const exchangeRoutes = express.Router();
 
 exchangeRoutes.get("/rates", mustBeAuthenticated, getRates);
+exchangeRoutes.get("/time-series", mustBeAuthenticated, getTimeSeries)
 exchangeRoutes.post("/exchange", mustBeAuthenticated, exchangeCurrency);
 exchangeRoutes.get("/history", mustBeAuthenticated, getHistory);

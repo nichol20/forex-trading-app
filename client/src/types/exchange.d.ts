@@ -14,3 +14,9 @@ export interface Exchange {
     exchangeRate: number;
     exchangedAt: string;
 }
+
+export type TimeSeries = {
+    [key in Currency]?: {
+        [data: string]: number;
+    };
+}

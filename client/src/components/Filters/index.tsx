@@ -4,15 +4,16 @@ import styles from "./style.module.scss";
 import { InputField } from "../InputField";
 import { CurrencyDropdown } from "../CurrencyDropdown";
 import { Slider } from "../DoubleSlider";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { Filters as IFilters } from "../../utils/api";
 import { Currency } from "../../utils/currency";
+import { Modal } from "../Modal";
 
-interface FiltersProps {
-    isOpen?: boolean
+interface FiltersDesktopProps {
+    isOpen: boolean
 }
 
-export const Filters = ({ isOpen }: FiltersProps) => {
+const FiltersDesktop = ({ isOpen }: FiltersDesktopProps) => {
     const location = useLocation();
     const navigate = useNavigate();
     const [filters, setFilters] = useState<IFilters>({
@@ -88,8 +89,22 @@ export const Filters = ({ isOpen }: FiltersProps) => {
         }))
     }
 
+    useEffect(() => {
+        if(isOpen) {
+            requestAnimationFrame(() => {
+                const filtersEl = document.querySelector(`.${styles.filters}`) as HTMLDivElement
+                filtersEl.classList.add(styles.active)
+            })
+        } else {
+            requestAnimationFrame(() => {
+                const filtersEl = document.querySelector(`.${styles.filters}`) as HTMLDivElement
+                filtersEl.classList.remove(styles.active)
+            })
+        }
+    }, [isOpen])
+
     return (
-        <div className={`${styles.filters} ${isOpen ? styles.active : ""}`}>
+        <div className={`${styles.filters}`}>
             <div className={styles.sections}>
                 <div className={styles.fromAndToSection}>
                     <div className={styles.currencyBox}>
@@ -169,4 +184,30 @@ export const Filters = ({ isOpen }: FiltersProps) => {
 
         </div>
     )
+}
+
+interface FiltersMobileProps {
+    isOpen: boolean
+    close: () => void
+}
+
+const FiltersMobile = ({ close, isOpen }: FiltersMobileProps) => {
+    if(!isOpen) return null
+
+    return (
+        <Modal close={close}>
+            <span className={styles.modalTitle}>Filters</span>
+            <FiltersDesktop isOpen={true} />
+        </Modal>
+    )
+}
+
+type FiltersProps = FiltersDesktopProps & FiltersMobileProps 
+
+export const Filters = ({ isOpen, close }: FiltersProps) => {
+    if(window.innerWidth <= 700) {
+        return <FiltersMobile isOpen={isOpen} close={close} />
+    }
+
+    return <FiltersDesktop isOpen={isOpen}/>
 }

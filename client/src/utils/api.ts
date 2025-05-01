@@ -1,4 +1,4 @@
-import { Exchange, Rates } from "../types/exchange";
+import { Exchange, Rates, TimeSeries } from "../types/exchange";
 import { User, Wallet } from "../types/user";
 import { Currency } from "./currency";
 import { http } from "./http";
@@ -95,3 +95,15 @@ export const getExchangeRates = async (base: Currency): Promise<Rates> => {
     const res = await http.get<Rates>(`/rates?base=${base}`);
     return res.data;
 };
+
+export const getTimeSeries = async (
+    from: Currency, 
+    to: Currency, 
+    start: string, 
+    end: string
+) => {
+    const query = new URLSearchParams({ from, to, start, end })
+    const res = await http.get<TimeSeries>(`/time-series?${query.toString()}`)
+
+    return res.data
+}

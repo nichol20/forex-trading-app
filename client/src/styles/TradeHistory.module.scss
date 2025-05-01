@@ -26,12 +26,6 @@ section {
     width: 100%;
 }
 
-.filterContainer {
-    @include display-flex(flex-start, flex-start);
-    flex-direction: column;
-    gap: 20px;
-}
-
 .filterBtn {
     @include light-box-shadow();
     @include display-flex();

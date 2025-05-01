@@ -2,7 +2,12 @@ import axios from "axios";
 
 import { env } from "../app";
 import { Currency } from "./currency";
-import { ExchangeRateResponse, Rates } from "../types/exchangeRateApi";
+import {
+    ExchangeRateResponse,
+    Rates,
+    TimeSeriesReponse,
+} from "../types/exchangeRateApi";
+import { formatDate } from "./date";
 
 const exchangeApiUrl = `https://api.beta.fastforex.io`;
 
@@ -28,4 +33,35 @@ export const fetchExchangeRate = async (
     return {
         rates: data.results,
     };
+};
+
+export const fetchTimeSeries = async (
+    from: Currency,
+    to: Currency,
+    start: Date,
+    end: Date
+) => {
+    // "start" and "end" format: YYYY-MM-DD
+    const startStr = formatDate(start);
+    const endStr = formatDate(end);
+
+    // Historical data limited to 14 days during trial
+    const searchParams = new URLSearchParams({
+        from,
+        to,
+        api_key: env.EXCHANGERATE_API_KEY,
+        start: startStr,
+        end: endStr,
+        interval: "P1D" // api only supports this one for now (daily)
+    });
+
+    const { data } = await axios.get<TimeSeriesReponse>(
+        `${exchangeApiUrl}/time-series?${searchParams.toString()}`
+    );
+
+    if (!("results" in data)) {
+        throw new Error("Error requesting time series: " + data.error);
+    }
+
+    return data.results;
 };

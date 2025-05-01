@@ -109,7 +109,7 @@ export default function TradeHistory() {
                         <img src={funnelIcon} alt="funnel" />
                         <span>Filter</span>
                     </button>
-                    <Filters isOpen={showFilters} />
+                    <Filters isOpen={showFilters} close={() => setShowFilters(false)} />
                 </section>
                 <section className={styles.tableContainer}>
                     <h2 className={styles.title}>Trade History</h2>

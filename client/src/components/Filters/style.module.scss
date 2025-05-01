@@ -1,5 +1,12 @@
 @use "../../styles/" as *;
 
+.modalTitle {
+    font-weight: bold;
+    width: 100%;
+    font-size: 2em;
+    text-align: center;
+}
+
 .filters {
     @include light-box-shadow();
     width: 100%;
@@ -11,22 +18,45 @@
     background-color: $colors-bg-secondary;
     border-radius: 5px;
     gap: 15px;
-
+    margin: 3px 0;
+    
     &.active {
         padding: 30px;
-        margin-bottom: 60px;
+        margin: 10px 0;
         max-height: 1000px;
+    }
+    
+    @include media("tablet") {
+        &.active {
+            max-height: none;
+            overflow-y: scroll;
+            background-color: transparent;
+            box-shadow: none;
+            margin-bottom: 0px;
+        }
     }
 }
 
 .sections {
     @include display-flex(flex-start, flex-start);
     gap: 30px;
+
+    @include media("tablet") {
+        flex-direction: column;
+        max-height: 400px;
+        overflow-y: scroll;
+        padding-right: 10px;
+    }
 }
 
 .fromAndToSection {
     @include display-flex(flex-start);
     gap: 20px;
+
+    @include media("tablet") {
+        flex-direction: column;
+        width: 100%;
+    }
 
     input {
         font-weight: 500;
@@ -38,6 +68,10 @@
     flex-direction: column;
     gap: 10px;
 
+    @include media("tablet") {
+        width: 100%;
+    }
+
     .title {
         font-weight: bold;
     }
@@ -45,6 +79,11 @@
 
 .amountSection {
     max-width: 200px;
+
+    @include media("tablet") {
+        max-width: none;
+        width: 100%;
+    }
     
     .title {
         display: block;
@@ -56,6 +95,10 @@
 .actions {
     @include display-flex(flex-start);
     gap: 10px;
+
+    @include media("tablet") {
+        justify-content: center;
+    }
 
     .applyBtn {
         @include button-primary();
