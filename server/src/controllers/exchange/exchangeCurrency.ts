@@ -46,7 +46,7 @@ export const exchangeCurrency = async (req: Request, res: Response<Wallet>) => {
     );
 
     const exchangeColection = db.getCollection<ExchangeDocument>("exchanges");
-    exchangeColection.insertOne({
+    await exchangeColection.insertOne({
         exchangedAt: new Date().toISOString(),
         exchangeRate: currentRate,
         fromAmount: amount,
@@ -57,4 +57,5 @@ export const exchangeCurrency = async (req: Request, res: Response<Wallet>) => {
     });
 
     res.status(200).json(user.wallet);
+    return
 };

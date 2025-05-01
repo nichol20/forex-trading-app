@@ -38,6 +38,33 @@ export const createExchangeHistory = (userId: string): ExchangeDocument[] => [
         exchangeRate: 1.5,
         exchangedAt: new Date().toISOString(),
     },
+    {
+        userId,
+        fromCurrency: "GBP",
+        toCurrency: "USD",
+        fromAmount: 1000,
+        toAmount: 1500,
+        exchangeRate: 1.5,
+        exchangedAt: new Date().toISOString(),
+    },
+    {
+        userId,
+        fromCurrency: "USD",
+        toCurrency: "GBP",
+        fromAmount: 500,
+        toAmount: 375,
+        exchangeRate: 0.75,
+        exchangedAt: new Date().toISOString(),
+    },
+    {
+        userId,
+        fromCurrency: "USD",
+        toCurrency: "GBP",
+        fromAmount: 100,
+        toAmount: 80,
+        exchangeRate: 0.8,
+        exchangedAt: new Date().toISOString(),
+    },
 ];
 
 beforeAll(async () => {
@@ -45,6 +72,9 @@ beforeAll(async () => {
 });
 
 beforeEach(async () => {
+    await db.getCollection("users").deleteMany({});
+    await db.getCollection("exchanges").deleteMany({});
+    
     // set up a user for testing
     const testUser = createValidUser();
     const userCollection = db.getCollection<UserDocument>("users");
@@ -57,11 +87,14 @@ beforeEach(async () => {
         password: hashedPassword,
     });
     expect(insertedId).toBeDefined();
+    const user = await userCollection.findOne({ _id: insertedId })
+    expect(user).not.toBeNull(); // giving null
+    const { _id, ...partialUser } = user!
 
-    const userId = insertedId.toString();
+    const userId = _id.toString();
 
     validUser = {
-        ...partialValidUser,
+        ...partialUser,
         password: testUser.password,
         id: userId,
     };
@@ -74,20 +107,15 @@ beforeEach(async () => {
     for (const ex of exchanges) {
         const { insertedId } = await exchangeColection.insertOne(ex);
         expect(insertedId).toBeDefined();
-        const { _id, ...partialExchange } = ex as ExchangeDocument & {
-            _id: ObjectId;
-        };
+        const exchange = await exchangeColection.findOne({ _id: insertedId })
+        expect(exchange).not.toBeNull() // giving null
+        const { _id, ...partialExchange } = exchange!
 
         validExchangeHistory.push({
-            ...partialExchange,
-            id: insertedId.toString(),
+            ...partialExchange!,
+            id: _id.toString(),
         });
     }
-});
-
-afterEach(async () => {
-    await db.getCollection("users").deleteMany({});
-    await db.getCollection("exchanges").deleteMany({});
 });
 
 afterAll(async () => {

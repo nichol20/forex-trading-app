@@ -25,6 +25,7 @@ describe("checkEnv", () => {
         process.env.EXCHANGERATE_API_KEY = "key";
 
         expect(checkEnv()).toEqual({
+            EXCHANGERATE_API_KEY: "key",
             JWT_SECRET: "secret",
             FRONTEND_URL: "http://localhost:3000",
             MONGO_URI: "mongodb://localhost:27017",

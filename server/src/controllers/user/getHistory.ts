@@ -1,16 +1,17 @@
 import { Request, Response } from "express";
+import { Filter } from "mongodb";
 
 import db from "../../config/db";
 import { ExchangeDocument } from "../../types/exchange";
 import { getHistoryQuerySchema } from "../../validators/user";
 import { BadRequestError } from "../../helpers/apiError";
-import { Filter } from "mongodb";
 import { sortByToExchangeKeyMap } from "../../utils/query";
 
 export const getHistory = async (req: Request, res: Response) => {
     const userId = req.userId;
+    const reqQuery = req.query ? req.query : {}
 
-    const parsed = getHistoryQuerySchema.safeParse(req.query);
+    const parsed = getHistoryQuerySchema.safeParse(reqQuery);
 
     if (!parsed.success) {
         throw new BadRequestError(parsed.error.errors[0].message);
@@ -86,4 +87,6 @@ export const getHistory = async (req: Request, res: Response) => {
         currentPage: page,
         totalPages,
     });
+
+    return;
 };

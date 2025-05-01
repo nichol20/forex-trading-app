@@ -28,3 +28,7 @@ export const checkEnv = () => {
 
     return result.data;
 };
+
+export const getEnv = () => {
+    return envSchema.parse(process.env);
+}

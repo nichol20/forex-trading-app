@@ -1,12 +1,12 @@
 import { Document, MongoClient } from "mongodb";
-import { env } from "../app";
 
-const uri = process.env.MONGO_URI!;
 const dbname = process.env.MONGO_DBNAME || "forex";
-const client = new MongoClient(uri);
+let client: MongoClient
 
 export default {
     connectToServer: async () => {
+        const uri = process.env.MONGO_URI!;
+        client = new MongoClient(uri);
         await client.connect();
         console.log("Connected successfully to MongoDB");
     },

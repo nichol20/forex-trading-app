@@ -14,5 +14,5 @@ export const getTimeSeries = async (req: Request, res: Response) => {
 
     const timeSeries = await fetchTimeSeries(from, to, start, end)
     res.status(200).json(timeSeries)
-    return
+    return;
 }

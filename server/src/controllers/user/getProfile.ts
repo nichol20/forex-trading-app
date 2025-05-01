@@ -20,4 +20,6 @@ export const getProfile = async (req: Request, res: Response<User>) => {
         id: _id.toString(),
         ...partialUser,
     });
+
+    return;
 };

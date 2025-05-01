@@ -14,4 +14,5 @@ export const errorHandler: ErrorRequestHandler = async (
 
     console.error(err);
     res.status(500).json({ message: "internal server error." });
+    return;
 };

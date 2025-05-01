@@ -1,7 +1,7 @@
-import { startWebSocketServer } from "../socket";
 import http from "http";
 import jwt from "jsonwebtoken";
 import { io as IOClient } from "socket.io-client";
+import { startWebSocketServer } from "../socket";
 
 jest.mock("jsonwebtoken");
 

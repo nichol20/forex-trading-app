@@ -1,9 +1,15 @@
 import { Request, Response } from "express";
 
-import { exchangeCurrency } from "./exchangeCurrency";
-import { fetchExchangeRate } from "../../utils/exchangeRateApi";
 import { BadRequestError } from "../../helpers/apiError";
 import { validUser } from "../../../jest.setup-env";
+import { Currency } from "../../utils/currency";
+
+jest.mock("../../utils/exchangeRateApi", () => ({
+    fetchExchangeRate: jest.fn()
+}));
+
+import { exchangeCurrency } from "./exchangeCurrency";
+import { fetchExchangeRate } from "../../utils/exchangeRateApi";
 
 const mockRequest = (body: any, userId: string): Partial<Request> => ({
     body,
@@ -15,8 +21,6 @@ const mockResponse = (): Partial<Response> => {
     res.json = jest.fn().mockReturnValue(res);
     return res;
 };
-
-jest.mock("../../utils/exchangeRateApi");
 
 describe("exchangeCurrency controller", () => {
     it("should throw BadRequestError if validation fails", async () => {
@@ -32,8 +36,8 @@ describe("exchangeCurrency controller", () => {
         const req = mockRequest(
             {
                 amount: 100,
-                fromCurrency: "USD",
-                toCurrency: "USD",
+                fromCurrency: Currency.USD,
+                toCurrency: Currency.USD,
             },
             validUser.id
         ) as Request;

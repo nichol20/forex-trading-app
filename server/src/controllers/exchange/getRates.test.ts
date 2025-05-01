@@ -1,8 +1,6 @@
-import { Request, Response } from "express";
 import { getRates } from "./getRates";
-
 import { fetchExchangeRate } from "../../utils/exchangeRateApi";
-import { getAllCurrencies } from "../../utils/currency";
+import { Request, Response } from "express";
 import { BadRequestError } from "../../helpers/apiError";
 
 jest.mock("../../utils/exchangeRateApi");

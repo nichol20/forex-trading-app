@@ -18,4 +18,5 @@ export const getRates = async (req: Request, res: Response) => {
     const exchangeRate = await fetchExchangeRate(base, getAllCurrencies());
 
     res.status(200).json(exchangeRate.rates);
+    return;
 };

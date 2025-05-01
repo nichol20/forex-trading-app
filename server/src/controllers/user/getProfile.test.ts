@@ -18,8 +18,10 @@ describe("getProfile controller", () => {
     it("should throw InternalServerError if user is not found", async () => {
         const req = mockRequest("507f1f77bcf86cd799439011") as Request;
         const res = mockResponse() as Response;
+        const consoleSpy = jest.spyOn(console, "error").mockImplementation(() => {});
 
         await expect(getProfile(req, res)).rejects.toThrow(InternalServerError);
+        expect(consoleSpy).toHaveBeenCalledWith("error finding authenticated user");
     });
 
     it("should return user profile data without password", async () => {

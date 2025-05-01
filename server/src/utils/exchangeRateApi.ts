@@ -1,6 +1,6 @@
 import axios from "axios";
 
-import { env } from "../app";
+import { getEnv } from "../config/env";
 import { Currency } from "./currency";
 import {
     ExchangeRateResponse,
@@ -18,7 +18,7 @@ export const fetchExchangeRate = async (
     const searchParams = new URLSearchParams({
         from: base,
         to: currencies.join(","),
-        api_key: env.EXCHANGERATE_API_KEY,
+        api_key: getEnv().EXCHANGERATE_API_KEY,
     });
     const { data } = await axios.get<ExchangeRateResponse>(
         `${exchangeApiUrl}/fetch-multi?${searchParams.toString()}`
@@ -49,7 +49,7 @@ export const fetchTimeSeries = async (
     const searchParams = new URLSearchParams({
         from,
         to,
-        api_key: env.EXCHANGERATE_API_KEY,
+        api_key: getEnv().EXCHANGERATE_API_KEY,
         start: startStr,
         end: endStr,
         interval: "P1D" // api only supports this one for now (daily)

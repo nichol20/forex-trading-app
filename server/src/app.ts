@@ -5,8 +5,6 @@ import cookieParser from "cookie-parser";
 import http from "http";
 
 import { checkEnv } from "./config/env";
-export const env = checkEnv();
-
 import db from "./config/db";
 import { errorHandler } from "./middlewares/errorHandler";
 import { authRoutes } from "./routes/auth";
@@ -21,7 +19,7 @@ const server = http.createServer(app);
 const port = process.env.PORT || 5000;
 
 const corsOptions: cors.CorsOptions = {
-    origin: env.FRONTEND_URL,
+    origin: process.env.FRONTEND_URL,
     credentials: true,
 };
 
@@ -45,6 +43,7 @@ app.use(errorHandler);
 
 const main = async () => {
     try {
+        checkEnv();
         await db.connectToServer();
         const io = await startWebSocketServer(server);
         startBroadcasts(io);
