@@ -53,8 +53,8 @@ export const TimeSeriesChart = ({
         
         // draw max and min
         ctx.fillStyle = '#707070';
-        ctx.fillText(String(max.toFixed(1)), 0, pad);
-        ctx.fillText(String(min.toFixed(1)), 0, height - pad);
+        ctx.fillText(String(max.toFixed(2)), 0, pad);
+        ctx.fillText(String(min.toFixed(2)), 0, height - pad);
 
         // gridlines
         ctx.strokeStyle = '#919a964c';
@@ -157,7 +157,7 @@ export const TimeSeriesChart = ({
                         whiteSpace: 'nowrap',
                     }}
                 >
-                    {tooltip.label}: {tooltip.value.toFixed(2)}
+                    {tooltip.label}: {tooltip.value}
                 </div>
             )}
         </div>
