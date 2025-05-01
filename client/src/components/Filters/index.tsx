@@ -6,7 +6,7 @@ import { CurrencyDropdown } from "../CurrencyDropdown";
 import { Slider } from "../DoubleSlider";
 import { ChangeEvent, useEffect, useState } from "react";
 import { Filters as IFilters } from "../../utils/api";
-import { Currency } from "../../utils/currency";
+import { Currency, getSign } from "../../utils/currency";
 import { Modal } from "../Modal";
 
 interface FiltersDesktopProps {
@@ -89,6 +89,25 @@ const FiltersDesktop = ({ isOpen }: FiltersDesktopProps) => {
         }))
     }
 
+    const handleCurrencyDropdownChange = (currency: Currency, type: "from" | "to") => {
+        setFilters(prev => {
+            const newFilters = {...prev}
+            if(type === "from" && currency === newFilters.to) {
+                newFilters.from = currency
+                if(currency === Currency.USD) newFilters.to = Currency.GBP
+                else newFilters.to = Currency.USD
+            }
+
+            if(type === "to" && currency === newFilters.from) {
+                newFilters.to = currency
+                if(currency === Currency.USD) newFilters.from = Currency.GBP
+                else newFilters.from = Currency.USD
+            }
+
+            return newFilters
+        })
+    }
+
     useEffect(() => {
         if(isOpen) {
             requestAnimationFrame(() => {
@@ -115,11 +134,8 @@ const FiltersDesktop = ({ isOpen }: FiltersDesktopProps) => {
                         />
                         <CurrencyDropdown
                             showInput={false}
-                            onSelectChange={c => setFilters(prev => ({
-                                ...prev,
-                                from: c
-                            }))}
-                            defaultCurrencyValue={filters.from}
+                            onSelectChange={c => handleCurrencyDropdownChange(c, "from")}
+                            value={filters.from}
                         />
                     </div>
                     <div className={styles.currencyBox}>
@@ -130,11 +146,8 @@ const FiltersDesktop = ({ isOpen }: FiltersDesktopProps) => {
                         />
                         <CurrencyDropdown
                             showInput={false}
-                            onSelectChange={c => setFilters(prev => ({
-                                ...prev,
-                                to: c
-                            }))}
-                            defaultCurrencyValue={filters.to}
+                            onSelectChange={c => handleCurrencyDropdownChange(c, "to")}
+                            value={filters.to}
                         />
                     </div>
                 </div>
@@ -149,7 +162,7 @@ const FiltersDesktop = ({ isOpen }: FiltersDesktopProps) => {
                             minAmount: v[0],
                             maxAmount: v[1]
                         }))}
-                        prefix="$"
+                        prefix={filters.from ? getSign(filters.from) : ""}
                         step={10}
                     />
                     <Slider
@@ -160,7 +173,7 @@ const FiltersDesktop = ({ isOpen }: FiltersDesktopProps) => {
                             minOutput: v[0],
                             maxOutput: v[1]
                         }))}
-                        prefix="£"
+                        prefix={filters.to ? getSign(filters.to) : ""}
                         step={10}
                     />
                     <Slider

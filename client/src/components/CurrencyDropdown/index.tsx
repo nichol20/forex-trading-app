@@ -10,7 +10,7 @@ interface CurrencyDropdownProps {
     defaultCurrencyValue?: Currency | null;
     defaultAmountValue?: number;
     selectId?: string;
-    value?: string | number | readonly string[];
+    value?: string | number | readonly string[] | null;
     onInputChange?: (amount: number) => void
     showInput?: boolean
 }
@@ -47,7 +47,7 @@ export const CurrencyDropdown = ({
             <select
                 name={selectName}
                 id={selectId}
-                value={value}
+                value={value ?? undefined}
                 className={`${styles.select} ${showInput ? "" : styles.onlySelect}`}
                 defaultValue={defaultCurrencyValue ?? undefined}
                 onChange={handleSelectChange}
