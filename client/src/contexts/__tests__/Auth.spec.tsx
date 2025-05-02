@@ -7,7 +7,7 @@ import { MemoryRouter } from "react-router";
 jest.mock("../../utils/api");
 jest.mock("react-router", () => ({
     ...jest.requireActual("react-router"),
-    useNavigate: jest.fn(),
+    useNavigate: () => jest.fn(),
 }));
 
 const TestComponent = () => {

@@ -71,7 +71,7 @@ describe("signup controller", () => {
             "mock-token",
             expect.objectContaining({
                 httpOnly: true,
-                sameSite: "none",
+                sameSite: "strict",
                 secure: true,
             })
         );

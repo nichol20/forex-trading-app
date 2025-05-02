@@ -21,6 +21,10 @@ export const login = async (email: string, password: string): Promise<User> => {
     return res.data;
 };
 
+export const logout = async (): Promise<void> => {
+    await http.post("/logout")
+};
+
 export const getUser = async (): Promise<User> => {
     const res = await http.get<User>("/profile");
     return res.data;

@@ -32,6 +32,10 @@
     filter: invert(55%) sepia(58%) saturate(6013%) hue-rotate(201deg) brightness(101%) contrast(101%);
 }
 
+@mixin black-filter() {
+    filter: brightness(0) saturate(100%);
+}
+
 @mixin triangle($width, $height, $color) {
     width: 0px;
     height: 0px;

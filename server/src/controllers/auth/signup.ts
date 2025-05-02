@@ -44,7 +44,7 @@ export const signup = async (req: Request, res: Response<User>) => {
 
     res.cookie("jwt", token, {
         httpOnly: true,
-        sameSite: "none",
+        sameSite: "strict",
         secure: true,
     });
 

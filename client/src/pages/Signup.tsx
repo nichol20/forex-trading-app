@@ -12,6 +12,7 @@ export default function SignupPage() {
         passwordMismatch: false,
         emailExists: false,
         weakPassword: false,
+        invalidEmailFormat: false
     })
 
     const validateForm = (formData: FormData) => {
@@ -44,14 +45,15 @@ export default function SignupPage() {
                 setFormErrors(prev => ({
                     ...prev,
                     emailExists: message.includes("email already exists"),
-                    weakPassword: message.includes("password must be")
+                    weakPassword: message.includes("password must be"),
+                    invalidEmailFormat: message.includes("Invalid email")
                 }))
             }
         }
     }
 
     const getErrorMessage = (inputName: string): string => {
-        const { passwordMismatch, emailExists, weakPassword } = formErrors
+        const { passwordMismatch, emailExists, weakPassword, invalidEmailFormat } = formErrors
 
         if (passwordMismatch) {
             if (inputName === "password") return "Passwords must be the same"
@@ -64,6 +66,7 @@ export default function SignupPage() {
             if (inputName === "confirmationPassword") return " "
         }
         if (emailExists && inputName === "email") return "This email already exists!"
+        if (invalidEmailFormat && inputName === "email") return "Invalid email format."
 
         return ""
     }

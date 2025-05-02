@@ -157,7 +157,7 @@ export default function TradeHistory() {
                                     </div>
                                     <div className={styles.item}>
                                         <span className={styles.value}>
-                                            {exchange.toAmount.toFixed(2)}
+                                            {exchange.toAmount.toFixed(6)}
                                         </span>
                                     </div>
                                 </div>

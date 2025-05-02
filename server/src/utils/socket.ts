@@ -19,17 +19,17 @@ export const startBroadcasts = async (io: Server) => {
 
 const broadcastRate = async (io: Server, currency: Currency) => {
     try {
-        // const data = await fetchExchangeRate(currency, getAllCurrencies());
+        const data = await fetchExchangeRate(currency, getAllCurrencies());
 
-        // io.emit(`exchange-rates:${currency}`, data.rates);
-        // console.log(data.rates);
+        io.emit(`exchange-rates:${currency}`, data.rates);
+        console.log(data.rates);
 
-        const rate = examples[Math.floor(Math.random() * examples.length)];
-        io.emit(`exchange-rates:${currency}`, rate);
+        // const rate = examples[Math.floor(Math.random() * examples.length)];
+        // io.emit(`exchange-rates:${currency}`, rate);
 
         setTimeout(() => broadcastRate(io, currency), 5_000); // 5s
     } catch (error: any) {
         console.error(`Failed to fetch exchange rate for ${currency}:`, error);
-        setTimeout(() => broadcastRate(io, currency), 60_000); // retry after 60s
+        setTimeout(() => broadcastRate(io, currency), 10_000); // retry after 10s
     }
 };

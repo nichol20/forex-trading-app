@@ -1,6 +1,7 @@
 @use '../../styles/' as *;
 
 .header {
+    @include display-flex(space-between);
     width: 100%;
     padding: 10px 20px;
     background-color: $colors-bg-primary;
@@ -17,5 +18,11 @@
     > a {
         color: $colors-text-primary;
         text-decoration: none;
+    }
+}
+
+.logoutBtn {
+    > img {
+        @include black-filter();
     }
 }

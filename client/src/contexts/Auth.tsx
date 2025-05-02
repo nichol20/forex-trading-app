@@ -10,6 +10,7 @@ interface AuthContextProps {
     updateUser: () => Promise<void>
     login: (email: string, password: string) => Promise<void>
     signup: (name: string, email: string, password: string) => Promise<void>
+    logout: () => Promise<void>
 }
 
 interface AuthProviderProps {
@@ -33,6 +34,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     const signup = async (name: string, email: string, password: string) => {
         const user = await api.signup({ email, name, password })
         setUser(user)
+        navigate("/login")
+    }
+
+    const logout = async () => {
+        setUser(null)
+        await api.logout()
     }
 
     const updateUser = async () => {
@@ -77,7 +84,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     if (isLoading) return <>Loading...</>
 
     return (
-        <AuthContext.Provider value={{ user, signup, login, updateUser }}>
+        <AuthContext.Provider value={{ user, signup, login, logout, updateUser }}>
             {children}
         </AuthContext.Provider>
     )

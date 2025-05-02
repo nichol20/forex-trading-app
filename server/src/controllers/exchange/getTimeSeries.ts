@@ -6,7 +6,6 @@ import { fetchTimeSeries } from "../../utils/exchangeRateApi";
 export const getTimeSeries = async (req: Request, res: Response) => {
     const parsed = getTimeSeriesQuerySchema.safeParse(req.query)
     if (!parsed.success) {
-        console.log(parsed.error.errors)
         throw new BadRequestError(parsed.error.errors[0].message);
     }
 

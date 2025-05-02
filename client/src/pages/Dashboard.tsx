@@ -89,8 +89,6 @@ export default function Dashboard() {
                 formatDate(start),
                 formatDate(end)
             )
-
-            console.log(timeSeries)
             
             const usdToGbpTimeSeries = timeSeries[Currency.GBP]
 
@@ -103,7 +101,10 @@ export default function Dashboard() {
         fetchData();
 
         socket.connect();
-        socket.on("exchange-rates:USD", setUSDBasedRates);
+        socket.on("exchange-rates:USD", data => {
+            console.log(data)
+            setUSDBasedRates(data)
+        });
 
         return () => {
             socket.off("exchange-rates:USD");
@@ -210,7 +211,7 @@ export default function Dashboard() {
                             defaultCurrencyValue={exchangeFrom}
                             defaultAmountValue={amountToExchange}
                             onInputChange={setAmountToExchange}
-
+                            inputTestId="currency-dropdown-input"
                         />
                         <img
                             src={rightArrow}
