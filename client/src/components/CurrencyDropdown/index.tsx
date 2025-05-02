@@ -10,6 +10,9 @@ interface CurrencyDropdownProps {
     defaultCurrencyValue?: Currency | null;
     defaultAmountValue?: number;
     selectId?: string;
+    selectTestId?: string;
+    inputId?: string;
+    inputTestId?: string;
     value?: string | number | readonly string[] | null;
     onInputChange?: (amount: number) => void
     showInput?: boolean
@@ -18,6 +21,9 @@ interface CurrencyDropdownProps {
 export const CurrencyDropdown = ({
     selectName,
     selectId,
+    selectTestId,
+    inputId,
+    inputTestId,
     value,
     inputName,
     defaultCurrencyValue,
@@ -51,6 +57,7 @@ export const CurrencyDropdown = ({
                 className={`${styles.select} ${showInput ? "" : styles.onlySelect}`}
                 defaultValue={defaultCurrencyValue ?? undefined}
                 onChange={handleSelectChange}
+                data-testid={selectTestId}
             >
                 {getAllCurrencies().map((c) => (
                     <option key={c} value={c}>
@@ -67,6 +74,8 @@ export const CurrencyDropdown = ({
                 min="0.01"
                 step="0.01"
                 onChange={handleMoneyInputChange}
+                inputId={inputId}
+                testId={inputTestId}
             />}
         </div>
     );

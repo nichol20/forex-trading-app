@@ -1,9 +1,7 @@
-import { useNavigate } from "react-router"
+import { useNavigate, useLocation } from "react-router"
 
 import { chevronForwardIcon } from "../../assets"
 import styles from "./style.module.scss"
-import { useLocation } from "react-router"
-
 interface PaginationProps {
     currentPage: number
     lastPage: number

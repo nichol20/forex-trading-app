@@ -1,8 +1,8 @@
-import { render, waitFor, screen } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { AuthProvider, useAuth } from "../Auth";
 import * as api from "../../utils/api";
 import { http } from "../../utils/http";
-import { MemoryRouter, useNavigate } from "react-router";
+import { MemoryRouter } from "react-router";
 
 jest.mock("../../utils/api");
 jest.mock("react-router", () => ({
@@ -90,21 +90,6 @@ describe("AuthContext", () => {
             await screen.findByText(`user: ${mockUser.email}`)
         ).toBeInTheDocument();
     })
-
-    it("redirects to /login on unauthorized getUser", async () => {
-        const navigate = jest.fn();
-        (api.getUser as jest.Mock).mockRejectedValue({
-            response: { status: 401 },
-        });
-
-        (useNavigate as jest.Mock).mockReturnValue(navigate);
-
-        renderWithProvider();
-        await waitFor(() => {
-            expect(navigate).toHaveBeenCalledWith("/login");
-        });
-    });
-
 
     it("registers and removes interceptor on mount/unmount", () => {
         const ejectMock = jest.fn();

@@ -49,7 +49,10 @@ export const AddFundsForm = ({ close, defaultValue = Currency.USD }: AddFundsFor
                 <h3>Add funds</h3>
                 <CurrencyDropdown
                     selectName="currency"
+                    selectId="currency-select"
+                    selectTestId="currency-select"
                     inputName="amount"
+                    inputTestId="amount-input"
                     defaultCurrencyValue={addFundsTo}
                     onSelectChange={() => setAddFundsTo}
                 />

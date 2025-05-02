@@ -1,6 +1,5 @@
 import { useLocation, useNavigate } from "react-router";
 
-import styles from "./style.module.scss";
 import { InputField } from "../InputField";
 import { CurrencyDropdown } from "../CurrencyDropdown";
 import { Slider } from "../DoubleSlider";
@@ -9,11 +8,13 @@ import { Filters as IFilters } from "../../utils/api";
 import { Currency, getSign } from "../../utils/currency";
 import { Modal } from "../Modal";
 
+import styles from "./style.module.scss";
+
 interface FiltersDesktopProps {
     isOpen: boolean
 }
 
-const FiltersDesktop = ({ isOpen }: FiltersDesktopProps) => {
+export const FiltersDesktop = ({ isOpen }: FiltersDesktopProps) => {
     const location = useLocation();
     const navigate = useNavigate();
     const [filters, setFilters] = useState<IFilters>({
@@ -131,6 +132,7 @@ const FiltersDesktop = ({ isOpen }: FiltersDesktopProps) => {
                         <InputField
                             type="date"
                             onChange={e => handleDateInput(e, "start")}
+                            testId="date-input-from"
                         />
                         <CurrencyDropdown
                             showInput={false}
@@ -143,6 +145,7 @@ const FiltersDesktop = ({ isOpen }: FiltersDesktopProps) => {
                         <InputField
                             type="date"
                             onChange={e => handleDateInput(e, "end")}
+                            testId="date-input-to"
                         />
                         <CurrencyDropdown
                             showInput={false}

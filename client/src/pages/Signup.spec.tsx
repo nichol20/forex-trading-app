@@ -33,7 +33,7 @@ describe("SignupPage", () => {
         return render(<SignupPage />, { wrapper: MemoryRouter });
     };
 
-    const loginUser = (withDifferentPassword: boolean = false) => {
+    const signUpUser = (withDifferentPassword: boolean = false) => {
         fireEvent.change(screen.getByTestId("name"), { target: { value: user.name }, });
         fireEvent.change(screen.getByTestId("email"), { target: { value: user.email }, });
         fireEvent.change(screen.getByTestId("password"), { target: { value: user.password }, });
@@ -43,7 +43,7 @@ describe("SignupPage", () => {
             },
         });
 
-        fireEvent.click(screen.getByRole("button", { name: /login/i }));
+        fireEvent.click(screen.getByRole("button", { name: /sign up/i }));
     }
 
     it("renders input fields and submit button", () => {
@@ -54,14 +54,14 @@ describe("SignupPage", () => {
         expect(screen.getByTestId("password")).toBeInTheDocument();
         expect(screen.getByTestId("confirmationPassword")).toBeInTheDocument();
         expect(
-            screen.getByRole("button", { name: /login/i })
+            screen.getByRole("button", { name: /sign up/i })
         ).toBeInTheDocument();
     });
 
     it("shows error if passwords do not match", async () => {
         setup();
 
-        loginUser(true)
+        signUpUser(true)
 
         await waitFor(() => {
             expect(screen.getByText(/passwords must be the same/i)).toBeInTheDocument();
@@ -71,7 +71,7 @@ describe("SignupPage", () => {
     it("calls signup when form is valid", async () => {
         setup();
 
-        loginUser()
+        signUpUser()
 
         await waitFor(() => {
             expect(signupMock).toHaveBeenCalledWith(
@@ -92,7 +92,7 @@ describe("SignupPage", () => {
 
         setup();
 
-        loginUser();
+        signUpUser();
 
         await waitFor(() => {
             expect(screen.getByText(/this email already exists!/i)).toBeInTheDocument();
@@ -109,7 +109,7 @@ describe("SignupPage", () => {
 
         setup();
 
-        loginUser();
+        signUpUser();
 
         await waitFor(() => {
             expect(screen.getByText(/password must be at least 6 characters/i)).toBeInTheDocument();

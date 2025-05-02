@@ -2,6 +2,7 @@ import { render, screen } from "@testing-library/react"
 import TradeHistory from "../pages/TradeHistory"
 import { getExchangeHistory } from "../utils/api"
 import { Exchange } from "../types/exchange"
+import { MemoryRouter } from "react-router"
 
 const mockHistory: Exchange[] = [
     {
@@ -32,8 +33,10 @@ jest.mock("../utils/api", () => ({
 
 describe("TradeHistory", () => {
     it("fetches and displays trade history", async () => {
-        (getExchangeHistory as jest.Mock).mockResolvedValue(mockHistory)
-        render(<TradeHistory />)
+        (getExchangeHistory as jest.Mock).mockResolvedValue({
+            history: mockHistory
+        })
+        render(<TradeHistory />, { wrapper: MemoryRouter })
 
         for (const exchange of mockHistory) {
             expect(await screen.findAllByText(exchange.fromCurrency)).not.toHaveLength(0);

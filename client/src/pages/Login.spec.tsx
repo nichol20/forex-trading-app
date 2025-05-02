@@ -8,6 +8,10 @@ jest.mock('../contexts/Auth', () => ({
     useAuth: jest.fn()
 }))
 
+jest.mock("../contexts/Toast", () => ({
+    useToast: () => jest.fn()
+}))
+
 // Mock useNavigate
 const mockNavigate = jest.fn()
 jest.mock('react-router', () => ({
