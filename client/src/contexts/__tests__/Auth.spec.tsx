@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { act, render, screen } from "@testing-library/react";
 import { AuthProvider, useAuth } from "../Auth";
 import * as api from "../../utils/api";
 import { http } from "../../utils/http";
@@ -11,7 +11,7 @@ jest.mock("react-router", () => ({
 }));
 
 const TestComponent = () => {
-    const { user, login, signup, updateUser } = useAuth();
+    const { user, login, logout, signup, updateUser } = useAuth();
     return (
         <div>
             <div>user: {user?.email ?? "none"}</div>
@@ -23,6 +23,7 @@ const TestComponent = () => {
             >
                 Signup
             </button>
+            <button onClick={() => logout()}>Logout</button>
             <button onClick={updateUser}>Update</button>
         </div>
     );
@@ -50,19 +51,16 @@ describe("AuthContext", () => {
         ).toBeInTheDocument();
 
     });
-
-    it("login updates the user state", async () => {
-        (api.login as jest.Mock).mockResolvedValue(mockUser);
+  
+    it("logout updates the user state", async () => {
+        (api.getUser as jest.Mock).mockResolvedValue(mockUser);
 
         renderWithProvider();
 
-        await screen.findByText("user: none");
-        screen.getByText(/login/i).click();
-
-        expect(
-            await screen.findByText(`user: ${mockUser.email}`)
-        ).toBeInTheDocument();
-
+        await screen.findByText(`user: ${mockUser.email}`);
+        act(() => screen.getByText(/Logout/i).click());
+        
+        expect(await screen.findByText(`user: none`)).toBeInTheDocument();
     });
 
     it("signup updates the user state", async () => {

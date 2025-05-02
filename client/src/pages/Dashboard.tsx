@@ -14,7 +14,7 @@ import { Rates } from "../types/exchange";
 import { AddFundsForm } from "../components/AddFundsForm";
 import { getInvertedRate } from "../utils/exchange";
 import { TimeSeriesChart } from "../components/TimeSeriesChart";
-import { formatDate } from "../utils/date";
+import { toUtcDateString } from "../utils/date";
 import styles from "../styles/Dashboard.module.scss";
 
 export default function Dashboard() {
@@ -77,24 +77,28 @@ export default function Dashboard() {
 
     useEffect(() => {
         const fetchData = async () => {
-            const exchangeRates = await api.getExchangeRates(Currency.USD);
-            setUSDBasedRates(exchangeRates);
+            try {
+                const exchangeRates = await api.getExchangeRates(Currency.USD);
+                setUSDBasedRates(exchangeRates);
 
-            const end = new Date()
-            const start = new Date()
-            start.setDate(end.getDate() - 12)
-            const timeSeries = await api.getTimeSeries(
-                Currency.USD, 
-                Currency.GBP,
-                formatDate(start),
-                formatDate(end)
-            )
-            
-            const usdToGbpTimeSeries = timeSeries[Currency.GBP]
+                const end = new Date()
+                const start = new Date()
+                start.setDate(end.getDate() - 12)
+                const timeSeries = await api.getTimeSeries(
+                    Currency.USD, 
+                    Currency.GBP,
+                    toUtcDateString(start),
+                    toUtcDateString(end)
+                )
+                
+                const usdToGbpTimeSeries = timeSeries[Currency.GBP]
 
-            if(usdToGbpTimeSeries) {
-                setTimeSeriesDates(Object.keys(usdToGbpTimeSeries))
-                setTimeSeriesValues(Object.values(usdToGbpTimeSeries))
+                if(usdToGbpTimeSeries) {
+                    setTimeSeriesDates(Object.keys(usdToGbpTimeSeries))
+                    setTimeSeriesValues(Object.values(usdToGbpTimeSeries))
+                }
+            } catch (error) {
+                setTimeout(fetchData, 3000)
             }
         };
 
@@ -146,6 +150,7 @@ export default function Dashboard() {
                         <button
                             className={styles.addFundsBtn}
                             onClick={() => handleAddFundsButtonClick(Currency.USD)}
+                            data-testid="add-funds-btn-usd"
                         >
                             Add Funds
                         </button>

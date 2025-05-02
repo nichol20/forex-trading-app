@@ -7,7 +7,6 @@ import { getExchangeHistory } from "../utils/api";
 
 import styles from "../styles/TradeHistory.module.scss";
 import { Pagination } from "../components/Pagination";
-import { useToast } from "../contexts/Toast";
 import { isValidSortBy, SortBy } from "../utils/params";
 import { useLocation } from "react-router";
 import { funnelIcon } from "../assets";
@@ -24,7 +23,6 @@ const columns: string[] = [
 ]
 
 export default function TradeHistory() {
-    const toast = useToast();
     const location = useLocation();
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
@@ -57,12 +55,12 @@ export default function TradeHistory() {
     }
 
     useEffect(() => {
-        const minAmount = parseInt(searchParams.get("minAmount") ?? "0", 10)
-        const maxAmount = parseInt(searchParams.get("maxAmount") ?? "1000", 10)
-        const minOutput = parseInt(searchParams.get("minOutput") ?? "0", 10)
-        const maxOutput = parseInt(searchParams.get("maxOutput") ?? "1000", 10)
-        const minRate = parseFloat(searchParams.get("minRate") ?? "0")
-        const maxRate = parseFloat(searchParams.get("maxRate") ?? "2")
+        const minAmount = searchParams.get("minAmount")
+        const maxAmount = searchParams.get("maxAmount")
+        const minOutput = searchParams.get("minOutput")
+        const maxOutput = searchParams.get("maxOutput")
+        const minRate = searchParams.get("minRate")
+        const maxRate = searchParams.get("maxRate")
         const from = searchParams.get("from")
         const to = searchParams.get("to")
 
@@ -74,12 +72,12 @@ export default function TradeHistory() {
                     sortBy,
                     sortOrder,
                     filters: {
-                        minAmount,
-                        maxAmount,
-                        minOutput,
-                        maxOutput,
-                        minRate,
-                        maxRate,
+                        minAmount: minAmount ? parseInt(minAmount) : null,
+                        maxAmount: maxAmount ? parseInt(maxAmount) : null,
+                        minOutput: minOutput ? parseInt(minOutput) : null,
+                        maxOutput: maxOutput ? parseInt(maxOutput) : null,
+                        minRate: minRate ? parseInt(minRate) : null,
+                        maxRate: maxRate ? parseInt(maxRate) : null,
                         start: searchParams.get("start"),
                         end: searchParams.get("end"),
                         from: from ? from as Currency : null,
@@ -92,13 +90,11 @@ export default function TradeHistory() {
                 if (error.response?.status === 400) {
                     return setHistory([])
                 }
-
-                toast({ message: "Something went wrong", status: "error" });
             }
         };
 
         fetchHistory();
-    }, [searchParams, page, limit, sortBy, toast, sortOrder]);
+    }, [searchParams, page, limit, sortBy, sortOrder]);
 
     return (
         <div className={styles.tradeHistoryPage}>

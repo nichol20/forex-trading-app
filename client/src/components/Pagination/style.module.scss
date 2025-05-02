@@ -54,3 +54,7 @@
         @include blue-filter();
     }
 }
+
+.ellipsis {
+    color: $colors-button-bg-primary;
+}

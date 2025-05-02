@@ -32,19 +32,19 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
 
     const signup = async (name: string, email: string, password: string) => {
-        const user = await api.signup({ email, name, password })
-        setUser(user)
-        navigate("/login")
+        const user = await api.signup({ email, name, password });
+        setUser(user);
     }
 
     const logout = async () => {
-        setUser(null)
-        await api.logout()
+        setUser(null);
+        await api.logout();
+        navigate("/login");
     }
 
     const updateUser = async () => {
-        const user = await api.getUser()
-        setUser(user)
+        const user = await api.getUser();
+        setUser(user);
     }
 
     useEffect(() => {

@@ -1,8 +1,9 @@
-import { render, screen } from "@testing-library/react"
+import { fireEvent, render, screen, waitFor } from "@testing-library/react"
 import TradeHistory from "../pages/TradeHistory"
 import { getExchangeHistory } from "../utils/api"
 import { Exchange } from "../types/exchange"
-import { MemoryRouter } from "react-router"
+import { MemoryRouter, Route, Routes } from "react-router"
+import { Currency } from "../utils/currency"
 
 const mockHistory: Exchange[] = [
     {
@@ -45,5 +46,45 @@ describe("TradeHistory", () => {
                 new Date(exchange.exchangedAt).toLocaleDateString()
             )).not.toHaveLength(0);
         }
+    })
+
+    it("handles sort column click and updates sort direction", async () => {
+        render(<TradeHistory />, { wrapper: MemoryRouter })
+
+        const dateHeader = screen.getByText("Date");
+        fireEvent.click(dateHeader);
+
+        await waitFor(() => {
+            expect(getExchangeHistory).toHaveBeenLastCalledWith(
+                expect.objectContaining({
+                    sortBy: "date"
+                })
+            );
+        });
+    });
+
+    it("calls API with expected filters and query params", async () => {
+        render(
+            <MemoryRouter initialEntries={["/trade-history?page=1&limit=5&sortBy=amount&sortOrder=desc&from=USD&to=GBP"]}>
+                <Routes>
+                    <Route path="/trade-history" element={<TradeHistory />} />
+                </Routes>
+            </MemoryRouter>
+        )
+
+        await waitFor(() => {
+            expect(getExchangeHistory).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    page: 1,
+                    limit: 5,
+                    sortBy: "amount",
+                    sortOrder: "desc",
+                    filters: expect.objectContaining({
+                        from: Currency.USD,
+                        to: Currency.GBP
+                    })
+                })
+            );
+        });
     })
 })

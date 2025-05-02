@@ -55,7 +55,7 @@ export const Pagination = ({ currentPage, lastPage }: PaginationProps) => {
 
             if (shouldShowEllipsis(index)) {
                 pages.push(
-                    <li key={`ellipsis-${index}`}>
+                    <li key={`ellipsis-${index}`} className={styles.ellipsis}>
                         ...
                     </li>
                 );

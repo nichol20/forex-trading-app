@@ -9,26 +9,29 @@ import { Currency, getSign } from "../../utils/currency";
 import { Modal } from "../Modal";
 
 import styles from "./style.module.scss";
+import { toUtcDateString } from "../../utils/date";
 
 interface FiltersDesktopProps {
     isOpen: boolean
 }
 
+const INITIAL_FILTERS: IFilters = {
+    end: null,
+    start: null,
+    minAmount: 0,
+    maxAmount: 1000,
+    minOutput: 0,
+    maxOutput: 1000,
+    minRate: 0,
+    maxRate: 2,
+    from: Currency.USD,
+    to: Currency.GBP
+}
+
 export const FiltersDesktop = ({ isOpen }: FiltersDesktopProps) => {
     const location = useLocation();
     const navigate = useNavigate();
-    const [filters, setFilters] = useState<IFilters>({
-        end: null,
-        start: null,
-        minAmount: 0,
-        maxAmount: 1000,
-        minOutput: 0,
-        maxOutput: 1000,
-        minRate: 0,
-        maxRate: 2,
-        from: Currency.USD,
-        to: Currency.GBP
-    })
+    const [filters, setFilters] = useState<IFilters>(INITIAL_FILTERS)
 
     const applySettings = () => {
         const params = clearAll(true) as URLSearchParams;
@@ -63,10 +66,11 @@ export const FiltersDesktop = ({ isOpen }: FiltersDesktopProps) => {
             const key = k as keyof IFilters
             params.delete(key);
         })
-
+    
         if(shouldReturnParams) {
             return params
         }
+        setFilters(INITIAL_FILTERS);
         
         navigate(`${location.pathname}?${params.toString()}`, {
             replace: false
@@ -133,6 +137,7 @@ export const FiltersDesktop = ({ isOpen }: FiltersDesktopProps) => {
                             type="date"
                             onChange={e => handleDateInput(e, "start")}
                             testId="date-input-from"
+                            value={filters.start ? toUtcDateString(new Date(filters.start)) : ""}
                         />
                         <CurrencyDropdown
                             showInput={false}
@@ -146,6 +151,7 @@ export const FiltersDesktop = ({ isOpen }: FiltersDesktopProps) => {
                             type="date"
                             onChange={e => handleDateInput(e, "end")}
                             testId="date-input-to"
+                            value={filters.end ? toUtcDateString(new Date(filters.end)): ""}
                         />
                         <CurrencyDropdown
                             showInput={false}

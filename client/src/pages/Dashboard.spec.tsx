@@ -12,6 +12,11 @@ jest.mock("../utils/api");
 jest.mock("../components/TimeSeriesChart", () => ({
     TimeSeriesChart: () => <div data-testid="chart" />,
 }));
+jest.mock("../components/AddFundsForm", () => ({
+    AddFundsForm: () => <div data-testid="add-funds-form" />,
+}));
+  
+
 jest.mock("../socket", () => ({
     socket: {
         connect: jest.fn(),
@@ -113,4 +118,12 @@ describe("Dashboard", () => {
             });
         });
     });
+
+    it("should show add funds form", async () => {
+        render(<Dashboard />);
+        const button = await screen.findByTestId("add-funds-btn-usd");
+        fireEvent.click(button);
+
+        expect(screen.getByTestId("add-funds-form")).toBeInTheDocument();
+    })
 });
