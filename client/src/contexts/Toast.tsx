@@ -56,7 +56,6 @@ export const ToastProvider = ({ children }: ToastProviderProps) => {
         }, 300)
     }
 
-
     return (
         <ToastContext.Provider value={{ toast }}>
             {children}
