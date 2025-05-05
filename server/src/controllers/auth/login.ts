@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 import db from "../../config/db";
+import { getEnv } from "../../config/env";
 import { BadRequestError, UnauthorizedError } from "../../helpers/apiError";
 import { User, UserDocument } from "../../types/user";
 import { loginSchema } from "../../validators/auth";
@@ -23,7 +24,7 @@ export const login = async (req: Request, res: Response<User>) => {
     const match = await bcrypt.compare(password, user.password);
     if (!match) throw new UnauthorizedError("Email or password incorrect!");
 
-    const token = jwt.sign({}, process.env.JWT_SECRET!, {
+    const token = jwt.sign({}, getEnv().JWT_SECRET, {
         subject: user._id.toString(),
         expiresIn: "1d",
     });

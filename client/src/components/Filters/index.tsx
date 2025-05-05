@@ -2,7 +2,7 @@ import { useLocation, useNavigate } from "react-router";
 
 import { InputField } from "../InputField";
 import { CurrencyDropdown } from "../CurrencyDropdown";
-import { Slider } from "../DoubleSlider";
+import { DoubleSlider } from "../DoubleSlider";
 import { ChangeEvent, useEffect, useState } from "react";
 import { Filters as IFilters } from "../../utils/api";
 import { Currency, getSign } from "../../utils/currency";
@@ -18,12 +18,12 @@ interface FiltersDesktopProps {
 const INITIAL_FILTERS: IFilters = {
     end: null,
     start: null,
-    minAmount: 0,
-    maxAmount: 1000,
-    minOutput: 0,
-    maxOutput: 1000,
-    minRate: 0,
-    maxRate: 2,
+    minAmount: null,
+    maxAmount: null,
+    minOutput: null,
+    maxOutput: null,
+    minRate: null,
+    maxRate: null,
     from: Currency.USD,
     to: Currency.GBP
 }
@@ -46,7 +46,6 @@ export const FiltersDesktop = ({ isOpen }: FiltersDesktopProps) => {
             maxRate: filters.maxRate === 2 ? null : filters.maxRate
         }
 
-
         Object.keys(f).forEach(k => {
             const key = k as keyof IFilters
             if (f[key]) {
@@ -67,9 +66,8 @@ export const FiltersDesktop = ({ isOpen }: FiltersDesktopProps) => {
             params.delete(key);
         })
     
-        if(shouldReturnParams) {
-            return params
-        }
+        if(shouldReturnParams) return params
+
         setFilters(INITIAL_FILTERS);
         
         navigate(`${location.pathname}?${params.toString()}`, {
@@ -163,9 +161,10 @@ export const FiltersDesktop = ({ isOpen }: FiltersDesktopProps) => {
 
                 <div className={styles.amountSection}>
                     <span className={styles.title}>Amount / Output / Rate</span>
-                    <Slider
+                    <DoubleSlider
                         max={1000}
                         min={0}
+                        value={[filters.minAmount ?? 0, filters.maxAmount ?? 1000]}
                         onChange={v => setFilters(prev => ({
                             ...prev,
                             minAmount: v[0],
@@ -174,9 +173,10 @@ export const FiltersDesktop = ({ isOpen }: FiltersDesktopProps) => {
                         prefix={filters.from ? getSign(filters.from) : ""}
                         step={10}
                     />
-                    <Slider
+                    <DoubleSlider
                         max={1000}
                         min={0}
+                        value={[filters.minOutput ?? 0, filters.maxOutput ?? 1000]}
                         onChange={v => setFilters(prev => ({
                             ...prev,
                             minOutput: v[0],
@@ -185,9 +185,10 @@ export const FiltersDesktop = ({ isOpen }: FiltersDesktopProps) => {
                         prefix={filters.to ? getSign(filters.to) : ""}
                         step={10}
                     />
-                    <Slider
+                    <DoubleSlider
                         max={2}
                         min={0}
+                        value={[filters.minRate ?? 0, filters.maxRate ?? 2]}
                         onChange={v => setFilters(prev => ({
                             ...prev,
                             minRate: v[0],

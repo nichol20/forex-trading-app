@@ -1,52 +1,52 @@
 
-import { ChangeEvent, useState } from "react"
+import { ChangeEvent } from "react"
 import styles from "./style.module.scss"
 
-interface SliderProps {
+interface DoubleSliderProps {
     min: number
     max: number
     step: number
     prefix: string
     onChange: (values: [number, number]) => void
+    value: [number, number]
 }
 
-export const Slider = ({ min, max, step, prefix, onChange }: SliderProps) => {
-    const [value, setValue] = useState<[number, number]>([min, 0])
+export const DoubleSlider = ({ min, max, step, prefix, onChange, value }: DoubleSliderProps) => {
     
     const getReversedValue = (value: number) => {
         return parseFloat((max - value).toFixed(2))
     }
     
     const getPorcentageValue = (index: 0 | 1) => {
-        const result = value[index] * 100 / max
-        return `${result}%`
+        const v = index === 0 ? value[0] : getReversedValue(value[1])
+        return `${v * 100 / max}%`
     }
     
     const handleChange = (event: ChangeEvent<HTMLInputElement>, index: 0 | 1) => {
         const targetValue = parseFloat(event.target.value)
+        console.log({
+            targetValue,
+            index
+        })
         
         if (index === 0) {
-            if (targetValue + value[1] > max) {
+            if (targetValue + getReversedValue(value[1]) > max) {
                 return
             }
 
-            const reversedValue = getReversedValue(value[1])
-            setValue([targetValue, value[1]])
-            return onChange([targetValue, reversedValue])
+            return onChange([targetValue, value[1]])
         }
-        
-        
+           
         if (value[0] + targetValue > max || targetValue === max) {
             return
         }
         
         const reversedValue = getReversedValue(targetValue)
-        setValue([value[0], targetValue])
         return onChange([value[0], reversedValue])
     }
     
     const rightInputValue = getReversedValue(value[1])
-    
+
     return (
         <div className={styles.slider}>
             <div className={`${styles.leftBar} ${styles.bar}`}>
@@ -71,7 +71,7 @@ export const Slider = ({ min, max, step, prefix, onChange }: SliderProps) => {
                         min={min}
                         max={max}
                         step={step}
-                        value={value[1]}
+                        value={rightInputValue}
                         onChange={e => handleChange(e, 1)}
                         className={`${styles.rangeInput} ${styles.rightRange}`}
                     />
@@ -80,7 +80,7 @@ export const Slider = ({ min, max, step, prefix, onChange }: SliderProps) => {
 
             <div className={styles.labels}>
                 <span>{prefix}{value[0]}</span>
-                <span>{rightInputValue === max ? "max" : `${prefix}${rightInputValue}`}</span>
+                <span>{value[1] === max ? "max" : `${prefix}${value[1]}`}</span>
             </div>
         </div>
     );

@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 
 import { BadRequestError, ConflictError } from "../../helpers/apiError";
 import db from "../../config/db";
+import { getEnv } from "../../config/env";
 import { User, UserDocument } from "../../types/user";
 import { signupSchema } from "../../validators/auth";
 
@@ -37,7 +38,7 @@ export const signup = async (req: Request, res: Response<User>) => {
 
     const { insertedId } = await userCollection.insertOne(newUser);
 
-    const token = jwt.sign({}, process.env.JWT_SECRET!, {
+    const token = jwt.sign({}, getEnv().JWT_SECRET, {
         subject: insertedId.toString(),
         expiresIn: "1d",
     });
