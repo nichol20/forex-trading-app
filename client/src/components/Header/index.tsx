@@ -1,6 +1,8 @@
+import Image from "next/image";
+
 import { exitIcon } from "../../assets"
 import { useAuth } from "../../contexts/Auth"
-import styles from "./style.module.scss"
+import styles from "./styles.module.scss"
 
 export const Header = () => {
     const { logout } = useAuth();
@@ -10,7 +12,7 @@ export const Header = () => {
                 <a href="/">Forex trading</a>
             </h1>
             <button className={styles.logoutBtn} onClick={logout}>
-                <img  src={exitIcon} alt="exit"/>
+                <Image src={exitIcon} alt="exit"/>
             </button>
         </header>
     )

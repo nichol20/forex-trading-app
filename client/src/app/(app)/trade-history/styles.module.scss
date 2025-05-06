@@ -1,4 +1,4 @@
-@use "./" as *;
+@use "../../../styles/" as *;
 
 .tradeHistoryPage {
     @include display-flex(flex-start);
@@ -21,7 +21,7 @@
     height: 100%;
 }
 
-section {
+.section {
     max-width: 1400px;
     width: 100%;
 }

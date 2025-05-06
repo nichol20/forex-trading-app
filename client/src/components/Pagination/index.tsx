@@ -1,15 +1,19 @@
-import { useNavigate, useLocation } from "react-router"
 
-import { chevronForwardIcon } from "../../assets"
-import styles from "./style.module.scss"
+import { usePathname, useRouter, useSearchParams } from "next/navigation"
+import Image from "next/image"
+
+import { chevronForwardIcon } from "@/assets"
+import styles from "./styles.module.scss"
+
 interface PaginationProps {
     currentPage: number
     lastPage: number
 }
 
 export const Pagination = ({ currentPage, lastPage }: PaginationProps) => {
-    const location = useLocation()
-    const navigate = useNavigate()
+    const router = useRouter();
+    const searchParams = useSearchParams();
+    const pathname = usePathname();
     const hasPreviousPage = currentPage > 1;
     const hasNextPage = currentPage < lastPage;
     const isSinglePage = lastPage <= 1;
@@ -17,12 +21,10 @@ export const Pagination = ({ currentPage, lastPage }: PaginationProps) => {
     if (isSinglePage) return null;
 
     const handleNavigate = (page: number) => {
-        const params = new URLSearchParams(location.search);
+        const params = new URLSearchParams(searchParams.toString());
         params.set('page', String(page));
 
-        navigate(`${location.pathname}?${params.toString()}`, {
-            replace: false
-        });
+        router.replace(`${pathname}?${params.toString()}`);
     };
 
     const shouldShowPage = (index: number) => {
@@ -70,7 +72,7 @@ export const Pagination = ({ currentPage, lastPage }: PaginationProps) => {
             {
                 hasPreviousPage && (
                     <li className={styles.pageItem} onClick={() => handleNavigate(currentPage - 1)}>
-                        <img src={chevronForwardIcon} alt="chevron" className={styles.icon} />
+                        <Image src={chevronForwardIcon} alt="chevron" className={styles.icon} />
                     </li>
                 )
             }
@@ -78,7 +80,7 @@ export const Pagination = ({ currentPage, lastPage }: PaginationProps) => {
             {
                 hasNextPage && (
                     <li className={styles.pageItem} onClick={() => handleNavigate(currentPage + 1)}>
-                        <img src={chevronForwardIcon} alt="chevron" className={styles.icon} />
+                        <Image src={chevronForwardIcon} alt="chevron" className={styles.icon} />
                     </li>
                 )
             }

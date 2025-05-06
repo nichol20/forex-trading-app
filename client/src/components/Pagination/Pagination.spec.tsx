@@ -1,18 +1,22 @@
 import { render, screen, fireEvent } from "@testing-library/react"
-import { Pagination } from "./"
-import { useLocation, useNavigate } from "react-router"
+import { Pagination } from "."
+import { usePathname, useRouter, useSearchParams } from "next/navigation"
 
-jest.mock("react-router", () => ({
-    useLocation: jest.fn(),
-    useNavigate: jest.fn(),
+jest.mock("next/navigation", () => ({
+    usePathname: jest.fn(),
+    useRouter: jest.fn(),
+    useSearchParams: () => ({
+        toString: () => ""
+    }),
 }))
 
 describe("Pagination", () => {
-    const mockNavigate = jest.fn()
+    const mockRouter = {
+        replace: jest.fn()
+    }
 
     beforeEach(() => {
-        (useNavigate as jest.Mock).mockReturnValue(mockNavigate)
-        mockNavigate.mockClear();
+        (useRouter as jest.Mock).mockReturnValue(mockRouter)
     })
 
     it("does not render if lastPage is 1", () => {
@@ -21,10 +25,7 @@ describe("Pagination", () => {
     })
 
     it("renders page items and navigates on click", () => {
-        (useLocation as jest.Mock).mockReturnValue({
-            pathname: "/test",
-            search: "",
-        })
+        (usePathname as jest.Mock).mockReturnValue("/test")
 
         render(<Pagination currentPage={2} lastPage={6} />)
         expect(screen.getByText("...")).toBeInTheDocument()
@@ -35,14 +36,12 @@ describe("Pagination", () => {
         expect(screen.getByText("6")).toBeInTheDocument()
 
         fireEvent.click(screen.getByText("3"))
-        expect(mockNavigate).toHaveBeenCalledWith("/test?page=3", { replace: false })
+        expect(mockRouter.replace).toHaveBeenCalledWith("/test?page=3")
     })
 
     it("shows previous and next arrows and they work", () => {
-        (useLocation as jest.Mock).mockReturnValue({
-            pathname: "/test",
-            search: "",
-        })
+        (usePathname as jest.Mock).mockReturnValue("/test")
+
         render(<Pagination currentPage={3} lastPage={5} />)
 
         const chevrons = screen.getAllByAltText("chevron")
@@ -50,10 +49,10 @@ describe("Pagination", () => {
 
         // Previous
         fireEvent.click(chevrons[0])
-        expect(mockNavigate).toHaveBeenCalledWith("/test?page=2", { replace: false })
+        expect(mockRouter.replace).toHaveBeenCalledWith("/test?page=2")
 
         // Next
         fireEvent.click(chevrons[1])
-        expect(mockNavigate).toHaveBeenCalledWith("/test?page=4", { replace: false })
+        expect(mockRouter.replace).toHaveBeenCalledWith("/test?page=4")
     })
 })

@@ -3,7 +3,7 @@ import { Currency, isCurrency } from "../../utils/currency";
 import { CurrencyDropdown } from "../CurrencyDropdown"
 import { Modal } from "../Modal"
 
-import styles from "./style.module.scss"
+import styles from "./styles.module.scss"
 import { addToWallet } from "../../utils/api";
 import { useAuth } from "../../contexts/Auth";
 import { useToast } from "../../contexts/Toast";

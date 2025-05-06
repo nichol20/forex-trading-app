@@ -1,8 +1,9 @@
 import { CSSProperties, useState } from 'react'
+import Image from 'next/image'
 
-import { eyeIcon, blockedEyeIcon } from '../../assets'
-import { ErrorMessage } from '../ErrorMessage'
-import styles from './style.module.scss'
+import { eyeIcon, blockedEyeIcon } from '@/assets'
+import { ErrorMessage } from '@/components/ErrorMessage'
+import styles from './styles.module.scss'
 
 interface InputFieldProps {
     name?: string
@@ -82,7 +83,7 @@ const InputField = ({
                         onClick={() => setShowPassword(prev => !prev)}
                         type='button'
                     >
-                        <img
+                        <Image
                             src={showPassword ? eyeIcon : blockedEyeIcon}
                             alt={showPassword ? "eye" : "blocked eye"}
                         />

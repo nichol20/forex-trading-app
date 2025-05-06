@@ -1,7 +1,8 @@
-import styles from "./style.module.scss";
+import { useState } from "react";
+
 import { InputField } from "../InputField";
 import { Currency, getAllCurrencies, getSign } from "../../utils/currency";
-import { useState } from "react";
+import styles from "./styles.module.scss";
 
 interface CurrencyDropdownProps {
     selectName?: string;

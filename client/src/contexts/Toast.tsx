@@ -1,9 +1,11 @@
+"use client"
 import { v4 as uuidv4 } from 'uuid';
 import { createContext, useContext, useState } from 'react'
 
 import { blueCheckMarkIcon, redXIcon } from '../assets';
 
 import styles from '../styles/Toast.module.scss'
+import Image from 'next/image';
 
 export interface ToastData {
     message: string
@@ -69,7 +71,7 @@ export const ToastProvider = ({ children }: ToastProviderProps) => {
                             onClick={() => deleteToast(t.id)}
                             key={index}
                         >
-                            <img src={t.icon} alt="icon" />
+                            <Image src={t.icon} alt="icon" />
                             <span>{t.message}</span>
                         </div>
                     ))

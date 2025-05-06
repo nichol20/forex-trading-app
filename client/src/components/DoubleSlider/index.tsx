@@ -1,6 +1,6 @@
 
 import { ChangeEvent } from "react"
-import styles from "./style.module.scss"
+import styles from "./styles.module.scss"
 
 interface DoubleSliderProps {
     min: number
@@ -24,10 +24,6 @@ export const DoubleSlider = ({ min, max, step, prefix, onChange, value }: Double
     
     const handleChange = (event: ChangeEvent<HTMLInputElement>, index: 0 | 1) => {
         const targetValue = parseFloat(event.target.value)
-        console.log({
-            targetValue,
-            index
-        })
         
         if (index === 0) {
             if (targetValue + getReversedValue(value[1]) > max) {

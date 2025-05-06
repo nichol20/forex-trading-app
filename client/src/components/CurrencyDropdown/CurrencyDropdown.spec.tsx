@@ -1,5 +1,5 @@
 import { render, screen, fireEvent } from "@testing-library/react";
-import { CurrencyDropdown } from "./"; // adjust import if needed
+import { CurrencyDropdown } from ".";
 import { Currency } from "../../utils/currency";
 
 describe("CurrencyDropdown", () => {

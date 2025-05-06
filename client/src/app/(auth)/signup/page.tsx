@@ -1,74 +1,73 @@
-import { useEffect, useState } from "react"
-import { useNavigate } from 'react-router'
+"use client";
+import { useState } from "react";
 
-import { useAuth } from "../contexts/Auth"
-import { InputField } from "../components/InputField"
-import styles from "../styles/Signup.module.scss"
+import { useAuth } from "@/contexts/Auth";
+import { InputField } from "@/components/InputField";
+import styles from "./styles.module.scss";
 
 export default function SignupPage() {
-    const { signup, user } = useAuth()
-    const navigate = useNavigate()
+    const { signup } = useAuth();
     const [formErrors, setFormErrors] = useState({
         passwordMismatch: false,
         emailExists: false,
         weakPassword: false,
         invalidEmailFormat: false
-    })
+    });
 
     const validateForm = (formData: FormData) => {
         const password = formData.get("password") as string
         const confirmationPassword = formData.get("confirmationPassword") as string
         if (password !== confirmationPassword) {
-            setFormErrors(prev => ({ ...prev, passwordMismatch: true }))
-            return false
+            setFormErrors(prev => ({ ...prev, passwordMismatch: true }));
+            return false;
         }
 
-        return true
+        return true;
     }
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault()
+        event.preventDefault();
 
-        const formData = new FormData(event.currentTarget)
+        const formData = new FormData(event.currentTarget);
 
-        if (!validateForm(formData)) return
+        if (!validateForm(formData)) return;
 
         try {
             await signup(
                 formData.get("name") as string,
                 formData.get("email") as string,
                 formData.get("password") as string
-            )
+            );
         } catch (error: any) {
             if (error.response?.status === 400 || error.response?.status === 409) {
-                const message = error?.response?.data?.message
+                const message = error?.response?.data?.message;
                 setFormErrors(prev => ({
                     ...prev,
                     emailExists: message.includes("email already exists"),
                     weakPassword: message.includes("password must be"),
                     invalidEmailFormat: message.includes("Invalid email")
-                }))
+                }));
             }
         }
     }
 
     const getErrorMessage = (inputName: string): string => {
-        const { passwordMismatch, emailExists, weakPassword, invalidEmailFormat } = formErrors
+        const { passwordMismatch, emailExists, weakPassword, invalidEmailFormat } = formErrors;
 
         if (passwordMismatch) {
-            if (inputName === "password") return "Passwords must be the same"
-            if (inputName === "confirmationPassword") return " "
+            if (inputName === "password") return "Passwords must be the same";
+            if (inputName === "confirmationPassword") return " ";
         }
         if (weakPassword) {
             if (inputName === "password") {
-                return "Password must be at least 6 characters"
+                return "Password must be at least 6 characters";
             }
-            if (inputName === "confirmationPassword") return " "
+            if (inputName === "confirmationPassword") return " ";
         }
-        if (emailExists && inputName === "email") return "This email already exists!"
-        if (invalidEmailFormat && inputName === "email") return "Invalid email format."
+        if (emailExists && inputName === "email") return "This email already exists!";
+        if (invalidEmailFormat && inputName === "email") return "Invalid email format.";
 
-        return ""
+        return "";
     }
 
     const resetError = (inputName: string) => {
@@ -79,13 +78,6 @@ export default function SignupPage() {
             weakPassword: inputName === "password" ? false : prev.weakPassword,
         }))
     }
-
-
-    useEffect(() => {
-        if (user) {
-            navigate("/")
-        }
-    }, [user, navigate])
 
     return (
         <div className={styles.signupPage}>

@@ -1,4 +1,3 @@
-// __tests__/api.test.ts or same directory as the API module
 import {
     signup,
     login,
@@ -9,12 +8,12 @@ import {
     getExchangeHistory,
     getExchangeRates,
     getTimeSeries,
-} from "./api"; // Replace with actual path
+} from "./api";
 
-import { http } from "./http";
+import { http } from "@/lib/api";
 import { Currency } from "./currency";
 
-jest.mock("./http", () => ({
+jest.mock("@/lib/api", () => ({
     http: {
         post: jest.fn(),
         get: jest.fn(),

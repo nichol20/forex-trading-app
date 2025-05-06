@@ -1,16 +1,9 @@
 import { render, screen, fireEvent } from '@testing-library/react'
 import { ToastProvider, useToast } from '../Toast'
 
-// Mocking uuidv4 and image imports
 jest.mock('uuid', () => ({
     v4: jest.fn(() => 'test-uuid'),
 }))
-
-jest.mock('../../assets', () => ({
-    blueCheckMarkIcon: 'blueCheckMarkIcon.svg',
-    redXIcon: 'redXIcon.svg',
-}))
-
 
 const TestComponent = () => {
     const toast = useToast()

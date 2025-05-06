@@ -1,15 +1,14 @@
-import { useEffect, useState } from "react"
-import { useNavigate } from 'react-router'
+"use client"
+import { useState } from "react"
 
-import { useAuth } from "../contexts/Auth"
-import { ErrorMessage } from "../components/ErrorMessage"
-import { InputField } from "../components/InputField"
-import styles from "../styles/Login.module.scss"
+import { useAuth } from "@/contexts/Auth"
+import { ErrorMessage } from "@/components/ErrorMessage"
+import { InputField } from "@/components/InputField"
+import styles from "./styles.module.scss"
 
 export default function LoginPage() {
     const [invalidCredentials, setInvalidCredentials] = useState(false)
     const { login, user } = useAuth()
-    const navigate = useNavigate()
 
     const resetErrors = () => {
         setInvalidCredentials(false)
@@ -36,12 +35,6 @@ export default function LoginPage() {
             }
         }
     }
-
-    useEffect(() => {
-        if (user) {
-            navigate("/")
-        }
-    }, [user, navigate])
 
     return (
         <div className={styles.loginPage}>

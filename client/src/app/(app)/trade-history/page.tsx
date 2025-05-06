@@ -1,17 +1,17 @@
+"use client"
 import { useEffect, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import Image from "next/image";
 
-import { Header } from "../components/Header";
-import { Exchange } from "../types/exchange";
-import { getExchangeHistory } from "../utils/api";
-
-import styles from "../styles/TradeHistory.module.scss";
-import { Pagination } from "../components/Pagination";
-import { isValidSortBy, SortBy } from "../utils/params";
-import { useLocation } from "react-router";
-import { funnelIcon } from "../assets";
-import { Filters } from "../components/Filters";
-import { Currency } from "../utils/currency";
+import { Header } from "@/components/Header";
+import { Exchange } from "@/types/exchange";
+import { getExchangeHistory } from "@/utils/api";
+import { Pagination } from "@/components/Pagination";
+import { isValidSortBy, SortBy } from "@/utils/params";
+import { funnelIcon } from "@/assets";
+import { Filters } from "@/components/Filters";
+import { Currency } from "@/utils/currency";
+import styles from "./styles.module.scss";
 
 const columns: string[] = [
     "Date",
@@ -23,9 +23,9 @@ const columns: string[] = [
 ]
 
 export default function TradeHistory() {
-    const location = useLocation();
-    const navigate = useNavigate();
-    const [searchParams] = useSearchParams();
+    const router = useRouter();
+    const searchParams = useSearchParams();
+    const pathname = usePathname();
 
     const [history, setHistory] = useState<Exchange[]>([]);
     const [totalPages, setTotalPages] = useState(0);
@@ -38,12 +38,10 @@ export default function TradeHistory() {
     const sortOrder = searchParams.get("sortOrder") === "asc" ? "asc" : "desc";
 
     const handleNavigate = (param: string, value: string) => {
-        const params = new URLSearchParams(location.search);
+        const params = new URLSearchParams(searchParams.toString())
         params.set(param, value);
 
-        navigate(`${location.pathname}?${params.toString()}`, {
-            replace: false
-        });
+        router.replace(`${pathname}?${params.toString()}`);
     };
 
     const changeOrderBy = (col: string) => {
@@ -100,14 +98,14 @@ export default function TradeHistory() {
         <div className={styles.tradeHistoryPage}>
             <Header />
             <main className={styles.content}>
-                <section className={styles.filterContainer}>
+                <section className={`${styles.filterContainer} ${styles.section}`}>
                     <button className={styles.filterBtn} onClick={() => setShowFilters(prev => !prev)}>
-                        <img src={funnelIcon} alt="funnel" />
+                        <Image src={funnelIcon} alt="funnel" />
                         <span>Filter</span>
                     </button>
                     <Filters isOpen={showFilters} close={() => setShowFilters(false)} />
                 </section>
-                <section className={styles.tableContainer}>
+                <section className={`${styles.tableContainer} ${styles.section}`}>
                     <h2 className={styles.title}>Trade History</h2>
                     <div className={styles.table}>
                         <div className={styles.header}>

@@ -1,15 +1,15 @@
-import { useLocation, useNavigate } from "react-router";
-
-import { InputField } from "../InputField";
-import { CurrencyDropdown } from "../CurrencyDropdown";
-import { DoubleSlider } from "../DoubleSlider";
 import { ChangeEvent, useEffect, useState } from "react";
-import { Filters as IFilters } from "../../utils/api";
-import { Currency, getSign } from "../../utils/currency";
-import { Modal } from "../Modal";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
-import styles from "./style.module.scss";
-import { toUtcDateString } from "../../utils/date";
+import { InputField } from "@/components/InputField";
+import { CurrencyDropdown } from "@/components/CurrencyDropdown";
+import { DoubleSlider } from "@/components/DoubleSlider";
+import { Modal } from "@/components/Modal";
+import { Filters as IFilters } from "@/utils/api";
+import { Currency, getSign } from "@/utils/currency";
+import { toUtcDateString } from "@/utils/date";
+
+import styles from "./styles.module.scss";
 
 interface FiltersDesktopProps {
     isOpen: boolean
@@ -29,8 +29,9 @@ const INITIAL_FILTERS: IFilters = {
 }
 
 export const FiltersDesktop = ({ isOpen }: FiltersDesktopProps) => {
-    const location = useLocation();
-    const navigate = useNavigate();
+    const router = useRouter();
+    const searchParams = useSearchParams();
+    const pathname = usePathname();
     const [filters, setFilters] = useState<IFilters>(INITIAL_FILTERS)
 
     const applySettings = () => {
@@ -53,13 +54,11 @@ export const FiltersDesktop = ({ isOpen }: FiltersDesktopProps) => {
             }
         });
 
-        navigate(`${location.pathname}?${params.toString()}`, {
-            replace: false
-        });
+        router.replace(`${pathname}?${params.toString()}`);
     }
 
     const clearAll = (shouldReturnParams?: boolean) => {
-        const params = new URLSearchParams(location.search);
+        const params = new URLSearchParams(searchParams.toString());
         
         Object.keys(filters).forEach(k => {
             const key = k as keyof IFilters
@@ -70,9 +69,7 @@ export const FiltersDesktop = ({ isOpen }: FiltersDesktopProps) => {
 
         setFilters(INITIAL_FILTERS);
         
-        navigate(`${location.pathname}?${params.toString()}`, {
-            replace: false
-        });
+        router.replace(`${pathname}?${params.toString()}`);
     }
 
     const handleDateInput = (event: ChangeEvent<HTMLInputElement>, type: "start" | "end") => {

@@ -1,9 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react'
-import { Modal } from '../Modal'
-
-jest.mock('../../assets', () => ({
-    closeIcon: 'close-icon.svg'
-}))
+import { Modal } from '.'
 
 describe('Modal', () => {
     it('renders the children content', () => {

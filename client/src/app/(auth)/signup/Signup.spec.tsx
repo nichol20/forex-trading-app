@@ -1,17 +1,9 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import SignupPage from "../pages/Signup";
-import { useAuth } from "../contexts/Auth";
-import { MemoryRouter } from "react-router";
-// Mock Auth context
-jest.mock("../contexts/Auth", () => ({
-    useAuth: jest.fn(),
-}));
+import SignupPage from "./page";
+import { useAuth } from "@/contexts/Auth";
 
-// Mock navigate
-const mockNavigate = jest.fn();
-jest.mock("react-router", () => ({
-    ...jest.requireActual("react-router"),
-    useNavigate: () => mockNavigate,
+jest.mock("@/contexts/Auth", () => ({
+    useAuth: jest.fn(),
 }));
 
 describe("SignupPage", () => {
@@ -30,7 +22,7 @@ describe("SignupPage", () => {
             ...authOverrides,
         });
 
-        return render(<SignupPage />, { wrapper: MemoryRouter });
+        return render(<SignupPage />);
     };
 
     const signUpUser = (withDifferentPassword: boolean = false) => {
@@ -114,11 +106,5 @@ describe("SignupPage", () => {
         await waitFor(() => {
             expect(screen.getByText(/password must be at least 6 characters/i)).toBeInTheDocument();
         });
-    });
-
-    it("redirects to home if user is already logged in", () => {
-        setup({ user: { name: "Alice" } });
-
-        expect(mockNavigate).toHaveBeenCalledWith("/");
     });
 });

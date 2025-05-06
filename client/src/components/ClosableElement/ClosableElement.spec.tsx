@@ -1,5 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react'
-import { ClosableElement } from '../ClosableElement'
+import { ClosableElement } from '.'
 
 describe('ClosableElement', () => {
     it('does not render when isOpen is false', () => {

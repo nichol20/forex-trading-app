@@ -1,7 +1,7 @@
 import { Exchange, Rates, TimeSeries } from "../types/exchange";
 import { User, Wallet } from "../types/user";
 import { Currency } from "./currency";
-import { http } from "./http";
+import { http } from "../lib/api";
 import { removeNullsDeep } from "./object";
 import { SortBy } from "./params";
 

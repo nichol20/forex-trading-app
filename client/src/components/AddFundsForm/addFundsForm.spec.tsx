@@ -1,13 +1,14 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { AddFundsForm } from "./";
-import { Currency } from "../../utils/currency";
-import * as api from "../../utils/api";
-import { useAuth } from "../../contexts/Auth";
-import { useToast } from "../../contexts/Toast";
+import { AddFundsForm } from ".";
+import { Currency, isCurrency } from "@/utils/currency";
+import * as api from "@/utils/api";
+import { useAuth } from "@/contexts/Auth";
+import { useToast } from "@/contexts/Toast";
 
-jest.mock("../../utils/api");
-jest.mock("../../contexts/Auth");
-jest.mock("../../contexts/Toast");
+jest.mock("@/utils/api");
+jest.mock("@/contexts/Auth");
+jest.mock("@/contexts/Toast");
+
 
 describe("AddFundsForm", () => {
     let mockClose: jest.Mock;
@@ -84,8 +85,6 @@ describe("AddFundsForm", () => {
     });
 
     it("does not submit if currency is invalid", async () => {
-        jest.spyOn(require("../../utils/currency"), "isCurrency").mockReturnValue(false);
-
         render(<AddFundsForm close={mockClose} />);
         const select = screen.getByTestId("currency-select");
         const input = screen.getByTestId("amount-input");

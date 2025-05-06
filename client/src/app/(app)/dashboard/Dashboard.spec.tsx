@@ -1,9 +1,9 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import Dashboard from "../pages/Dashboard";
-import { useAuth } from "../contexts/Auth";
-import { useToast } from "../contexts/Toast";
-import * as api from "../utils/api";
-import { Currency } from "../utils/currency";
+import Dashboard from "./page";
+import { useAuth } from "@/contexts/Auth";
+import { useToast } from "@/contexts/Toast";
+import * as api from "@/utils/api";
+import { Currency } from "@/utils/currency";
 
 // Mock modules
 jest.mock("../contexts/Auth");

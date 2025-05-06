@@ -1,6 +1,7 @@
-import styles from './style.module.scss'
 import { ClosableElement } from '../ClosableElement'
 import { closeIcon } from '../../assets'
+import styles from './styles.module.scss'
+import Image from 'next/image'
 
 interface ModalProps {
     className?: string
@@ -16,7 +17,7 @@ export const Modal = ({ className, children, close }: ModalProps) => {
         <div className={`${styles.fixedBox}`}>
             <ClosableElement isOpen={true} close={close} className={`${styles.modal} ${className}`}>
                 <button className={styles.closeBtn} onClick={close}>
-                    <img src={closeIcon} alt='x' />
+                    <Image src={closeIcon} alt='x' />
                 </button>
                 {children}
             </ClosableElement>

@@ -1,18 +1,9 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
-import LoginPage from '../pages/Login'
-import { useAuth } from '../contexts/Auth'
-import { MemoryRouter } from 'react-router'
+import LoginPage from './page'
+import { useAuth } from '@/contexts/Auth'
 
-// Mock useAuth
-jest.mock('../contexts/Auth', () => ({
+jest.mock('@/contexts/Auth', () => ({
     useAuth: jest.fn()
-}))
-
-// Mock useNavigate
-const mockNavigate = jest.fn()
-jest.mock('react-router', () => ({
-    ...jest.requireActual('react-router'),
-    useNavigate: () => mockNavigate
 }))
 
 describe('LoginPage', () => {
@@ -24,7 +15,7 @@ describe('LoginPage', () => {
             ...authOverrides
         })
 
-        return render(<LoginPage />, { wrapper: MemoryRouter })
+        return render(<LoginPage />)
     }
 
     it('renders email and password input fields and a login button', () => {
@@ -60,10 +51,5 @@ describe('LoginPage', () => {
         await waitFor(() => {
             expect(screen.getByText(/invalid email or password/i)).toBeInTheDocument()
         })
-    })
-
-    it('redirects to home if user is already logged in', () => {
-        setup({ user: { id: 1, name: 'Alice' } })
-        expect(mockNavigate).toHaveBeenCalledWith('/')
     })
 })

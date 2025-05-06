@@ -1,28 +1,28 @@
 import { render, screen, fireEvent } from "@testing-library/react";
-import { Filters } from "./";
-import { MemoryRouter, useNavigate } from "react-router";
-import { useLocation } from "react-router";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { Filters } from ".";
 
-jest.mock("react-router", () => ({
-    ...jest.requireActual("react-router"),
-    useLocation: jest.fn(),
-    useNavigate: jest.fn(),
+jest.mock("next/navigation", () => ({
+    usePathname: jest.fn(),
+    useRouter: jest.fn(),
+    useSearchParams: () => ({
+        toString: () => ""
+    }),
 }))
 
 const defaultProps = {
     isOpen: true,
     close: jest.fn(),
-  };
+};
 
 describe("Filters Component", () => {
-    const mockNavigate = jest.fn();
+    const mockRouter = {
+        replace: jest.fn()
+    };
 
     beforeEach(() => {
-        (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
-        (useLocation as jest.Mock).mockReturnValue({
-            pathname: "/test",
-            search: "",
-        })
+        (useRouter as jest.Mock).mockReturnValue(mockRouter);
+        (usePathname as jest.Mock).mockReturnValue("/test")
         jest.clearAllMocks();
     });
 
@@ -33,7 +33,7 @@ describe("Filters Component", () => {
             value: 1024,
         });
 
-        render(<Filters {...defaultProps} />, { wrapper: MemoryRouter });
+        render(<Filters {...defaultProps} />);
 
         expect(screen.getByText("From")).toBeInTheDocument();
         expect(screen.getByText("To")).toBeInTheDocument();
@@ -47,32 +47,30 @@ describe("Filters Component", () => {
             value: 600,
         });
 
-        render(<Filters {...defaultProps} />, { wrapper: MemoryRouter });
+        render(<Filters {...defaultProps} />);
         expect(screen.getByText("Filters")).toBeInTheDocument(); // Modal title
     });
 
     it("clears filters when 'Clear all' is clicked", () => {
-        render(<Filters {...defaultProps} />, { wrapper: MemoryRouter });
+        render(<Filters {...defaultProps} />);
 
         const clearButton = screen.getByText("Clear all");
         fireEvent.click(clearButton);
 
-        expect(mockNavigate).toHaveBeenCalledWith("/test?", { replace: false });
+        expect(mockRouter.replace).toHaveBeenCalledWith("/test?");
     });
 
     it("applies filters when 'Apply filters' is clicked", () => {
-        render(<Filters {...defaultProps} />, { wrapper: MemoryRouter });
+        render(<Filters {...defaultProps} />);
 
         const applyButton = screen.getByText("Apply filters");
         fireEvent.click(applyButton);
 
-        expect(mockNavigate).toHaveBeenCalledWith(expect.stringContaining("/test?"), {
-            replace: false,
-        });
+        expect(mockRouter.replace).toHaveBeenCalledWith(expect.stringContaining("/test?"));
     });
 
     it("updates state when date input is changed", () => {
-        render(<Filters {...defaultProps} />, { wrapper: MemoryRouter });
+        render(<Filters {...defaultProps} />);
 
         const dateInputFrom = screen.getByTestId("date-input-from")
         const dateInputTo = screen.getByTestId("date-input-to")

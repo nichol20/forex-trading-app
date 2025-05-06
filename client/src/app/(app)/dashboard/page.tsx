@@ -1,21 +1,24 @@
+"use client"
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 
-import * as api from "../utils/api";
-import { socket } from "../socket";
-import { rightArrow } from "../assets";
-import { Header } from "../components/Header";
-import { CurrencyDropdown } from "../components/CurrencyDropdown";
-import { exchangeCurrencies } from "../utils/api";
-import { Currency, getSign } from "../utils/currency";
-import { useAuth } from "../contexts/Auth";
-import { InputField } from "../components/InputField";
-import { useToast } from "../contexts/Toast";
-import { Rates } from "../types/exchange";
-import { AddFundsForm } from "../components/AddFundsForm";
-import { getInvertedRate } from "../utils/exchange";
-import { TimeSeriesChart } from "../components/TimeSeriesChart";
-import { toUtcDateString } from "../utils/date";
-import styles from "../styles/Dashboard.module.scss";
+import * as api from "@/utils/api";
+import { socket } from "@/socket";
+import { rightArrow } from "@/assets";
+import { Header } from "@/components/Header";
+import { CurrencyDropdown } from "@/components/CurrencyDropdown";
+import { exchangeCurrencies } from "@/utils/api";
+import { Currency, getSign } from "@/utils/currency";
+import { useAuth } from "@/contexts/Auth";
+import { InputField } from "@/components/InputField";
+import { useToast } from "@/contexts/Toast";
+import { Rates } from "@/types/exchange";
+import { AddFundsForm } from "@/components/AddFundsForm";
+import { getInvertedRate } from "@/utils/exchange";
+import { TimeSeriesChart } from "@/components/TimeSeriesChart";
+import { toUtcDateString } from "@/utils/date";
+
+import styles from "./styles.module.scss";
 
 export default function Dashboard() {
     const toast = useToast();
@@ -97,18 +100,18 @@ export default function Dashboard() {
                     setTimeSeriesDates(Object.keys(usdToGbpTimeSeries))
                     setTimeSeriesValues(Object.values(usdToGbpTimeSeries))
                 }
-            } catch (error) {
-                setTimeout(fetchData, 3000)
+            } catch (error: any) {
+                console.log("erro fetching data: ", error.message)
             }
         };
 
-        fetchData();
+        console.log("test")
+        // fetchData();
+    } ,[])
 
+    useEffect(() => {
         socket.connect();
-        socket.on("exchange-rates:USD", data => {
-            console.log(data)
-            setUSDBasedRates(data)
-        });
+        socket.on("exchange-rates:USD", setUSDBasedRates);
 
         return () => {
             socket.off("exchange-rates:USD");
@@ -218,7 +221,7 @@ export default function Dashboard() {
                             onInputChange={setAmountToExchange}
                             inputTestId="currency-dropdown-input"
                         />
-                        <img
+                        <Image
                             src={rightArrow}
                             alt="arrow"
                             className={styles.arrowImg}

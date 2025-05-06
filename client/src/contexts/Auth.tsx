@@ -1,9 +1,10 @@
+"use client"
 import { createContext, useContext, useEffect, useState } from "react";
 
 import { User } from "../types/user";
-import { http } from "../utils/http";
+import { http } from "../lib/api";
 import * as api from "../utils/api";
-import { useNavigate } from "react-router";
+import { useRouter } from "next/navigation";
 
 interface AuthContextProps {
     user: User | null
@@ -24,7 +25,7 @@ export const useAuth = () => useContext(AuthContext)
 export const AuthProvider = ({ children }: AuthProviderProps) => {
     const [user, setUser] = useState<User | null>(null)
     const [isLoading, setIsLoading] = useState(true)
-    const navigate = useNavigate()
+    const router = useRouter()
 
     const login = async (email: string, password: string) => {
         const user = await api.login(email, password)
@@ -39,7 +40,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     const logout = async () => {
         setUser(null);
         await api.logout();
-        navigate("/login");
+        router.push("/login");
     }
 
     const updateUser = async () => {
@@ -54,8 +55,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
                 setUser(user)
             }
             catch (error: any) {
-                if ([403, 401].includes(error?.response?.status)) return
-                console.error(error)
+                if(![403, 401].includes(error?.response?.status)) {
+                    console.error(error)
+                }
             }
             finally {
                 setIsLoading(false)
@@ -63,14 +65,14 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         }
 
         refreshUser()
-    }, [navigate])
+    }, [])
 
     useEffect(() => {
         const responseIntercept = http.interceptors.response.use(
             response => response,
             async error => {
                 if ([403, 401].includes(error?.response?.status)) {
-                    navigate("/login")
+                    router.push("/login")
                 }
                 return Promise.reject(error)
             }
@@ -79,7 +81,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         return () => {
             http.interceptors.response.eject(responseIntercept)
         }
-    }, [navigate])
+    }, [router])
 
     if (isLoading) return <>Loading...</>
 
