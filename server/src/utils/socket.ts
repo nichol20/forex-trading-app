@@ -19,7 +19,7 @@ export const startBroadcasts = async (io: Server) => {
 
 const broadcastRate = async (io: Server, currency: Currency) => {
     try {
-        const data = await fetchExchangeRate(currency, getAllCurrencies());
+        // const data = await fetchExchangeRate(currency, getAllCurrencies());
 
         // io.emit(`exchange-rates:${currency}`, data.rates);
         // console.log(data.rates);

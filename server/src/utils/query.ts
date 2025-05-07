@@ -15,10 +15,10 @@ export enum SortOrder {
 }
 
 export const sortByToExchangeKeyMap: Record<SortBy, SortableField> = {
-    [SortBy.DATE]: "exchangedAt",
-    [SortBy.FROM]: "fromCurrency",
-    [SortBy.TO]: "toCurrency",
-    [SortBy.AMOUNT]: "fromAmount",
-    [SortBy.RATE]: "exchangeRate",
-    [SortBy.OUTPUT]: "toAmount",
+    [SortBy.DATE]: "exchanged_at",
+    [SortBy.FROM]: "from_currency",
+    [SortBy.TO]: "to_currency",
+    [SortBy.AMOUNT]: "from_amount",
+    [SortBy.RATE]: "exchange_rate",
+    [SortBy.OUTPUT]: "to_amount",
 };

@@ -12,4 +12,4 @@ export interface User {
     createdAt: string;
 }
 
-export type UserDocument = Omit<User, "id"> & { password: string };
+export type UserRow = Omit<User, "createdAt"> & { created_at: string, password: string };

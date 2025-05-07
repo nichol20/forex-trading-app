@@ -1,20 +1,32 @@
-import { Document, MongoClient } from "mongodb";
+import { Pool, PoolClient, QueryConfig, QueryResultRow } from 'pg'
+import { getEnv } from './env';
 
-const dbname = process.env.MONGO_DBNAME || "forex";
-let client: MongoClient
+let pool: Pool
 
 export default {
     connectToServer: async () => {
-        const uri = process.env.MONGO_URI!;
-        client = new MongoClient(uri);
-        await client.connect();
-        console.log("Connected successfully to MongoDB");
+        pool = new Pool({
+            connectionString: getEnv().POSTGRES_URI
+        });
+
+        await pool.connect();
+
+        console.log("Connected successfully to Postgres");
     },
 
-    getCollection: <T extends Document>(collection: string) =>
-        client.db(dbname).collection<T>(collection),
+    query: async <T extends QueryResultRow>(query: QueryConfig) => {
+        const start = Date.now();
+        const response = await pool.query<T>(query);
+        const duration = Date.now() - start;
+    
+        console.log('executed query', {text: query.text, duration, rows: response.rowCount });
+    
+        return response;
+    },
 
-    close: () => client.close(),
+    connectAClient: () => pool.connect(),
 
-    dropDB: () => client.db(dbname).dropDatabase(),
+    release: (client: PoolClient) => client.release(),
+
+    close: () => pool.end(),
 };

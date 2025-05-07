@@ -1,15 +1,14 @@
 import { Request, Response } from "express";
-import { ObjectId } from "mongodb";
 
-import { UserDocument, Wallet } from "../../types/user";
-import db from "../../config/db";
 import { BadRequestError, InternalServerError } from "../../helpers/apiError";
 import { fetchExchangeRate } from "../../utils/exchangeRateApi";
 import { exchangeCurrencySchema } from "../../validators/exchange";
-import { ExchangeDocument } from "../../types/exchange";
 import { getAllCurrencies } from "../../utils/currency";
+import { findUserById } from "../../repositories/userRepository";
+import { Exchange } from "../../types/exchange";
+import { exchange } from "../../repositories/exchangeRepository";
 
-export const exchangeCurrency = async (req: Request, res: Response<Wallet>) => {
+export const exchangeCurrency = async (req: Request, res: Response<Exchange>) => {
     const parsed = exchangeCurrencySchema.safeParse(req.body);
     if (!parsed.success) {
         throw new BadRequestError(parsed.error.errors[0].message);
@@ -21,8 +20,7 @@ export const exchangeCurrency = async (req: Request, res: Response<Wallet>) => {
     }
 
     const userId = req.userId;
-    const userCollection = db.getCollection<UserDocument>("users");
-    const user = await userCollection.findOne({ _id: new ObjectId(userId) });
+    const user = await findUserById(userId!);
 
     if (!user) {
         console.error("error finding authenticated user");
@@ -35,27 +33,24 @@ export const exchangeCurrency = async (req: Request, res: Response<Wallet>) => {
 
     const data = await fetchExchangeRate(fromCurrency, getAllCurrencies());
     const currentRate = data.rates[toCurrency];
-    const convertedCurrency = amount * currentRate;
+    
+    const exchangeRow = await exchange({
+        user_id: user.id,
+        from_currency: fromCurrency,
+        to_currency: toCurrency,
+        from_amount: amount,
+        exchange_rate: currentRate,
+    })
 
-    user.wallet[fromCurrency] -= amount;
-    user.wallet[toCurrency] += convertedCurrency;
-
-    await userCollection.updateOne(
-        { _id: new ObjectId(userId) },
-        { $set: { wallet: user.wallet } }
-    );
-
-    const exchangeColection = db.getCollection<ExchangeDocument>("exchanges");
-    await exchangeColection.insertOne({
-        exchangedAt: new Date().toISOString(),
-        exchangeRate: currentRate,
-        fromAmount: amount,
-        toAmount: convertedCurrency,
-        fromCurrency: fromCurrency,
-        toCurrency: toCurrency,
-        userId: userId!,
+    res.status(200).json({
+        id: exchangeRow.id,
+        userId: exchangeRow.user_id,
+        fromCurrency,
+        toCurrency,
+        fromAmount: exchangeRow.from_amount,
+        toAmount: exchangeRow.to_amount,
+        exchangeRate: exchangeRow.exchange_rate,
+        exchangedAt: exchangeRow.exchanged_at,
     });
-
-    res.status(200).json(user.wallet);
     return
 };

@@ -7,12 +7,12 @@ const envSchema = z.object({
     FRONTEND_URL: z
         .string({ required_error: "FRONTEND_URL is required" })
         .nonempty("FRONTEND_URL is required"),
-    MONGO_URI: z
-        .string({ required_error: "MONGO_URI is required" })
-        .nonempty("MONGO_URI is required"),
+    POSTGRES_URI: z
+        .string({ required_error: "POSTGRES_URI is required" })
+        .nonempty("POSTGRES_URI is required"),
     EXCHANGERATE_API_KEY: z
-        .string({ required_error: "MONGO_URI is required" })
-        .nonempty("MONGO_URI is required"),
+        .string({ required_error: "EXCHANGERATE_API_KEY is required" })
+        .nonempty("EXCHANGERATE_API_KEY is required"),
 });
 
 export const checkEnv = () => {
