@@ -16,13 +16,24 @@ export const getHistory = async (req: Request, res: Response) => {
 
     const { page, limit, start, end } = parsed.data;
 
-    const { history, totalItems } = await getExchanges(userId!, {...parsed.data}, {
+    const { rows, totalItems } = await getExchanges(userId!, {...parsed.data}, {
         ...parsed.data, 
         start: start?.toISOString(), 
         end: end?.toISOString()
     })
 
     const totalPages = Math.ceil(totalItems / limit);
+
+    const history = rows.map(row => ({
+        id: row.id,
+        userId: row.user_id,
+        exchangedAt: row.exchanged_at,
+        fromCurrency: row.from_currency,
+        toCurrency: row.to_currency,
+        exchangeRate: parseFloat(row.exchange_rate),
+        fromAmount: parseFloat(row.from_amount),
+        toAmount: parseFloat(row.to_amount),
+    }));
 
     res.status(200).json({
         history,

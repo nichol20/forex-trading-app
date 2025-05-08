@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 
+import { useT } from "@/i18n/client";
 import * as api from "@/utils/api";
 import { socket } from "@/socket";
 import { rightArrow } from "@/assets";
@@ -21,6 +22,7 @@ import { toUtcDateString } from "@/utils/date";
 import styles from "./styles.module.scss";
 
 export default function Dashboard() {
+    const { t } = useT("dashboard");
     const toast = useToast();
     const { user, updateUser } = useAuth();
     const chartParentRef = useRef<HTMLDivElement>(null);
@@ -105,7 +107,6 @@ export default function Dashboard() {
             }
         };
 
-        console.log("test")
         // fetchData();
     } ,[])
 
@@ -149,26 +150,26 @@ export default function Dashboard() {
                         <h2 className={styles.amount}>
                             {getSign(Currency.USD)}{user ? user.wallet.USD.toFixed(2) : "0.00"}
                         </h2>
-                        <span className={styles.type}>USD wallet</span>
+                        <span className={styles.type}>{t("usd-wallet-title")}</span>
                         <button
                             className={styles.addFundsBtn}
                             onClick={() => handleAddFundsButtonClick(Currency.USD)}
                             data-testid="add-funds-btn-usd"
                         >
-                            Add Funds
+                            {t("button.add-funds")}
                         </button>
                     </div>
                     <div className={styles.wallet}>
                         <h2 className={styles.amount}>
                             {getSign(Currency.GBP)}{user ? user.wallet.GBP.toFixed(2) : "0.00"}
                         </h2>
-                        <span className={styles.type}>GBP wallet</span>
+                        <span className={styles.type}>{t("gbp-wallet-title")}</span>
                         <button
                             className={styles.addFundsBtn}
                             onClick={() => handleAddFundsButtonClick(Currency.GBP)}
                         >
-                            Add Funds
-                        </button>
+                            {t("button.add-funds")}
+                            </button>
                     </div>
                     {showAddFundsForm && (
                         <AddFundsForm
@@ -185,7 +186,7 @@ export default function Dashboard() {
                                 <div></div>
                             </div>
                         </div>
-                        <h3>Live Exchange Rate</h3>
+                        <h3>{t("live-exchange-rate-section-title")}</h3>
                     </div>
 
                     <div className={styles.chartContainer} ref={chartParentRef}>
@@ -205,7 +206,7 @@ export default function Dashboard() {
                 </section>
 
                 <section className={styles.exchangeCurrencyContainer}>
-                    <h3>Exchange Currency</h3>
+                    <h3>{t("exchange-currency-section-title")}</h3>
 
                     <form
                         id="myform"
@@ -241,9 +242,9 @@ export default function Dashboard() {
                     </form>
 
                     <button form="myform" type="submit" className={styles.exchangeBtn}>
-                        Exchange
+                        {t("exchange-btn")}
                     </button>
-                    <a href="/trade-history">See history</a>
+                    <a href="/trade-history">{t("see-history-link")}</a>
                 </section>
             </div>
         </div>

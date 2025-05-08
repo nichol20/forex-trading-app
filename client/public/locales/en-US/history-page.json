@@ -1,0 +1,11 @@
+{
+    "title": "Trade History",
+    "columns": {
+        "date": "Date",
+        "from": "From",
+        "to": "To",
+        "amount": "Amount",
+        "rate": "Rate",
+        "output": "Output"
+    }
+}

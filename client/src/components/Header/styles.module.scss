@@ -21,6 +21,11 @@
     }
 }
 
+.rightSide {
+    @include display-flex();
+    gap: 5px;
+}
+
 .logoutBtn {
     > img {
         @include black-filter();

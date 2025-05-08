@@ -1,0 +1,9 @@
+{
+    "button": {
+        "add-funds": "Add Funds"
+    },
+    "error": {
+        "unknown": "Something went wrong!"
+    },
+    "language-dropdown-title": "Change language"
+}

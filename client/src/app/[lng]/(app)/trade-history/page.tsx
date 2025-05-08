@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
+import { useT } from "@/i18n/client";
 
 import { Header } from "@/components/Header";
 import { Exchange } from "@/types/exchange";
@@ -11,19 +12,16 @@ import { isValidSortBy, SortBy } from "@/utils/params";
 import { funnelIcon } from "@/assets";
 import { Filters } from "@/components/Filters";
 import { Currency } from "@/utils/currency";
+
 import styles from "./styles.module.scss";
 
-const columns: string[] = [
-    "Date",
-    "From",
-    "To",
-    "Amount",
-    "Rate",
-    "Output"
-]
-
 export default function TradeHistory() {
+    const { t } = useT("history-page");
     const router = useRouter();
+    const columns: string[] = [
+        t("columns.date"), t("columns.from"), t("columns.to"),
+        t("columns.amount"), t("columns.rate"), t("columns.output")
+    ]
     const searchParams = useSearchParams();
     const pathname = usePathname();
 
@@ -82,6 +80,7 @@ export default function TradeHistory() {
                         to: to ? to as Currency : null
                     }
                 });
+
                 setTotalPages(res.totalPages)
                 setHistory(res.history);
             } catch (error: any) {
@@ -106,7 +105,7 @@ export default function TradeHistory() {
                     <Filters isOpen={showFilters} close={() => setShowFilters(false)} />
                 </section>
                 <section className={`${styles.tableContainer} ${styles.section}`}>
-                    <h2 className={styles.title}>Trade History</h2>
+                    <h2 className={styles.title}>{t("title")}</h2>
                     <div className={styles.table}>
                         <div className={styles.header}>
                             {columns.map(col => (

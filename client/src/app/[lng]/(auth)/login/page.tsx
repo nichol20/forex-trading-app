@@ -1,14 +1,17 @@
 "use client"
 import { useState } from "react"
 
-import { useAuth } from "@/contexts/Auth"
-import { ErrorMessage } from "@/components/ErrorMessage"
-import { InputField } from "@/components/InputField"
-import styles from "./styles.module.scss"
+import { useAuth } from "@/contexts/Auth";
+import { ErrorMessage } from "@/components/ErrorMessage";
+import { InputField } from "@/components/InputField";
+import { useT } from "@/i18n/client";
+
+import styles from "./styles.module.scss";
 
 export default function LoginPage() {
+    const { t } = useT("login-page");
     const [invalidCredentials, setInvalidCredentials] = useState(false)
-    const { login, user } = useAuth()
+    const { login } = useAuth()
 
     const resetErrors = () => {
         setInvalidCredentials(false)
@@ -40,19 +43,19 @@ export default function LoginPage() {
         <div className={styles.loginPage}>
             <div className={styles.container}>
                 <form className={styles.loginForm} onSubmit={handleSubmit}>
-                    <h1 className={styles.title}>Login</h1>
+                    <h1 className={styles.title}>{t("title")}</h1>
                     <InputField
-                        title='E-mail'
+                        title={t("email-field-name")}
                         name="email"
                         type='email'
                         inputId='email'
                         testId="email"
-                        placeholder='Type your e-mail'
+                        placeholder={t("email-field-placeholder")}
                         required
 
                     />
                     <InputField
-                        title="Password"
+                        title={t("password-field-name")}
                         name='password'
                         type="password"
                         inputId='password'
@@ -63,10 +66,10 @@ export default function LoginPage() {
                         required
                     />
                     {invalidCredentials && <ErrorMessage message='invalid email or password' />}
-                    <button type='submit' className={styles.submitBtn}>Login</button>
+                    <button type='submit' className={styles.submitBtn}>{t("login-btn")}</button>
                     <span className={styles.signupLinkBox}>
-                        {"Don't have an account? "}
-                        <a href='/signup' className={styles.link}>sign up</a>
+                        {t("account-question")}
+                        <a href='/signup' className={styles.link}>{t("signup-link")}</a>
                     </span>
                 </form>
             </div>

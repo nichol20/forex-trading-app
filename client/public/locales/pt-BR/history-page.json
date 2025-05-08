@@ -1,0 +1,12 @@
+{
+    "title": "Histórico de Negociações",
+    "columns": {
+      "date": "Data",
+      "from": "De",
+      "to": "Para",
+      "amount": "Quantidade",
+      "rate": "Taxa",
+      "output": "Saída"
+    }
+  }
+  

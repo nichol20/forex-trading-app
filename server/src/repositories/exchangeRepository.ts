@@ -137,16 +137,6 @@ export const getExchanges = async (
     ])
 
     const totalItems = parseInt(countRows[0].count);
-    const history = dataRows.map(row => ({
-        id: row.id,
-        userId: row.user_id,
-        exchangedAt: row.exchanged_at,
-        fromCurrency: row.from_currency,
-        toCurrency: row.to_currency,
-        exchangeRate: row.exchange_rate,
-        fromAmount: row.from_amount,
-        toAmount: row.to_amount,
-    }));
 
-    return { totalItems, history };
+    return { totalItems, rows: dataRows };
 } 

@@ -1,6 +1,7 @@
 import { ChangeEvent, useEffect, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
+import { useT } from "@/i18n/client";
 import { InputField } from "@/components/InputField";
 import { CurrencyDropdown } from "@/components/CurrencyDropdown";
 import { DoubleSlider } from "@/components/DoubleSlider";
@@ -29,6 +30,7 @@ const INITIAL_FILTERS: IFilters = {
 }
 
 export const FiltersDesktop = ({ isOpen }: FiltersDesktopProps) => {
+    const { t } = useT("filters");
     const router = useRouter();
     const searchParams = useSearchParams();
     const pathname = usePathname();
@@ -127,7 +129,7 @@ export const FiltersDesktop = ({ isOpen }: FiltersDesktopProps) => {
             <div className={styles.sections}>
                 <div className={styles.fromAndToSection}>
                     <div className={styles.currencyBox}>
-                        <span className={styles.title}>From</span>
+                        <span className={styles.title}>{t("title.from")}</span>
                         <InputField
                             type="date"
                             onChange={e => handleDateInput(e, "start")}
@@ -141,7 +143,7 @@ export const FiltersDesktop = ({ isOpen }: FiltersDesktopProps) => {
                         />
                     </div>
                     <div className={styles.currencyBox}>
-                        <span className={styles.title}>To</span>
+                        <span className={styles.title}>{t("title.to")}</span>
                         <InputField
                             type="date"
                             onChange={e => handleDateInput(e, "end")}
@@ -157,7 +159,7 @@ export const FiltersDesktop = ({ isOpen }: FiltersDesktopProps) => {
                 </div>
 
                 <div className={styles.amountSection}>
-                    <span className={styles.title}>Amount / Output / Rate</span>
+                    <span className={styles.title}>{t("title.amount-output-rate")}</span>
                     <DoubleSlider
                         max={1000}
                         min={0}
@@ -198,8 +200,8 @@ export const FiltersDesktop = ({ isOpen }: FiltersDesktopProps) => {
             </div>
 
             <div className={styles.actions}>
-                <button className={styles.applyBtn} onClick={applySettings}>Apply filters</button>
-                <button className={styles.clearBtn} onClick={() => clearAll()}>Clear all</button>
+                <button className={styles.applyBtn} onClick={applySettings}>{t("apply-filters-btn")}</button>
+                <button className={styles.clearBtn} onClick={() => clearAll()}>{t("clear-all-btn")}</button>
             </div>
 
         </div>
@@ -212,11 +214,12 @@ interface FiltersMobileProps {
 }
 
 const FiltersMobile = ({ close, isOpen }: FiltersMobileProps) => {
+    const { t } = useT("filters");
     if(!isOpen) return null
 
     return (
         <Modal close={close}>
-            <span className={styles.modalTitle}>Filters</span>
+            <span className={styles.modalTitle}>{t("title.modal")}</span>
             <FiltersDesktop isOpen={true} />
         </Modal>
     )

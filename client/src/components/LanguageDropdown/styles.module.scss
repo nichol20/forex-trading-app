@@ -1,0 +1,59 @@
+@use '../../styles/' as *;
+
+.container {
+    position: relative;
+}
+
+.title {
+    padding: 8px 16px;
+    line-height: 14px;
+    font-size: 14px;
+    text-wrap: nowrap;
+    cursor: pointer;
+    transition: 150ms all ease-in-out; 
+    border-radius: 2px;
+
+    &:hover {
+        background-color: $colors-button-bg-primary;
+        color: $colors-button-text-primary;
+
+        &::after {
+            @include triangle(8px, 5px, $colors-button-text-primary);
+
+        }
+    }
+
+    &::after {
+        @include triangle(8px, 5px, $colors-text-primary);
+        content: "";
+        display: inline-block;
+        margin-left: 0.255em;
+        vertical-align: 0.255em;
+        transition: 150ms border-color ease-in-out; 
+        transform: rotate(180deg);
+    }
+}
+
+.list {
+    @include light-box-shadow();
+    position: absolute;
+    top: 30px;
+    right: 0px;
+    list-style: none;
+    background-color: $colors-bg-secondary;
+    min-width: 100%;
+    border-radius: 2px;
+}
+
+.item {
+    padding: 8px 18px;
+    font-size: 13px;
+    text-wrap: nowrap;
+    cursor: pointer;
+    transition: 150ms all ease-in-out; 
+
+    &:hover {
+        background-color: $colors-button-bg-primary;
+        color: $colors-button-text-primary;
+    }
+}

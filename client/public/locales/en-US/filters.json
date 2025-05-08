@@ -1,0 +1,10 @@
+{
+    "title": {
+        "modal": "Filters",
+        "from": "from",
+        "to": "to",
+        "amount-output-rate": "Amount / Output / Rate"
+    },
+    "apply-filters-btn": "Apply filters",
+    "clear-all-btn": "Clear all"
+}

@@ -1,0 +1,9 @@
+{
+    "title": "Login",
+    "email-field-name": "E-mail",
+    "email-field-placeholder": "Type your e-mail",
+    "password-field-name": "Password",
+    "login-btn": "Login",
+    "account-question": "Don't have an account? ",
+    "signup-link": "sign up"
+}

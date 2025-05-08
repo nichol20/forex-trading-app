@@ -1,0 +1,26 @@
+{
+    "title": "Sign Up",
+    "field": {
+        "name": {
+            "name": "Name",
+            "placeholder": "Type your name"
+        },
+        "email": {
+            "name": "E-mail",
+            "placeholder": "Type your email",
+            "already-exists-error": "This email already exists!",
+            "invalid-format-error": "Invalid email format."
+        },
+        "password": {
+            "name": "Password",
+            "password-mismatch-error": "Passwords must be the same",
+            "weak-password-error": "Password must be at least 6 characters"
+        },
+        "confirmation-password": {
+            "name": "Confirm password"
+        }
+    },
+    "signup-btn": "Sign Up",
+    "account-question": "Already have an account? ",
+    "login-link": "login"
+}

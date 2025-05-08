@@ -3,9 +3,12 @@ import { useState } from "react";
 
 import { useAuth } from "@/contexts/Auth";
 import { InputField } from "@/components/InputField";
+import { useT } from "@/i18n/client";
+
 import styles from "./styles.module.scss";
 
 export default function SignupPage() {
+    const { t } = useT("signup-page")
     const { signup } = useAuth();
     const [formErrors, setFormErrors] = useState({
         passwordMismatch: false,
@@ -55,17 +58,17 @@ export default function SignupPage() {
         const { passwordMismatch, emailExists, weakPassword, invalidEmailFormat } = formErrors;
 
         if (passwordMismatch) {
-            if (inputName === "password") return "Passwords must be the same";
+            if (inputName === "password") return t("field.password.password-mismatch-error");
             if (inputName === "confirmationPassword") return " ";
         }
         if (weakPassword) {
             if (inputName === "password") {
-                return "Password must be at least 6 characters";
+                return t("field.password.weak-password-error");
             }
             if (inputName === "confirmationPassword") return " ";
         }
-        if (emailExists && inputName === "email") return "This email already exists!";
-        if (invalidEmailFormat && inputName === "email") return "Invalid email format.";
+        if (emailExists && inputName === "email") return t("field.email.already-exists-error");
+        if (invalidEmailFormat && inputName === "email") return t("field.email.invalid-format-error");
 
         return "";
     }
@@ -83,29 +86,29 @@ export default function SignupPage() {
         <div className={styles.signupPage}>
             <div className={styles.container}>
                 <form className={styles.signupForm} onSubmit={handleSubmit}>
-                    <h1 className={styles.title}>Sign Up</h1>
+                    <h1 className={styles.title}>{t("title")}</h1>
                     <InputField
                         inputId='name'
                         testId='name'
-                        title='Name'
+                        title={t("field.name.name")}
                         name="name"
                         type='text'
-                        placeholder='Type your name'
+                        placeholder={t("field.name.placeholder")}
                         required
                     />
                     <InputField
                         inputId='email'
                         testId='email'
-                        title='E-mail'
+                        title={t("field.email.name")}
                         name="email"
                         type='email'
-                        placeholder='Type your e-mail'
+                        placeholder={t("field.email.placeholder")}
                         errorMessage={getErrorMessage("email")}
                         onChange={() => resetError("email")}
                         required
                     />
                     <InputField
-                        title="Password"
+                        title={t("field.password.name")}
                         type="password"
                         inputId='password'
                         testId='password'
@@ -119,7 +122,7 @@ export default function SignupPage() {
                     <InputField
                         inputId='confirmationPassword'
                         testId='confirmationPassword'
-                        title='Confirm password'
+                        title={t("field.confirmation-password.name")}
                         name="confirmationPassword"
                         type='password'
                         placeholder='••••••••'
@@ -127,10 +130,10 @@ export default function SignupPage() {
                         errorMessage={getErrorMessage("confirmationPassword")}
                         onChange={() => resetError("confirmationPassword")}
                     />
-                    <button type='submit' className={styles.submitBtn}>Sign up</button>
+                    <button type='submit' className={styles.submitBtn}>{t("signup-btn")}</button>
                     <span className={styles.signupLinkBox}>
-                        {"Already have an account? "}
-                        <a href='/login' className={styles.link}>login</a>
+                        {t("account-question")}
+                        <a href='/login' className={styles.link}>{t("login-link")}</a>
                     </span>
                 </form>
             </div>
