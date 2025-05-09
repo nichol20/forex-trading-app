@@ -14,7 +14,7 @@ import { userRoutes } from "./routes/user";
 import { startWebSocketServer } from "./config/socket";
 import { startBroadcasts } from "./utils/socket";
 import { connectToRedis } from "./config/redis";
-import { startExchangeQueue } from "./config/queue";
+import { ExchangeQueue, startExchangeQueue } from "./config/queue";
 
 const app = express();
 const server = http.createServer(app);
@@ -60,5 +60,6 @@ const main = async () => {
         process.exit();
     }
 };
+
 
 main();

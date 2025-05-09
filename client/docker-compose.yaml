@@ -1,0 +1,10 @@
+services:
+  client:
+    build:
+      context: .
+      args:
+        NODE_VERSION: ${NODE_VERSION}
+    volumes:
+      - .:/app
+    ports:
+      - 3000:3000

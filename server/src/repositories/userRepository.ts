@@ -34,6 +34,7 @@ export const createUser = async (newUser: Omit<UserRow, "id" | "created_at">): P
         USD: 0,
         GBP: 0
     }
+    console.log([name, email, password, wallet])
     const rows = await runQuery<UserRow>(createUserQuery, [name, email, password, wallet]);
     return rows[0];
 }

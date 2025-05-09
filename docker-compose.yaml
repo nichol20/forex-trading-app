@@ -1,0 +1,3 @@
+include:
+  - ./client/docker-compose.yaml
+  - ./server/docker-compose.yaml

@@ -30,6 +30,10 @@ export class Queue<T extends any> {
             await new Promise(r => setTimeout(r, 1000));
         }
     }
+
+    async shutdown() {
+        await redisClient.del(this.queueName)
+    }
 }
 
 interface ExchangePayload {

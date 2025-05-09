@@ -3,7 +3,6 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 import { BadRequestError, ConflictError } from "../../helpers/apiError";
-import db from "../../config/db";
 import { getEnv } from "../../config/env";
 import { User } from "../../types/user";
 import { signupSchema } from "../../validators/auth";
