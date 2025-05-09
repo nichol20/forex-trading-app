@@ -7,6 +7,7 @@ import { getAllCurrencies } from "../../utils/currency";
 import { findUserById } from "../../repositories/userRepository";
 import { Exchange } from "../../types/exchange";
 import { exchange } from "../../repositories/exchangeRepository";
+import { ExchangeQueue } from "../../config/queue";
 
 export const exchangeCurrency = async (req: Request, res: Response<Exchange>) => {
     const parsed = exchangeCurrencySchema.safeParse(req.body);
@@ -31,26 +32,31 @@ export const exchangeCurrency = async (req: Request, res: Response<Exchange>) =>
         throw new BadRequestError("Insufficient amount for exchange");
     }
 
-    const data = await fetchExchangeRate(fromCurrency, getAllCurrencies());
-    const currentRate = data.rates[toCurrency];
-    
-    const exchangeRow = await exchange({
-        user_id: user.id,
-        from_currency: fromCurrency,
-        to_currency: toCurrency,
-        from_amount: amount,
-        exchange_rate: currentRate,
-    })
+    await ExchangeQueue.enqueue(user.id, parsed.data)
 
-    res.status(200).json({
-        id: exchangeRow.id,
-        userId: exchangeRow.user_id,
-        fromCurrency,
-        toCurrency,
-        fromAmount: exchangeRow.from_amount,
-        toAmount: exchangeRow.to_amount,
-        exchangeRate: exchangeRow.exchange_rate,
-        exchangedAt: exchangeRow.exchanged_at,
-    });
+    await ExchangeQueue.process(user.id, async payload => {
+        await new Promise(r => setTimeout(r, 10000)); // heavy process
+        const data = await fetchExchangeRate(fromCurrency, getAllCurrencies());
+        const currentRate = data.rates[toCurrency];
+        
+        const exchangeRow = await exchange({
+            user_id: user.id,
+            from_currency: payload.fromCurrency,
+            to_currency: payload.toCurrency,
+            from_amount: payload.amount,
+            exchange_rate: currentRate,
+        })
+
+        res.status(200).json({
+            id: exchangeRow.id,
+            userId: exchangeRow.user_id,
+            fromCurrency: payload.fromCurrency,
+            toCurrency: payload.toCurrency,
+            fromAmount: exchangeRow.from_amount,
+            toAmount: exchangeRow.to_amount,
+            exchangeRate: exchangeRow.exchange_rate,
+            exchangedAt: exchangeRow.exchanged_at,
+        });
+    })
     return
 };
