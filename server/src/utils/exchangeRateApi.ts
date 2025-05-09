@@ -7,7 +7,7 @@ import {
     Rates,
     TimeSeriesReponse,
 } from "../types/exchangeRateApi";
-import { formatDate } from "./date";
+import { toUtcDateString } from "./date";
 
 const exchangeApiUrl = `https://api.beta.fastforex.io`;
 
@@ -45,8 +45,8 @@ export const fetchTimeSeries = async (
     end: Date
 ) => {
     // "start" and "end" format: YYYY-MM-DD
-    const startStr = formatDate(start);
-    const endStr = formatDate(end);
+    const startStr = toUtcDateString(start);
+    const endStr = toUtcDateString(end);
 
     // Historical data limited to 14 days during trial
     const searchParams = new URLSearchParams({
