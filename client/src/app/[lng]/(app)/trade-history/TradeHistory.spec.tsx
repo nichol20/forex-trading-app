@@ -1,90 +1,144 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react"
-import TradeHistory from "../pages/TradeHistory"
-import { getExchangeHistory } from "../utils/api"
-import { Exchange } from "../types/exchange"
-import { MemoryRouter, Route, Routes } from "react-router"
-import { Currency } from "../utils/currency"
+import React from "react";
+import { render, screen, waitFor, fireEvent } from "@testing-library/react";
+import TradeHistory from "./page";
+import { getExchangeHistory } from "@/utils/api";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
+import { useT } from "@/i18n/client";
 
-const mockHistory: Exchange[] = [
+jest.mock("next/navigation", () => ({
+  useRouter: jest.fn(),
+  useSearchParams: jest.fn(),
+  usePathname: jest.fn(),
+}));
+
+jest.mock("@/utils/api", () => ({
+  getExchangeHistory: jest.fn(),
+}));
+
+jest.mock("@/i18n/client", () => ({
+  useT: jest.fn(),
+}));
+
+jest.mock("@/components/Header", () => ({ Header: () => <div data-testid="header" /> }));
+
+jest.mock("@/components/Filters", () => ({ Filters: ({ isOpen }: any) => (
+    <div data-testid="filters">{isOpen ? "open" : "closed"}</div>
+)}));
+
+const mockHistory = [
     {
         id: "1",
-        userId: "1",
-        exchangedAt: "2023-12-01T10:00:00Z",
+        exchangedAt: "2025-05-07T12:00:00Z",
         fromCurrency: "USD",
         toCurrency: "GBP",
         fromAmount: 100,
-        exchangeRate: 0.85,
-        toAmount: 85,
+        exchangeRate: 0.9,
+        toAmount: 90,
     },
     {
         id: "2",
-        userId: "2",
-        exchangedAt: "2023-11-15T10:00:00Z",
+        exchangedAt: "2025-05-06T08:30:00Z",
         fromCurrency: "GBP",
         toCurrency: "USD",
-        fromAmount: 200,
-        exchangeRate: 1.2,
-        toAmount: 30100,
+        fromAmount: 100,
+        exchangeRate: 1.3,
+        toAmount: 130,
     },
 ]
 
-jest.mock("../utils/api", () => ({
-    getExchangeHistory: jest.fn()
-}))
+describe("<TradeHistory />", () => {
+    const mockReplace = jest.fn();
+    const fakeSearchParams = new URLSearchParams({
+        page: "2",
+        limit: "5",
+        sortBy: "date",
+        sortOrder: "asc",
+    });
 
-describe("TradeHistory", () => {
-    it("fetches and displays trade history", async () => {
+    beforeEach(() => {
+        (useT as jest.Mock).mockReturnValue({
+        t: (key: string) => {
+            const map: Record<string, string> = {
+                "columns.date": "Date",
+                "columns.from": "From",
+                "columns.to": "To",
+                "columns.amount": "Amount",
+                "columns.rate": "Rate",
+                "columns.output": "Output",
+                "title": "My History",
+            };
+            return map[key] ?? key;
+        },
+        });
+
+        // mock router + params
+        (useRouter as jest.Mock).mockReturnValue({ replace: mockReplace });
+        (useSearchParams as jest.Mock).mockReturnValue(fakeSearchParams);
+        (usePathname as jest.Mock).mockReturnValue("/history");
+    });
+
+    it("renders headers and fetches + displays rows", async () => {
         (getExchangeHistory as jest.Mock).mockResolvedValue({
-            history: mockHistory
-        })
-        render(<TradeHistory />, { wrapper: MemoryRouter })
+            totalPages: 3,
+            history: mockHistory,
+        });
 
-        for (const exchange of mockHistory) {
-            expect(await screen.findAllByText(exchange.fromCurrency)).not.toHaveLength(0);
-            expect(await screen.findAllByText(exchange.toCurrency)).not.toHaveLength(0);
-            expect(await screen.findAllByText(
-                new Date(exchange.exchangedAt).toLocaleDateString()
-            )).not.toHaveLength(0);
-        }
-    })
+        render(<TradeHistory />);
 
-    it("handles sort column click and updates sort direction", async () => {
-        render(<TradeHistory />, { wrapper: MemoryRouter })
+        expect(screen.getByTestId("header")).toBeInTheDocument();
 
-        const dateHeader = screen.getByText("Date");
-        fireEvent.click(dateHeader);
+        const rowItems = await screen.findAllByText(/USD/);
+        expect(rowItems).toHaveLength(2);
+    });
+
+    it("toggles filter panel", async () => {
+        (getExchangeHistory as jest.Mock).mockResolvedValue({ totalPages: 0, history: [] });
+
+        render(<TradeHistory />);
+
+        const btn = await screen.findByRole("button", { name: /Filter/i });
+        expect(screen.getByTestId("filters")).toHaveTextContent("closed");
+
+        fireEvent.click(btn);
+        expect(screen.getByTestId("filters")).toHaveTextContent("open");
+
+        fireEvent.click(btn);
+        expect(screen.getByTestId("filters")).toHaveTextContent("closed");
+    });
+
+    it("handles API 400 error by showing no rows", async () => {
+        const err: any = new Error("Bad Request");
+        err.response = { status: 400 };
+        (getExchangeHistory as jest.Mock).mockRejectedValue(err);
+
+        render(<TradeHistory />);
 
         await waitFor(() => {
-            expect(getExchangeHistory).toHaveBeenLastCalledWith(
-                expect.objectContaining({
-                    sortBy: "date"
-                })
-            );
+            const rowsContainer = screen.getByTestId("rows");
+            expect(rowsContainer.children).toHaveLength(0);
         });
     });
 
-    it("calls API with expected filters and query params", async () => {
-        render(
-            <MemoryRouter initialEntries={["/trade-history?page=1&limit=5&sortBy=amount&sortOrder=desc&from=USD&to=GBP"]}>
-                <Routes>
-                    <Route path="/trade-history" element={<TradeHistory />} />
-                </Routes>
-            </MemoryRouter>
-        )
+    it("changes sort order when clicking the same column", async () => {
+        (getExchangeHistory as jest.Mock).mockResolvedValue({ totalPages: 1, history: [] });
+        render(<TradeHistory />);
 
-        await waitFor(() => {
-            expect(getExchangeHistory).toHaveBeenCalledWith(
-                expect.objectContaining({
-                    page: 1,
-                    limit: 5,
-                    sortBy: "amount",
-                    sortOrder: "desc",
-                    filters: expect.objectContaining({
-                        from: Currency.USD,
-                        to: Currency.GBP
-                    })
-                })
-            );
-        });
-    })
-})
+        const dateHeader = await screen.findByText("Date");
+        fireEvent.click(dateHeader);
+
+        expect(mockReplace).toHaveBeenCalledWith(
+            expect.stringContaining("sortOrder=desc")
+        );
+    });
+
+    it("changes sort-by when clicking a different column", async () => {
+        (getExchangeHistory as jest.Mock).mockResolvedValue({ totalPages: 1, history: [] });
+        render(<TradeHistory />);
+
+        const fromHeader = await screen.findByText("From");
+        fireEvent.click(fromHeader);
+        expect(mockReplace).toHaveBeenCalledWith(
+            expect.stringContaining("sortBy=from")
+        );
+    });
+});
