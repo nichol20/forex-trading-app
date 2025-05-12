@@ -10,6 +10,11 @@ export interface User {
     email: string;
     wallet: Wallet;
     createdAt: string;
+    hubspotContactId: string;
 }
 
-export type UserRow = Omit<User, "createdAt"> & { created_at: string, password: string };
+export type UserRow = Omit<User, "createdAt" | "hubspotContactId"> & {
+    created_at: string;
+    hubspot_contact_id: string;
+    password: string;
+};

@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS users (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     name VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL UNIQUE CHECK (email ~* '^.+@.+\..+$'),
+    hubspot_contact_id TEXT NOT NULL UNIQUE,
     password TEXT NOT NULL,
     wallet JSONB DEFAULT '{}',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP

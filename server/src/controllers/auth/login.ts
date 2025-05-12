@@ -34,11 +34,12 @@ export const login = async (req: Request, res: Response<User>) => {
         secure: true,
     });
 
-    const { created_at, password: _, ...partialUser } = user;
+    const { password: _, created_at, hubspot_contact_id, ...partialUser } = user;
 
     res.status(200).json({
         ...partialUser,
         createdAt: created_at,
+        hubspotContactId:hubspot_contact_id
     });
 
     return;

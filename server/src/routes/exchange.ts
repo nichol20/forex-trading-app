@@ -8,7 +8,7 @@ import { getTimeSeries } from "../controllers/exchange/getTimeSeries";
 
 export const exchangeRoutes = express.Router();
 
-// exchangeRoutes.post("/exchange", mustBeAuthenticated, exchangeCurrency);
+exchangeRoutes.post("/exchange", mustBeAuthenticated, exchangeCurrency);
 exchangeRoutes.get("/rates", mustBeAuthenticated, getRates);
 exchangeRoutes.get("/time-series", mustBeAuthenticated, getTimeSeries)
 exchangeRoutes.get("/history", mustBeAuthenticated, getHistory);

@@ -1,5 +1,5 @@
 import { getRates } from "./getRates";
-import { fetchExchangeRate } from "../../utils/exchangeRateApi";
+import { fetchExchangeRate } from "../../services/exchangeRateApi";
 import { Request, Response } from "express";
 import { BadRequestError } from "../../helpers/apiError";
 

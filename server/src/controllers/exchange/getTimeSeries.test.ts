@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { getTimeSeries } from "./getTimeSeries";
 import * as validator from "../../validators/exchange";
-import * as api from "../../utils/exchangeRateApi";
+import * as api from "../../services/exchangeRateApi";
 import { BadRequestError } from "../../helpers/apiError";
 import { Currency } from "../../utils/currency";
 

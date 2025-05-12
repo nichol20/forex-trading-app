@@ -14,7 +14,7 @@ import { userRoutes } from "./routes/user";
 import { startWebSocketServer } from "./config/socket";
 import { startBroadcasts } from "./utils/socket";
 import { connectToRedis } from "./config/redis";
-import { ExchangeQueue, startExchangeQueue } from "./config/queue";
+import { startExchangeQueue } from "./config/queue";
 
 const app = express();
 const server = http.createServer(app);

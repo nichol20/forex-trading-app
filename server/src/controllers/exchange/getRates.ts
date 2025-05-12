@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 
 import { getAllCurrencies, isCurrency } from "../../utils/currency";
-import { fetchExchangeRate } from "../../utils/exchangeRateApi";
+import { fetchExchangeRate } from "../../services/exchangeRateApi";
 import { BadRequestError } from "../../helpers/apiError";
 
 export const getRates = async (req: Request, res: Response) => {

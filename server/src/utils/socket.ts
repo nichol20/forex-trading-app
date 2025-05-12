@@ -1,5 +1,5 @@
 import { Server } from "socket.io";
-import { fetchExchangeRate } from "./exchangeRateApi";
+import { fetchExchangeRate } from "../services/exchangeRateApi";
 import { Currency, getAllCurrencies } from "./currency";
 
 const examples = [

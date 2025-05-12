@@ -23,19 +23,19 @@ export const findUserById = async (userId: string): Promise<UserRow | undefined>
 }
 
 const createUserQuery = `
-    INSERT INTO users (name, email, password, wallet)
-    VALUES ($1, $2, $3, $4) 
+    INSERT INTO users (name, email, password, wallet, hubspot_contact_id)
+    VALUES ($1, $2, $3, $4, $5) 
     RETURNING *
 `
 
 export const createUser = async (newUser: Omit<UserRow, "id" | "created_at">): Promise<UserRow> => {
-    const { name, email, password } = newUser;
+    const { name, email, password, hubspot_contact_id } = newUser;
     const wallet: Wallet = {
         USD: 0,
         GBP: 0
     }
-    console.log([name, email, password, wallet])
-    const rows = await runQuery<UserRow>(createUserQuery, [name, email, password, wallet]);
+    
+    const rows = await runQuery<UserRow>(createUserQuery, [name, email, password, wallet, hubspot_contact_id]);
     return rows[0];
 }
 

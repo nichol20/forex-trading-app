@@ -7,6 +7,7 @@ import { getEnv } from "../../config/env";
 import { User } from "../../types/user";
 import { signupSchema } from "../../validators/auth";
 import { createUser, findUserByEmail } from "../../repositories/userRepository";
+import { createContact } from "../../services/hubspotApi";
 
 const saltRounds = 10;
 
@@ -24,6 +25,8 @@ export const signup = async (req: Request, res: Response<User>) => {
 
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
+    const contactInfo = await createContact(email, name);
+
     const { password: _, created_at, ...partialUser } = await createUser({
         name,
         email,
@@ -31,7 +34,8 @@ export const signup = async (req: Request, res: Response<User>) => {
         wallet: {
             GBP: 0,
             USD: 0,
-        }
+        },
+        hubspot_contact_id: contactInfo.id
     })
 
     const token = jwt.sign({}, getEnv().JWT_SECRET, {
@@ -47,7 +51,8 @@ export const signup = async (req: Request, res: Response<User>) => {
 
     res.status(201).json({
         ...partialUser,
-        createdAt: created_at
+        createdAt: created_at,
+        hubspotContactId: contactInfo.id
     });
     return;
 };

@@ -9,7 +9,7 @@ jest.mock("../../utils/exchangeRateApi", () => ({
 }));
 
 import { exchangeCurrency } from "./exchangeCurrency";
-import { fetchExchangeRate } from "../../utils/exchangeRateApi";
+import { fetchExchangeRate } from "../../services/exchangeRateApi";
 
 const mockRequest = (body: any, userId: string): Partial<Request> => ({
     body,

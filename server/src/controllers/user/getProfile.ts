@@ -13,11 +13,12 @@ export const getProfile = async (req: Request, res: Response<User>) => {
         throw new InternalServerError();
     }
 
-    const { password, created_at, ...partialUser } = user
+    const { password, created_at, hubspot_contact_id, ...partialUser } = user
 
     res.status(200).json({
         ...partialUser,
-        createdAt: created_at
+        createdAt: created_at,
+        hubspotContactId: hubspot_contact_id
     });
     
     return;
