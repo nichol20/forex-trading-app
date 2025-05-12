@@ -6,7 +6,8 @@
     "scripts": {
         "test": "jest --coverage --runInBand",
         "test:watch": "jest --watch",
-        "dev": "nodemon --exec ts-node ./src/app.ts"
+        "dev": "nodemon --exec ts-node ./src/app.ts",
+        "setup-hubspot": "ts-node ./src/cmd/setup-hubspot.ts"
     },
     "author": "",
     "license": "ISC",
