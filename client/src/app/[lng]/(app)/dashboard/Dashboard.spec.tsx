@@ -6,18 +6,17 @@ import * as api from "@/utils/api";
 import { Currency } from "@/utils/currency";
 
 // Mock modules
-jest.mock("../contexts/Auth");
-jest.mock("../contexts/Toast");
-jest.mock("../utils/api");
-jest.mock("../components/TimeSeriesChart", () => ({
+jest.mock("@/contexts/Auth");
+jest.mock("@/contexts/Toast");
+jest.mock("@/utils/api");
+jest.mock("@/components/TimeSeriesChart", () => ({
     TimeSeriesChart: () => <div data-testid="chart" />,
 }));
-jest.mock("../components/AddFundsForm", () => ({
+jest.mock("@/components/AddFundsForm", () => ({
     AddFundsForm: () => <div data-testid="add-funds-form" />,
 }));
   
-
-jest.mock("../socket", () => ({
+jest.mock("@/socket", () => ({
     socket: {
         connect: jest.fn(),
         disconnect: jest.fn(),
@@ -26,8 +25,10 @@ jest.mock("../socket", () => ({
     }
 }));
 
-// Mock style imports to avoid CSS issues
-jest.mock("../styles/Dashboard.module.scss", () => ({}));
+jest.mock('@/i18n/client', () => ({
+    useT: jest.fn(() => ({ t: (text: string) => text }))
+}))
+
 
 describe("Dashboard", () => {
     const mockUpdateUser = jest.fn();
@@ -73,7 +74,7 @@ describe("Dashboard", () => {
     it("renders wallet balances", async () => {
         render(<Dashboard />);
 
-        expect(await screen.findByText("USD wallet")).toBeInTheDocument();
+        expect(await screen.findByText("usd-wallet-title")).toBeInTheDocument();
         expect(screen.getByText("$1500.00")).toBeInTheDocument();
         expect(screen.getByText("£1000.00")).toBeInTheDocument();
     });
@@ -87,9 +88,14 @@ describe("Dashboard", () => {
     it("handles successful currency exchange", async () => {
         render(<Dashboard />);
         const input = await screen.findByTestId("currency-dropdown-input");
-        fireEvent.change(input, { target: { value: "100" } });
+        const referenceInput = screen.getByTestId("reference-input");
 
-        const button = screen.getByText("Exchange");
+        fireEvent.change(input, { target: { value: "100" } });
+        await waitFor(() => {
+            expect(referenceInput).toHaveValue(100 * 0.8)
+        })
+
+        const button = screen.getByText("exchange-btn");
         fireEvent.click(button);
 
         await waitFor(() => {
@@ -97,7 +103,7 @@ describe("Dashboard", () => {
         });
         expect(mockUpdateUser).toHaveBeenCalled();
         expect(mockToast).toHaveBeenCalledWith({
-            message: "Exchange made successfully",
+            message: "exchange-made-message",
             status: "success"
         });
     });
@@ -108,12 +114,12 @@ describe("Dashboard", () => {
         });
 
         render(<Dashboard />);
-        const button = await screen.findByText("Exchange");
+        const button = await screen.findByText("exchange-btn");
         fireEvent.click(button);
 
         await waitFor(() => {
             expect(mockToast).toHaveBeenCalledWith({
-                message: "Insufficient amount for exchange",
+                message: "insufficient-amount-error",
                 status: "error",
             });
         });

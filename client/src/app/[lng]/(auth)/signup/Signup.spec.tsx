@@ -6,6 +6,10 @@ jest.mock("@/contexts/Auth", () => ({
     useAuth: jest.fn(),
 }));
 
+jest.mock('@/i18n/client', () => ({
+    useT: jest.fn(() => ({ t: (text: string) => text }))
+}))
+
 describe("SignupPage", () => {
     const user = {
         name: "User",
@@ -35,7 +39,7 @@ describe("SignupPage", () => {
             },
         });
 
-        fireEvent.click(screen.getByRole("button", { name: /sign up/i }));
+        fireEvent.click(screen.getByRole("button", { name: /signup-btn/i }));
     }
 
     it("renders input fields and submit button", () => {
@@ -46,7 +50,7 @@ describe("SignupPage", () => {
         expect(screen.getByTestId("password")).toBeInTheDocument();
         expect(screen.getByTestId("confirmationPassword")).toBeInTheDocument();
         expect(
-            screen.getByRole("button", { name: /sign up/i })
+            screen.getByRole("button", { name: /signup-btn/i })
         ).toBeInTheDocument();
     });
 
@@ -56,7 +60,7 @@ describe("SignupPage", () => {
         signUpUser(true)
 
         await waitFor(() => {
-            expect(screen.getByText(/passwords must be the same/i)).toBeInTheDocument();
+            expect(screen.getByText(/field.password.password-mismatch-error/i)).toBeInTheDocument();
         });
     });
 
@@ -87,7 +91,7 @@ describe("SignupPage", () => {
         signUpUser();
 
         await waitFor(() => {
-            expect(screen.getByText(/this email already exists!/i)).toBeInTheDocument();
+            expect(screen.getByText(/field.email.already-exists-error/i)).toBeInTheDocument();
         });
     });
 
@@ -104,7 +108,7 @@ describe("SignupPage", () => {
         signUpUser();
 
         await waitFor(() => {
-            expect(screen.getByText(/password must be at least 6 characters/i)).toBeInTheDocument();
+            expect(screen.getByText(/field.password.weak-password-error/i)).toBeInTheDocument();
         });
     });
 });

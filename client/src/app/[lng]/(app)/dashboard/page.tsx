@@ -36,6 +36,7 @@ export default function Dashboard() {
     const [USDBasedRates, setUSDBasedRates] = useState<Rates>();
     const [amountToExchange, setAmountToExchange] = useState<number>(100);
     const toCurrency = exchangeFrom === Currency.USD ? Currency.GBP : Currency.USD;
+    const [isProcessing, setIsProcessing] = useState(false)
 
     const handleExchangeForm = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -44,24 +45,27 @@ export default function Dashboard() {
         const amount = formData.get("amount") as string;
 
         try {
+            setIsProcessing(true)
             await exchangeCurrencies(
                 exchangeFrom,
                 toCurrency,
                 parseFloat(amount)
             );
             updateUser();
-            toast({ message: "Exchange made successfully", status: "success" });
+            toast({ message: t("exchange-made-message"), status: "success" });
         } catch (error: any) {
             if (
                 error?.response?.data?.message?.includes("Insufficient amount")
             ) {
                 toast({
-                    message: "Insufficient amount for exchange",
+                    message: t("insufficient-amount-error"),
                     status: "error",
                 });
                 return;
             }
-            toast({ message: "Something went wrong", status: "error" });
+            toast({ message: t("error.unknown"), status: "error" });
+        } finally {
+            setIsProcessing(false)
         }
     };
 
@@ -97,6 +101,7 @@ export default function Dashboard() {
                 )
                 
                 const usdToGbpTimeSeries = timeSeries[Currency.GBP]
+                console.log(usdToGbpTimeSeries)
 
                 if(usdToGbpTimeSeries) {
                     setTimeSeriesDates(Object.keys(usdToGbpTimeSeries))
@@ -107,7 +112,7 @@ export default function Dashboard() {
             }
         };
 
-        // fetchData();
+        fetchData();
     } ,[])
 
     useEffect(() => {
@@ -143,7 +148,6 @@ export default function Dashboard() {
 
     return (
         <div className={styles.dashboardPage}>
-            <Header />
             <div className={styles.content}>
                 <section className={styles.walletContainer}>
                     <div className={styles.wallet}>
@@ -236,13 +240,14 @@ export default function Dashboard() {
                                 type="number"
                                 prefix={getSign(toCurrency)}
                                 value={getReferenceValue()}
+                                testId="reference-input"
                                 readOnly
                             />
                         </div>
                     </form>
 
                     <button form="myform" type="submit" className={styles.exchangeBtn}>
-                        {t("exchange-btn")}
+                        {!isProcessing ? t("exchange-btn") : "Processing..."}
                     </button>
                     <a href="/trade-history">{t("see-history-link")}</a>
                 </section>

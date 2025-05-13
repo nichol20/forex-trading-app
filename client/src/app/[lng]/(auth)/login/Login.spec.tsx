@@ -6,6 +6,10 @@ jest.mock('@/contexts/Auth', () => ({
     useAuth: jest.fn()
 }))
 
+jest.mock('@/i18n/client', () => ({
+    useT: jest.fn(() => ({ t: (text: string) => text }))
+}))
+
 describe('LoginPage', () => {
     const loginMock = jest.fn()
     const setup = (authOverrides = {}) => {
@@ -23,7 +27,7 @@ describe('LoginPage', () => {
 
         expect(screen.getByTestId('email')).toBeInTheDocument()
         expect(screen.getByTestId('password')).toBeInTheDocument()
-        expect(screen.getByRole('button', { name: /login/i })).toBeInTheDocument()
+        expect(screen.getByRole('button', { name: /login-btn/i })).toBeInTheDocument()
     })
 
     it('calls login with correct credentials on submit', async () => {
@@ -32,7 +36,7 @@ describe('LoginPage', () => {
         fireEvent.change(screen.getByTestId('email'), { target: { value: 'test@example.com' } })
         fireEvent.change(screen.getByTestId('password'), { target: { value: 'password123' } })
 
-        fireEvent.click(screen.getByRole('button', { name: /login/i }))
+        fireEvent.click(screen.getByRole('button', { name: /login-btn/i }))
 
         await waitFor(() => {
             expect(loginMock).toHaveBeenCalledWith('test@example.com', 'password123')
@@ -46,7 +50,7 @@ describe('LoginPage', () => {
         fireEvent.change(screen.getByTestId('email'), { target: { value: 'fail@example.com' } })
         fireEvent.change(screen.getByTestId('password'), { target: { value: 'wrongpass' } })
 
-        fireEvent.click(screen.getByRole('button', { name: /login/i }))
+        fireEvent.click(screen.getByRole('button', { name: /login-btn/i }))
 
         await waitFor(() => {
             expect(screen.getByText(/invalid email or password/i)).toBeInTheDocument()

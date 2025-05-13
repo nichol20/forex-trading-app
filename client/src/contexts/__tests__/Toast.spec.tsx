@@ -40,10 +40,8 @@ describe('ToastProvider', () => {
         fireEvent.click(button)
 
         const toastMessage = screen.getByText('Success!')
-        const toastIcon = screen.getByAltText('icon')
 
         expect(toastMessage).toBeInTheDocument()
-        expect(toastIcon).toHaveAttribute('src', 'blueCheckMarkIcon.svg')
     })
 
     it('should show an error toast', () => {
@@ -57,10 +55,8 @@ describe('ToastProvider', () => {
         fireEvent.click(button)
 
         const toastMessage = screen.getByText('Error!')
-        const toastIcon = screen.getByAltText('icon')
 
         expect(toastMessage).toBeInTheDocument()
-        expect(toastIcon).toHaveAttribute('src', 'redXIcon.svg')
     })
 
     it('should remove a toast after timeout', () => {

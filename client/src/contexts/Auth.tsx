@@ -4,7 +4,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { User } from "../types/user";
 import { http } from "../lib/api";
 import * as api from "../utils/api";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 interface AuthContextProps {
     user: User | null
@@ -23,9 +23,10 @@ export const AuthContext = createContext({} as AuthContextProps)
 export const useAuth = () => useContext(AuthContext)
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
-    const [user, setUser] = useState<User | null>(null)
-    const [isLoading, setIsLoading] = useState(true)
-    const router = useRouter()
+    const [user, setUser] = useState<User | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const router = useRouter();
+    const pathname = usePathname();
 
     const login = async (email: string, password: string) => {
         const user = await api.login(email, password)
@@ -55,6 +56,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
                 setUser(user)
             }
             catch (error: any) {
+                if([403, 401].includes(error?.response?.status) 
+                    && !pathname.includes("/signup") 
+                    && !pathname.includes("/login")
+                ) {
+                    router.push("/login");
+                    return;
+                }
                 if(![403, 401].includes(error?.response?.status)) {
                     console.error(error)
                 }

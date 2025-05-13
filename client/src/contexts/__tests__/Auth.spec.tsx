@@ -2,13 +2,12 @@ import { act, render, screen, waitFor } from "@testing-library/react";
 import { AuthProvider, useAuth } from "../Auth";
 import * as api from "@/utils/api";
 import { http } from "@/lib/api";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 
 jest.mock("@/utils/api");
 jest.mock("next/navigation", () => ({
-    useRouter: jest.fn().mockReturnValue({
-        push: jest.fn(),
-    }),
+    useRouter: jest.fn(),
+    usePathname: jest.fn().mockReturnValue("/")
 }));
 
 const TestComponent = () => {
@@ -30,30 +29,28 @@ const TestComponent = () => {
     );
 };
 
-const renderWithProvider = () =>
-    render(
-        <AuthProvider>
-            <TestComponent />
-        </AuthProvider>
-    );
-
 describe("AuthContext", () => {
     const mockUser = { id: 1, email: "user@example.com" };
+    const renderWithProvider = () =>
+        render(
+            <AuthProvider>
+                <TestComponent />
+            </AuthProvider>
+        );
 
     it("calls getUser on mount and sets user", async () => {
-        (api.getUser as jest.Mock).mockResolvedValue(mockUser);
+        (api.getUser as jest.Mock).mockResolvedValueOnce(mockUser);
 
         renderWithProvider();
 
         expect(
             await screen.findByText(`user: ${mockUser.email}`)
         ).toBeInTheDocument();
-
     });
 
     it("redirects to /login on unauthorized getUser", async () => {
         const router = { push: jest.fn() };
-        (api.getUser as jest.Mock).mockRejectedValue({
+        (api.getUser as jest.Mock).mockRejectedValueOnce({
             response: { status: 401 },
         });
 
@@ -68,7 +65,7 @@ describe("AuthContext", () => {
     });
   
     it("logout updates the user state", async () => {
-        (api.getUser as jest.Mock).mockResolvedValue(mockUser);
+        (api.getUser as jest.Mock).mockReturnValueOnce(mockUser);
 
         renderWithProvider();
 
@@ -79,7 +76,7 @@ describe("AuthContext", () => {
     });
 
     it("signup updates the user state", async () => {
-        (api.signup as jest.Mock).mockResolvedValue(mockUser);
+        (api.signup as jest.Mock).mockReturnValueOnce(mockUser);
 
         renderWithProvider();
 
@@ -96,7 +93,7 @@ describe("AuthContext", () => {
 
         await screen.findByText("user: none");
 
-        (api.getUser as jest.Mock).mockResolvedValue(mockUser);
+        (api.getUser as jest.Mock).mockReturnValueOnce(mockUser);
         screen.getByText(/update/i).click();
 
         expect(

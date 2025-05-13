@@ -17,7 +17,7 @@ export const Header = () => {
             <div className={styles.rightSide}>
                 <LanguageDropdown />
                 <button className={styles.logoutBtn} onClick={logout}>
-                    <Image src={exitIcon} alt="exit"/>
+                    <Image src={exitIcon} alt="exit" width={15} height={20}/>
                 </button>
             </div>
         </header>

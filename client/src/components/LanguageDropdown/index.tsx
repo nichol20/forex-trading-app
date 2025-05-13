@@ -1,4 +1,5 @@
 import { MouseEvent, useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import { supportedLngs, LanguageCode } from "@/i18n/language";
 import { useT } from "@/i18n/client";
@@ -7,6 +8,9 @@ import styles from './styles.module.scss';
 
 export const LanguageDropdown = () => {
     const { t, i18n } = useT();
+    const router = useRouter();
+    const searchParams = useSearchParams();
+    const pathname = usePathname();
     const [open, setOpen] = useState(false);
 
     const handleMouseOver = (event: MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => {
@@ -18,7 +22,9 @@ export const LanguageDropdown = () => {
     }
 
     const handleClick = (event: MouseEvent<HTMLLIElement, globalThis.MouseEvent>, code: LanguageCode) => {
-        i18n.changeLanguage(code);
+        const newPath = pathname.split("/");
+        newPath[1] = code;
+        router.replace(`${newPath.join("/")}?${searchParams.toString()}`);
         setOpen(false);
     }
 
