@@ -2,10 +2,8 @@ import "dotenv/config";
 import { getAllStages } from "../services/hubspotApi";
 import {
     CreateAPropertyGroup,
-    CreateDealSchema,
     CreateDealStageSchema,
     CreatePropertySchema,
-    GetAllStagesResponse,
     ObjectType,
     PropertyInfo,
     ReadAllPropertiesResponse,

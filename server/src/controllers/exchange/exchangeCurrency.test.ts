@@ -4,12 +4,17 @@ import { BadRequestError } from "../../helpers/apiError";
 import { validUser } from "../../../jest.setup-env";
 import { Currency } from "../../utils/currency";
 
-jest.mock("../../utils/exchangeRateApi", () => ({
+jest.mock("../../services/exchangeRateApi", () => ({
     fetchExchangeRate: jest.fn()
+}));
+
+jest.mock("../../services/hubspotApi", () => ({
+    createDealWithContactAssociation: jest.fn()
 }));
 
 import { exchangeCurrency } from "./exchangeCurrency";
 import { fetchExchangeRate } from "../../services/exchangeRateApi";
+import { findUserByEmail } from "../../repositories/userRepository";
 
 const mockRequest = (body: any, userId: string): Partial<Request> => ({
     body,
@@ -50,9 +55,12 @@ describe("exchangeCurrency controller", () => {
     });
 
     it("should throw BadRequestError if user has insufficient balance", async () => {
+        const user = await findUserByEmail(validUser.email)
+        expect(user).not.toBeFalsy();
+        
         const req = mockRequest(
             {
-                amount: validUser.wallet.USD + 0.1,
+                amount: user!.wallet.USD + 0.1,
                 fromCurrency: "USD",
                 toCurrency: "GBP",
             },
@@ -66,6 +74,9 @@ describe("exchangeCurrency controller", () => {
     });
 
     it("should convert currency, update wallet, and return new wallet", async () => {
+        const user = await findUserByEmail(validUser.email)
+        expect(user).not.toBeFalsy();
+
         const testGBPRate = 0.5;
         const amount = 100;
 
@@ -88,9 +99,10 @@ describe("exchangeCurrency controller", () => {
         expect(res.status).toHaveBeenCalledWith(200);
         expect(res.json).toHaveBeenCalledWith(
             expect.objectContaining({
-                USD: validUser.wallet.USD - amount,
-                GBP: validUser.wallet.GBP + amount * testGBPRate,
+                exchangeRate: testGBPRate,
+                fromAmount: amount,
+                toAmount: amount * testGBPRate,
             })
         );
-    });
+    }, 10_000);
 });

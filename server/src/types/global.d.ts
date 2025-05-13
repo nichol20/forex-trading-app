@@ -1,5 +1,6 @@
 export {};
 
 declare global {
-    var __MONGO_URI__: string;
+    var __POSTGRES_URI__: string;
+    var __REDIS_URI__: string;
 }

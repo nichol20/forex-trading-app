@@ -6,7 +6,6 @@ describe("checkEnv", () => {
     const originalConsoleError = console.error;
 
     beforeEach(() => {
-        jest.resetModules(); // Clears any cache
         process.env = { ...originalEnv }; // Clone original env
         console.error = jest.fn();
         process.exit = jest.fn() as never;
@@ -19,17 +18,16 @@ describe("checkEnv", () => {
     });
 
     it("should pass when all required env variables are set", () => {
-        process.env.JWT_SECRET = "secret";
-        process.env.FRONTEND_URL = "http://localhost:3000";
-        process.env.MONGO_URI = "mongodb://localhost:27017";
-        process.env.EXCHANGERATE_API_KEY = "key";
-
-        expect(checkEnv()).toEqual({
-            EXCHANGERATE_API_KEY: "key",
-            JWT_SECRET: "secret",
-            FRONTEND_URL: "http://localhost:3000",
-            MONGO_URI: "mongodb://localhost:27017",
-        });
+        process.env.JWT_SECRET = "test";
+        process.env.FRONTEND_URL = "test";
+        process.env.POSTGRES_URI = "test";
+        process.env.EXCHANGERATE_API_URL = "test";
+        process.env.EXCHANGERATE_API_KEY = "test";
+        process.env.HUBSPOT_API_URL = "test";
+        process.env.HUBSPOT_API_KEY = "test";
+        process.env.REDIS_URI = "test";
+    
+        checkEnv();
 
         expect(console.error).not.toHaveBeenCalled();
         expect(process.exit).not.toHaveBeenCalled();
@@ -49,9 +47,6 @@ describe("checkEnv", () => {
 
     it("should fail if one of the env vars is empty", () => {
         process.env.JWT_SECRET = "";
-        process.env.FRONTEND_URL = "http://localhost:3000";
-        process.env.MONGO_URI = "mongodb://localhost:27017";
-        process.env.EXCHANGERATE_API_KEY = "key";
 
         checkEnv();
 

@@ -9,8 +9,6 @@ import {
 } from "../types/exchangeRateApi";
 import { toUtcDateString } from "../utils/date";
 
-const exchangeApiUrl = `https://api.beta.fastforex.io`;
-
 export const fetchExchangeRate = async (
     base: Currency,
     currencies: Currency[]

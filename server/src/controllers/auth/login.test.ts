@@ -1,11 +1,15 @@
 import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt"
 
 import { login } from "./login";
 import { BadRequestError, UnauthorizedError } from "../../helpers/apiError";
 import { validUser } from "../../../jest.setup-env";
 
 jest.mock("jsonwebtoken");
+jest.mock("bcrypt", () => ({
+    compare: jest.fn()
+}))
 
 describe("login controller", () => {
     const mockRequest = (body: any): Partial<Request> => ({ body });
@@ -54,6 +58,7 @@ describe("login controller", () => {
         }) as Request;
         const res = mockResponse() as Response;
 
+        (bcrypt.compare as jest.Mock).mockReturnValue(true);
         (jwt.sign as jest.Mock).mockReturnValue("mock-token");
 
         await login(req, res);

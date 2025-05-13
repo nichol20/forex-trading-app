@@ -3,7 +3,7 @@ import { fetchExchangeRate } from "../../services/exchangeRateApi";
 import { Request, Response } from "express";
 import { BadRequestError } from "../../helpers/apiError";
 
-jest.mock("../../utils/exchangeRateApi");
+jest.mock("../../services/exchangeRateApi");
 
 const mockRequest = (query: any): Partial<Request> => ({
     query,

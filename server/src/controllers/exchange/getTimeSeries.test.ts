@@ -5,7 +5,7 @@ import * as api from "../../services/exchangeRateApi";
 import { BadRequestError } from "../../helpers/apiError";
 import { Currency } from "../../utils/currency";
 
-jest.mock("../../utils/exchangeRateApi");
+jest.mock("../../services/exchangeRateApi");
 
 describe("getTimeSeries", () => {
     const mockRequest = (query: any): Partial<Request> => ({ query });

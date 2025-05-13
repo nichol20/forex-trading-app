@@ -10,9 +10,21 @@ const envSchema = z.object({
     POSTGRES_URI: z
         .string({ required_error: "POSTGRES_URI is required" })
         .nonempty("POSTGRES_URI is required"),
+    EXCHANGERATE_API_URL: z
+        .string({ required_error: "EXCHANGERATE_API_URL is required" })
+        .nonempty("EXCHANGERATE_API_URL is required"),
     EXCHANGERATE_API_KEY: z
         .string({ required_error: "EXCHANGERATE_API_KEY is required" })
         .nonempty("EXCHANGERATE_API_KEY is required"),
+    HUBSPOT_API_URL: z
+        .string({ required_error: "HUBSPOT_API_URL is required" })
+        .nonempty("HUBSPOT_API_URL is required"),
+    HUBSPOT_API_KEY: z
+        .string({ required_error: "HUBSPOT_API_KEY is required" })
+        .nonempty("HUBSPOT_API_KEY is required"),
+    REDIS_URI: z
+        .string({ required_error: "REDIS_URI is required" })
+        .nonempty("REDIS_URI is required"),
 });
 
 export const checkEnv = () => {

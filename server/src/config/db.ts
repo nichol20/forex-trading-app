@@ -9,17 +9,17 @@ export default {
             connectionString: getEnv().POSTGRES_URI
         });
 
-        await pool.connect();
+        const client = await pool.connect();
+        client.release();
 
         console.log("Connected successfully to Postgres");
     },
 
     query: async <T extends QueryResultRow>(query: QueryConfig) => {
-        const start = Date.now();
         const response = await pool.query<T>(query);
-        const duration = Date.now() - start;
-    
-        console.log('executed query', {text: query.text, duration, rows: response.rowCount });
+        // const start = Date.now();
+        // const duration = Date.now() - start;
+        // console.log('executed query', {text: query.text, duration, rows: response.rowCount });
     
         return response;
     },

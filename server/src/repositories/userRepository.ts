@@ -29,11 +29,7 @@ const createUserQuery = `
 `
 
 export const createUser = async (newUser: Omit<UserRow, "id" | "created_at">): Promise<UserRow> => {
-    const { name, email, password, hubspot_contact_id } = newUser;
-    const wallet: Wallet = {
-        USD: 0,
-        GBP: 0
-    }
+    const { name, email, password, hubspot_contact_id, wallet } = newUser;
     
     const rows = await runQuery<UserRow>(createUserQuery, [name, email, password, wallet, hubspot_contact_id]);
     return rows[0];

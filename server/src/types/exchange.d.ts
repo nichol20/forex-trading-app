@@ -17,9 +17,9 @@ export interface ExchangeRow {
     user_id: string;
     from_currency: Currency;
     to_currency: Currency;
-    from_amount: number;
-    to_amount: number;
-    exchange_rate: number;
+    from_amount: string;
+    to_amount: string;
+    exchange_rate: string;
     exchanged_at: string;
 }
 

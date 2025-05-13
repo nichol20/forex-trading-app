@@ -1,6 +1,6 @@
 import { Response, Request, NextFunction } from "express";
 import { errorHandler } from "./errorHandler";
-import { ApiError, BadRequestError, InternalServerError } from "../helpers/apiError";
+import { BadRequestError, InternalServerError } from "../helpers/apiError";
 
 describe("errorHandler middleware", () => {
     const res: Partial<Response> = {

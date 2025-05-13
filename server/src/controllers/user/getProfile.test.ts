@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { randomUUID } from "crypto";
 
 import { getProfile } from "./getProfile";
 import { InternalServerError } from "../../helpers/apiError";
@@ -16,7 +17,7 @@ const mockResponse = (): Partial<Response> => {
 
 describe("getProfile controller", () => {
     it("should throw InternalServerError if user is not found", async () => {
-        const req = mockRequest("507f1f77bcf86cd799439011") as Request;
+        const req = mockRequest(randomUUID()) as Request;
         const res = mockResponse() as Response;
         const consoleSpy = jest.spyOn(console, "error").mockImplementation(() => {});
 

@@ -1,1 +1,0 @@
-{"properties":{"dealname":"Exchange from USD to GBP","dealstage":"1068661176","pipeline":"default","amount":"0.7538726100","from_currency":"USD","to_currency":"GBP","exchange_rate":0.75387261,"output":"0.7538726100"},"associations":[{"to":{"id":"121119187237"},"types":{"associationCategory":"HUBSPOT_DEFINED","associationTypeId":3}}]}

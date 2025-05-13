@@ -27,7 +27,7 @@ describe("getHistory controller", () => {
 
         expect(res.json).toHaveBeenCalledWith(
             expect.objectContaining({
-                history: validExchangeHistory
+                totalItems: validExchangeHistory.length
             })
         );
     });

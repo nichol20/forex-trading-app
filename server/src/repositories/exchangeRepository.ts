@@ -1,5 +1,5 @@
 import db from "../config/db";
-import { ExchangeFilters, ExchangeOrderOptions, ExchangeRow } from "../types/exchange"
+import { Exchange, ExchangeFilters, ExchangeOrderOptions, ExchangeRow } from "../types/exchange"
 import { runQuery } from "../utils/db";
 import { SortBy, sortByToExchangeKeyMap } from "../utils/query";
 
@@ -27,8 +27,8 @@ const insertExchangeQuery = `
     RETURNING *;
 `
 
-export const exchange = async (exchange: Omit<ExchangeRow, "id" | "exchanged_at" | "to_amount">): Promise<ExchangeRow> => {
-    const { user_id, from_currency, to_currency, from_amount, exchange_rate} = exchange;
+export const createExchange = async (exchange: Omit<Exchange, "id" | "exchangedAt" | "toAmount">): Promise<ExchangeRow> => {
+    const { userId, fromCurrency, toCurrency, fromAmount, exchangeRate} = exchange;
 
     const client = await db.connectAClient();
 
@@ -36,24 +36,24 @@ export const exchange = async (exchange: Omit<ExchangeRow, "id" | "exchanged_at"
 
     await client.query({
         text: subtractAmountQuery, 
-        values: [[from_currency], from_currency, from_amount, user_id]
+        values: [[fromCurrency], fromCurrency, fromAmount, userId]
     });
 
     const { rows } = await client.query({
         text: addAmountQuery, 
-        values: [[to_currency], to_currency, from_amount, exchange_rate, user_id]
+        values: [[toCurrency], toCurrency, fromAmount, exchangeRate, userId]
     });
     
     const res = await client.query<ExchangeRow>({
         text: insertExchangeQuery,
-        values:[ user_id, from_currency, to_currency, from_amount, rows[0].to_amount, exchange_rate ],
+        values:[ userId, fromCurrency, toCurrency, fromAmount, rows[0].to_amount, exchangeRate ],
     });
 
     await client.query("COMMIT");
 
     db.release(client);
 
-    return res.rows[0];
+    return res.rows[0]
 } 
 
 export const getExchanges = async (

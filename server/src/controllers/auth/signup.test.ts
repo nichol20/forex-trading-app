@@ -7,7 +7,12 @@ import { ConflictError, BadRequestError } from "../../helpers/apiError";
 import { validUser } from "../../../jest.setup-env";
 
 jest.mock("jsonwebtoken");
-jest.mock("bcrypt");
+jest.mock("bcrypt", () => ({
+    hash: jest.fn()
+}));
+jest.mock("../../services/hubspotApi", () => ({
+    createContact: () => ({ id: "7098907097" })
+}))
 
 const mockRequest = (body: any): Partial<Request> => ({ body });
 const mockResponse = (): Partial<Response> => {
@@ -46,10 +51,11 @@ describe("signup controller", () => {
 
     it("should hash password, insert user, set cookie and return user data", async () => {
         (jwt.sign as jest.Mock).mockReturnValue("mock-token");
+        (bcrypt.hash as jest.Mock).mockReturnValue("hashedpassword");
 
         const req = mockRequest({
             name: "name",
-            email: "email@example.com",
+            email: "email3214132@example.com",
             password: "validpassword",
         }) as Request;
         const res = mockResponse() as Response;
