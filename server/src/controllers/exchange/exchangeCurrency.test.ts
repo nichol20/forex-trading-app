@@ -8,13 +8,15 @@ jest.mock("../../services/exchangeRateApi", () => ({
     fetchExchangeRate: jest.fn()
 }));
 
-jest.mock("../../services/hubspotApi", () => ({
-    createDealWithContactAssociation: jest.fn()
+jest.mock("../../repositories/exchangeRepository", () => ({
+    createExchange: jest.fn()
 }));
 
 import { exchangeCurrency } from "./exchangeCurrency";
 import { fetchExchangeRate } from "../../services/exchangeRateApi";
 import { findUserByEmail } from "../../repositories/userRepository";
+import { createExchange } from "../../repositories/exchangeRepository";
+import { Exchange } from "../../types/exchange";
 
 const mockRequest = (body: any, userId: string): Partial<Request> => ({
     body,
@@ -73,7 +75,7 @@ describe("exchangeCurrency controller", () => {
         );
     });
 
-    it("should convert currency, update wallet, and return new wallet", async () => {
+    it("should convert currency, update wallet, and return new exchange", async () => {
         const user = await findUserByEmail(validUser.email)
         expect(user).not.toBeFalsy();
 
@@ -93,6 +95,13 @@ describe("exchangeCurrency controller", () => {
         (fetchExchangeRate as jest.Mock).mockResolvedValue({
             rates: { GBP: testGBPRate },
         });
+        (createExchange as jest.Mock).mockImplementationOnce(
+            (exchange: Omit<Exchange, "id" | "exchangedAt" | "toAmount" | "hubspotDealId">) => {
+                // mock implementation to skip the API call by passing an id 
+                return jest.requireActual("../../repositories/exchangeRepository")
+                            .createExchange(exchange, "93821639816") // random id to avoid conflict with the setup ones
+            }
+        )
 
         await exchangeCurrency(req, res);
 

@@ -8,7 +8,6 @@ import { findUserById } from "../../repositories/userRepository";
 import { Exchange } from "../../types/exchange";
 import { createExchange } from "../../repositories/exchangeRepository";
 import { ExchangeQueue } from "../../config/queue";
-import { createDealWithContactAssociation } from "../../services/hubspotApi";
 
 export const exchangeCurrency = async (req: Request, res: Response<Exchange>) => {
     const parsed = exchangeCurrencySchema.safeParse(req.body);
@@ -46,18 +45,7 @@ export const exchangeCurrency = async (req: Request, res: Response<Exchange>) =>
             toCurrency: payload.toCurrency,
             fromAmount: payload.amount,
             exchangeRate: currentRate,
-        })
-        
-        await createDealWithContactAssociation(user.hubspot_contact_id, {
-            dealname: `Exchange ${payload.fromCurrency} → ${payload.toCurrency}`,
-            dealstage: "exchange_executed",
-            pipeline: "default",
-            amount: payload.amount,
-            from_currency: payload.fromCurrency,
-            to_currency: payload.toCurrency,
-            exchange_rate: currentRate,
-            output: parseFloat(exchangeRow.to_amount),
-        });
+        }) 
         
         res.status(200).json({
             id: exchangeRow.id,
@@ -68,6 +56,7 @@ export const exchangeCurrency = async (req: Request, res: Response<Exchange>) =>
             toAmount: parseFloat(exchangeRow.to_amount),
             exchangeRate: parseFloat(exchangeRow.exchange_rate),
             exchangedAt: exchangeRow.exchanged_at,
+            hubspotDealId: exchangeRow.hubspot_deal_id
         });
     })
     return

@@ -10,6 +10,7 @@ export interface Exchange {
     toAmount: number;
     exchangeRate: number;
     exchangedAt: string;
+    hubspotDealId: string;
 }
 
 export interface ExchangeRow {
@@ -21,6 +22,7 @@ export interface ExchangeRow {
     to_amount: string;
     exchange_rate: string;
     exchanged_at: string;
+    hubspot_deal_id: string;
 }
 
 export type SortableField = keyof Pick<

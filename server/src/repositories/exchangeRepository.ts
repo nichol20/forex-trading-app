@@ -1,5 +1,8 @@
 import db from "../config/db";
+import { createDealWithContactAssociation } from "../services/hubspotApi";
 import { Exchange, ExchangeFilters, ExchangeOrderOptions, ExchangeRow } from "../types/exchange"
+import { DealInfo } from "../types/hubspotApi";
+import { UserRow } from "../types/user";
 import { runQuery } from "../utils/db";
 import { SortBy, sortByToExchangeKeyMap } from "../utils/query";
 
@@ -18,16 +21,28 @@ const addAmountQuery = `
         true
     )
     WHERE id = $5
-    RETURNING ($3::numeric * $4::numeric) AS to_amount;
+    RETURNING *, ($3::numeric * $4::numeric) AS to_amount;
 `
 
 const insertExchangeQuery = `
-    INSERT INTO exchanges (user_id, from_currency, to_currency, from_amount, to_amount, exchange_rate, exchanged_at)
-    VALUES ($1, $2, $3, $4, $5, $6, NOW())
+    INSERT INTO exchanges (
+        user_id, 
+        from_currency,
+        to_currency, 
+        from_amount, 
+        to_amount, 
+        exchange_rate, 
+        hubspot_deal_id, 
+        exchanged_at
+    )
+    VALUES ($1, $2, $3, $4, $5, $6, $7, NOW())
     RETURNING *;
 `
 
-export const createExchange = async (exchange: Omit<Exchange, "id" | "exchangedAt" | "toAmount">): Promise<ExchangeRow> => {
+export const createExchange = async (
+    exchange: Omit<Exchange, "id" | "exchangedAt" | "toAmount" | "hubspotDealId">,
+    hubspotId?: string
+): Promise<ExchangeRow> => {
     const { userId, fromCurrency, toCurrency, fromAmount, exchangeRate} = exchange;
 
     const client = await db.connectAClient();
@@ -39,14 +54,32 @@ export const createExchange = async (exchange: Omit<Exchange, "id" | "exchangedA
         values: [[fromCurrency], fromCurrency, fromAmount, userId]
     });
 
-    const { rows } = await client.query({
+    const { rows } = await client.query<UserRow & { to_amount: number }>({
         text: addAmountQuery, 
         values: [[toCurrency], toCurrency, fromAmount, exchangeRate, userId]
     });
+
+    let dealInfo: DealInfo
+    if(!hubspotId) {
+        dealInfo = await createDealWithContactAssociation(rows[0].hubspot_contact_id, {
+            dealname: `Exchange ${fromCurrency} → ${toCurrency}`,
+            dealstage: "exchange_executed",
+            pipeline: "default",
+            amount: fromAmount,
+            from_currency: fromCurrency,
+            to_currency: toCurrency,
+            exchange_rate: exchangeRate,
+            output: rows[0].to_amount
+        });
+    }
     
     const res = await client.query<ExchangeRow>({
         text: insertExchangeQuery,
-        values:[ userId, fromCurrency, toCurrency, fromAmount, rows[0].to_amount, exchangeRate ],
+        values:[ 
+            userId, fromCurrency, toCurrency, 
+            fromAmount, rows[0].to_amount, exchangeRate, 
+            hubspotId ? hubspotId : dealInfo!.id 
+        ],
     });
 
     await client.query("COMMIT");
@@ -60,7 +93,7 @@ export const getExchanges = async (
     userId: string, 
     orderOptions: ExchangeOrderOptions, 
     filters: ExchangeFilters
-) => {
+): Promise<{ rows: ExchangeRow[], totalItems: number}> => {
     const {
         start, end, from, to, minRate, maxRate,
         minAmount, maxAmount, minOutput, maxOutput,
@@ -132,7 +165,7 @@ export const getExchanges = async (
     const getCountQuery = `SELECT COUNT(*) FROM exchanges ${whereSQL}`
 
     const [dataRows, countRows] = await Promise.all([
-        runQuery(getExchangesQuery, values),
+        runQuery<ExchangeRow>(getExchangesQuery, values),
         runQuery(getCountQuery, values.slice(0, limitIdx - 1))
     ])
 

@@ -20,17 +20,19 @@ export type ExchangeRateResponse =
     | SuccessfulExchangeRateResponse
     | FailedExchangeRateResponse;
 
+export type TimeSeries = {
+    [key in Currency]?: {
+        [date: string]: number;
+    };
+}
+
 export interface SuccessfulTimeSeriesResponse {
     start: string;
     end: string;
     interval: string;
     base: string;
     ms: number;
-    results: {
-        [key in Currency]?: {
-            [data: string]: number;
-        };
-    };
+    results: TimeSeries
 }
 
 // Status codes: 400, 401, 403, 429

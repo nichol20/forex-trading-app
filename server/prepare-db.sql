@@ -19,6 +19,7 @@ CREATE DOMAIN positive_numeric AS NUMERIC(18, 10) CHECK (VALUE >= 0);
 CREATE TABLE IF NOT EXISTS exchanges (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    hubspot_deal_id TEXT NOT NULL UNIQUE,
     from_currency TEXT NOT NULL,
     to_currency TEXT NOT NULL,
     from_amount positive_numeric NOT NULL,

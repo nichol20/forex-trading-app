@@ -3,6 +3,7 @@ import { Request, Response } from "express";
 import { getHistoryQuerySchema } from "../../validators/user";
 import { BadRequestError } from "../../helpers/apiError";
 import { getExchanges } from "../../repositories/exchangeRepository";
+import { Exchange } from "../../types/exchange";
 
 export const getHistory = async (req: Request, res: Response) => {
     const userId = req.userId;
@@ -24,7 +25,7 @@ export const getHistory = async (req: Request, res: Response) => {
 
     const totalPages = Math.ceil(totalItems / limit);
 
-    const history = rows.map(row => ({
+    const history: Exchange[] = rows.map(row => ({
         id: row.id,
         userId: row.user_id,
         exchangedAt: row.exchanged_at,
@@ -33,6 +34,7 @@ export const getHistory = async (req: Request, res: Response) => {
         exchangeRate: parseFloat(row.exchange_rate),
         fromAmount: parseFloat(row.from_amount),
         toAmount: parseFloat(row.to_amount),
+        hubspotDealId: row.hubspot_deal_id
     }));
 
     res.status(200).json({

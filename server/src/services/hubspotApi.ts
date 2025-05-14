@@ -1,12 +1,13 @@
+import { hubspotClient } from "../utils/http";
 import {
     ContactInfo,
     CreateAddFundsDealSchema,
+    CreateDealResponse,
     CreateExchangeDealSchema,
     GetAllStagesResponse,
     ObjectType,
     SearchForContactsResponse,
 } from "../types/hubspotApi";
-import { hubspotClient } from "../utils/http";
 
 export const getAllStages = async (objectType: ObjectType, pipelineId: string) => {
     const { data } = await hubspotClient.get<GetAllStagesResponse>(`/crm/v3/pipelines/${objectType}/${pipelineId}/stages`);
@@ -26,7 +27,7 @@ export const createDealWithContactAssociation = async (
         }
     }
 
-    const { data } = await hubspotClient.post(`/crm/v3/objects/deals`, {
+    const { data } = await hubspotClient.post<CreateDealResponse>(`/crm/v3/objects/deals`, {
         properties: { ...properties, dealstage: stageID },
         associations: [{
             to: {

@@ -115,29 +115,27 @@ interface CreateEnumerationPropertySchema extends PropertyBase {
 
 type CreatePropertySchema = PropertyBase | CreateEnumerationPropertySchema;
 
-interface CreateDealResultItem {
-    id: string;
-    objectWriteTraceId: string;
-    createdAt: string;
-    updatedAt: string;
-    archived: boolean;
-    archivedAt: string;
-    propertiesWithHistory: {
-        additionalProp1: [];
-    };
-    properties: {};
+interface DealInfo {
+    id: string
+    properties: {
+        amount: string
+        amount_in_home_currency: string
+        closedate: string
+        createdate: string
+        days_to_close: string
+        dealname: string
+        dealstage: string
+        num_associated_contacts: string
+        num_notes: string
+        pipeline: string
+        [key: string]: string
+    },
+    createdAt: string
+    updatedAt: string
+    archived: boolean
 }
 
-interface CreateDealResponse {
-    total: number;
-    paging: {
-        next: {
-            link: string;
-            after: string;
-        };
-    };
-    results: [];
-}
+type CreateDealResponse = DealInfo
 
 interface AssociationSchema {
     to: {

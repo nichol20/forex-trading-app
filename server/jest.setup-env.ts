@@ -28,7 +28,7 @@ export const createValidUser = (): Omit<UserRow, "id" | "hubspot_contact_id" | "
     }
 });
 
-export const createExchangeHistory = (userId: string): Omit<Exchange, "id" | "exchangedAt" | "toAmount">[] => [
+export const createExchangeHistory = (userId: string): Omit<Exchange, "id" | "exchangedAt" | "toAmount" | "hubspotDealId">[] => [
     {
         userId,
         fromCurrency: Currency.USD,
@@ -91,8 +91,8 @@ beforeEach(async () => {
     const exchanges = createExchangeHistory(newUser.id);
     validExchangeHistory = [];
 
-    for (const ex of exchanges) {
-        const newExchange = await createExchange({ ...ex })
+    for (let i = 0; i < exchanges.length; i++) {
+        const newExchange = await createExchange({ ...exchanges[i] }, String(i))
         expect(newExchange.id).toBeDefined();
 
         validExchangeHistory.push({
@@ -103,7 +103,8 @@ beforeEach(async () => {
             fromAmount: parseFloat(newExchange.from_amount),
             toAmount: parseFloat(newExchange.to_amount),
             exchangeRate: parseFloat(newExchange.exchange_rate),
-            exchangedAt: newExchange.exchanged_at
+            exchangedAt: newExchange.exchanged_at,
+            hubspotDealId: newExchange.hubspot_deal_id
         });
     }
 });
