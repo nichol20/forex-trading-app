@@ -28,8 +28,10 @@ export const TimeSeriesChart = ({
     const hoverRadius = 6; // maximum radius the mouse needs to be around the point to show the tooltip
 
     // map data domain → canvas coords
-    const max = Math.max(...data);
-    const min = Math.min(...data);
+    let max = Math.max(...data);
+    max += max * (1/1000)
+    let min = Math.min(...data) - 0.001;
+    min -= min * (1/1000)
     const yRange = max - min;
     const getX = useCallback(
         (i: number) => pad + (i / (data.length - 1)) * (width - 40 * 2), 
@@ -102,9 +104,9 @@ export const TimeSeriesChart = ({
             ctx.lineWidth = 2;
             ctx.stroke();
 
-            if(width > 350 || i === 0 || i === data.length - 1) {
+            if(width > 500 || i === 0 || i === data.length - 1) {
                 ctx.fillStyle = "#707070"
-                ctx.fillText(`${data.length - i}d`, x, height - 10)
+                ctx.fillText(`${data.length - i}min`, x, height - 10)
             }
         });
     }, [data, height, width, getX, getY, max, min]);
@@ -157,7 +159,7 @@ export const TimeSeriesChart = ({
                         whiteSpace: 'nowrap',
                     }}
                 >
-                    {tooltip.label}: {tooltip.value}
+                    {tooltip.label}={tooltip.value}
                 </div>
             )}
         </div>

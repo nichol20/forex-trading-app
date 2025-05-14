@@ -20,6 +20,7 @@ import { TimeSeriesChart } from "@/components/TimeSeriesChart";
 import { toUtcDateString } from "@/utils/date";
 
 import styles from "./styles.module.scss";
+import { ExchangeRatesEventResponse } from "@/types/socket";
 
 export default function Dashboard() {
     const { t } = useT("dashboard");
@@ -28,8 +29,8 @@ export default function Dashboard() {
     const chartParentRef = useRef<HTMLDivElement>(null);
     const [chartWidth, setChartWidth] = useState(0);
     const [chartHeight, setChartHeight] = useState(350)
-    const [timeSeriesDates, setTimeSeriesDates] = useState<string[]>([])
-    const [timeSeriesValues, setTimeSeriesValues] = useState<number[]>([])
+    const [lastRatesDates, setLastRatesDates] = useState<string[]>([])
+    const [lastRatesValues, setLastRatesValues] = useState<number[]>([])
     const [showAddFundsForm, setShowAddForms] = useState(false);
     const [exchangeFrom, setExchangeFrom] = useState<Currency>(Currency.USD);
     const [addFundsTo, setAddFundsTo] = useState<Currency>(Currency.USD);
@@ -89,24 +90,6 @@ export default function Dashboard() {
             try {
                 const exchangeRates = await api.getExchangeRates(Currency.USD);
                 setUSDBasedRates(exchangeRates);
-
-                const end = new Date()
-                const start = new Date()
-                start.setDate(end.getDate() - 12)
-                const timeSeries = await api.getTimeSeries(
-                    Currency.USD, 
-                    Currency.GBP,
-                    toUtcDateString(start),
-                    toUtcDateString(end)
-                )
-                
-                const usdToGbpTimeSeries = timeSeries[Currency.GBP]
-                console.log(usdToGbpTimeSeries)
-
-                if(usdToGbpTimeSeries) {
-                    setTimeSeriesDates(Object.keys(usdToGbpTimeSeries))
-                    setTimeSeriesValues(Object.values(usdToGbpTimeSeries))
-                }
             } catch (error: any) {
                 console.log("erro fetching data: ", error.message)
             }
@@ -117,7 +100,12 @@ export default function Dashboard() {
 
     useEffect(() => {
         socket.connect();
-        socket.on("exchange-rates:USD", setUSDBasedRates);
+        socket.on("exchange-rates:USD", (data: ExchangeRatesEventResponse) => {
+            console.log(data)
+            setUSDBasedRates(data.rates);
+            setLastRatesValues(data.lastRates.map(r => r.rates.GBP))
+            setLastRatesDates(data.lastRates.map(r => new Date(r.time).toLocaleTimeString()))
+        });
 
         return () => {
             socket.off("exchange-rates:USD");
@@ -195,8 +183,8 @@ export default function Dashboard() {
 
                     <div className={styles.chartContainer} ref={chartParentRef}>
                         <TimeSeriesChart
-                            data={timeSeriesValues} 
-                            labels={timeSeriesDates} 
+                            data={lastRatesValues} 
+                            labels={lastRatesDates} 
                             width={chartWidth} 
                             height={chartHeight} 
                         />

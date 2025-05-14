@@ -5,3 +5,7 @@ export const toUtcDateString = (date: Date) => {
 
     return `${year}-${month}-${day}`;
 }
+
+export const checkIf1MinuteHasPassed = (timeInMs: number) => {
+    return Date.now() - timeInMs >= 1000 * 60
+}
