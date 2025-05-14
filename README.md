@@ -65,15 +65,15 @@ All services are containerized and orchestrated with Docker Compose.
 
    ```bash
    docker compose exec server sh
-   npm install         # if first time
-   npm run dev         # launches the server in development mode
+   npm install              # if first time
+   npm run setup-hubspot    # if first time, setup hubspot with required properties and groups
+   npm run dev              # launches the server in development mode
    ```
 3. **Frontend (Client)**
 
    ```bash
    docker compose exec client sh
    npm install              # if first time
-   npm run setup-hubspot    # if first time, setup hubspot with required properties and groups
    npm run dev              # launches the NextJS app in development mode
    ```
 
@@ -100,7 +100,7 @@ Once both services are running, open your browser to `http://localhost:3000`.
     * If you want to inspect database details, you can open pgadmin via the url [http://localhost:8888](http://localhost:8888)
     * If you haven't changed your .env file, you should be able to log in with these credentials `admin@user.com` and `secret`
     * Register a server with this connection configuration (default .env config):
-        - Address: `localhost`
+        - Address (docker compose service name): `postgres`
         - Database: `forex`
         - Username: `postgres`
         - Password: `postgres`
