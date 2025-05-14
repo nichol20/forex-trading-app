@@ -56,13 +56,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
                 setUser(user)
             }
             catch (error: any) {
-                if([403, 401].includes(error?.response?.status) 
-                    && !pathname.includes("/signup") 
-                    && !pathname.includes("/login")
-                ) {
-                    router.push("/login");
-                    return;
-                }
                 if(![403, 401].includes(error?.response?.status)) {
                     console.error(error)
                 }
@@ -79,7 +72,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         const responseIntercept = http.interceptors.response.use(
             response => response,
             async error => {
-                if ([403, 401].includes(error?.response?.status)) {
+                if (
+                    [403, 401].includes(error?.response?.status)
+                    && !pathname.includes("/signup") 
+                    && !pathname.includes("/login")) {
                     router.push("/login")
                 }
                 return Promise.reject(error)
