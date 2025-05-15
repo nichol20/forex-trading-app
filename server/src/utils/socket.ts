@@ -42,9 +42,10 @@ const broadcastRate = async (io: Server, currency: Currency) => {
         // io.emit(`exchange-rates:${currency}`, data.rates);
         // console.log(data.rates);
 
+        
         const examples = currency === Currency.USD ? usdExamples : gbpExamples
         const rates = examples[Math.floor(Math.random() * examples.length)];
-
+        
         let rateList = await getList(keyName);
 
         if(

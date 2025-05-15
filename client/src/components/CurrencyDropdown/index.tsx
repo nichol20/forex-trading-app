@@ -12,6 +12,7 @@ interface CurrencyDropdownProps {
     defaultAmountValue?: number;
     selectId?: string;
     selectTestId?: string;
+    selectClassName?: string;
     inputId?: string;
     inputTestId?: string;
     value?: string | number | readonly string[] | null;
@@ -23,6 +24,7 @@ export const CurrencyDropdown = ({
     selectName,
     selectId,
     selectTestId,
+    selectClassName,
     inputId,
     inputTestId,
     value,
@@ -55,7 +57,7 @@ export const CurrencyDropdown = ({
                 name={selectName}
                 id={selectId}
                 value={value ?? undefined}
-                className={`${styles.select} ${showInput ? "" : styles.onlySelect}`}
+                className={`${styles.select} ${showInput ? "" : styles.onlySelect} ${selectClassName}`}
                 defaultValue={defaultCurrencyValue ?? undefined}
                 onChange={handleSelectChange}
                 data-testid={selectTestId}

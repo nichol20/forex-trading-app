@@ -8,5 +8,5 @@
     "types": ["jest", "node"]
   },
   "include": ["src/**/*", "index.ts", "jest.setup-env.ts"],
-  "files": ["src/types/express.d.ts", "src/app.ts"],
+  "files": ["src/types/express.d.ts", "src/types/socket.d.ts", "src/app.ts"],
 }

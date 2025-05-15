@@ -1,53 +1,73 @@
-import { Currency } from "../utils/currency";
+import { Server } from "socket.io";
 import { redisClient } from "./redis";
+import { RedisClientType } from "redis";
+export class Queue<T> {
+    private queueName: string;
+    private processingQueue: string;
+    private running = false;
+    private io: Server
+    private client: RedisClientType
 
-export class Queue<T extends any> {
-    private queueName: string
+    constructor(io: Server, queueName: string) {
+        this.queueName = queueName;
+        this.processingQueue = `${queueName}:processing`;
+        this.io = io
 
-    constructor(queueName: string) {
-        this.queueName = queueName
+        this.client = redisClient.duplicate();
     }
 
-    async enqueue(id: string, payload: T) {
+    async enqueue(id: string, payload: T): Promise<void> {
         const jobData = JSON.stringify([id, payload]);
         await redisClient.rPush(this.queueName, jobData);
-        console.log(`Enqueued job to ${this.queueName}:`, payload);
+        console.log(`[${this.queueName}] Enqueued job:`, { id, payload });
     }
 
-    async process(id: string, handler: (payload: T) => Promise<void>) {
-        while(true) {
-            const [firstItem] = await redisClient.lRange(this.queueName, 0, 0);
-            if(firstItem?.startsWith('["' + id)) {
-                const [itemID, payload] = JSON.parse(firstItem);
-                console.log(`${this.queueName}: Processing id: ${itemID} payload: ${payload}`);
-                await handler(payload as T);
-                console.log(`${this.queueName}: processed successfully!`);
-                
-                await redisClient.lPop(this.queueName);
-                break;
+    async start(
+        handler: (id: string, payload: T) => Promise<void>
+    ): Promise<void> {
+        await this.client.connect();
+        this.running = true;
+        console.log(`[${this.queueName}] Worker started.`);
+
+        while (this.running) {
+            try {
+                // Atomically pop from main queue and push into processing queue
+                const jobData = await this.client.blMove(
+                    this.queueName,
+                    this.processingQueue,
+                    "LEFT",
+                    "RIGHT",
+                    0 // 0 = block indefinitely
+                );
+                if (!jobData) {
+                    // Shouldn't happen with timeout=0, but guard anyway
+                    continue;
+                }
+
+                const [jobId, payload] = JSON.parse(jobData) as [string, T];
+                console.log(`[${this.queueName}] → Handling job ${jobId}`);
+
+                await handler(jobId, payload);
+
+                await this.client.lRem(this.processingQueue, 1, jobData);
+                console.log(`[${this.queueName}] ✓ Completed job ${jobId}`);
+            } catch (err) {
+                console.error(`[${this.queueName}] ✗ error:`, err);
             }
-            // wait until try again
-            await new Promise(r => setTimeout(r, 1000));
         }
+
+        console.log(`[${this.queueName}] Worker stopped.`);
     }
 
-    async shutdown() {
-        await redisClient.del(this.queueName)
+    stop(): void {
+        this.running = false;
     }
-}
 
-interface ExchangePayload {
-    fromCurrency: Currency;
-    toCurrency: Currency;
-    amount: number;
-}
-
-export let ExchangeQueue: Queue<ExchangePayload>
-
-export const startExchangeQueue = () => {
-    ExchangeQueue = new Queue("exchanges")
-}
-
-export const stopExchangeQueue = async () => {
-    await ExchangeQueue.shutdown()
+    async shutdown(): Promise<void> {
+        this.stop();
+        await this.client.del(this.queueName);
+        await this.client.del(this.processingQueue);
+        await this.client.quit();
+        console.log(`[${this.queueName}] Queues deleted.`);
+    }
 }

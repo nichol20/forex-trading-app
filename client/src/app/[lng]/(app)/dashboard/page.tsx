@@ -31,6 +31,8 @@ export default function Dashboard() {
     const [chartWidth, setChartWidth] = useState(0);
     const [chartHeight, setChartHeight] = useState(350)
 
+    const [seconds, setSeconds] = useState(0); 
+
     const [latestRatesDates, setLatestRatesDates] = useState<string[]>([])
     const [latestRatesValues, setLatestRatesValues] = useState<number[]>([])
 
@@ -147,6 +149,20 @@ export default function Dashboard() {
         };
     }, []);
 
+    useEffect(() => {
+        let intervalId: NodeJS.Timeout;
+
+        if (isProcessing) {
+            intervalId = setInterval(() => {
+            setSeconds(prev => prev + 1);
+            }, 1000);
+        } else {
+            setSeconds(0)
+        }
+
+        return () => clearInterval(intervalId);
+    }, [isProcessing]); 
+
     return (
         <div className={styles.dashboardPage}>
             <div className={styles.content}>
@@ -186,12 +202,37 @@ export default function Dashboard() {
 
                 <section className={styles.liveExchangeRateBox}>
                     <div className={styles.titleBox}>
-                        <div className={styles.pingContainer}>
-                            <div className={styles.ping}>
-                                <div></div>
+                        <div className={styles.leftSide}>
+                            <div className={styles.pingContainer}>
+                                <div className={styles.ping}>
+                                    <div></div>
+                                </div>
                             </div>
+                            <h3>{t("live-exchange-rate-section-title")}</h3>
                         </div>
-                        <h3>{t("live-exchange-rate-section-title")}</h3>
+                        <div className={styles.rightSide}>
+                            <CurrencyDropdown
+                                selectClassName={styles.chartDropdownSelect}
+                                value={exchangeFrom}
+                                onSelectChange={setExchangeFrom}
+                                showInput={false} 
+                            />
+                            <Image
+                                src={rightArrow}
+                                alt="arrow"
+                                className={styles.arrowImg}
+                                width={20}
+                                height={20}
+                            />
+                            <CurrencyDropdown
+                                selectClassName={styles.chartDropdownSelect}
+                                showInput={false} 
+                                value={toCurrency}
+                                onSelectChange={c => c === Currency.USD 
+                                    ? setExchangeFrom(Currency.GBP)
+                                    : setExchangeFrom(Currency.USD)}
+                            />
+                        </div>
                     </div>
 
                     <div className={styles.chartContainer} ref={chartParentRef}>
@@ -250,7 +291,7 @@ export default function Dashboard() {
                     </form>
 
                     <button form="myform" type="submit" className={styles.exchangeBtn}>
-                        {!isProcessing ? t("exchange-btn") : "Processing..."}
+                        {!isProcessing ? t("exchange-btn") : `${seconds}s`}
                     </button>
                     <a href="/trade-history">{t("see-history-link")}</a>
                 </section>

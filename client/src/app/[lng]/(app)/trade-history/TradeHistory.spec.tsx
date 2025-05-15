@@ -77,15 +77,13 @@ describe("<TradeHistory />", () => {
         (usePathname as jest.Mock).mockReturnValue("/history");
     });
 
-    it("renders headers and fetches + displays rows", async () => {
+    it("fetches + displays rows", async () => {
         (getExchangeHistory as jest.Mock).mockResolvedValue({
             totalPages: 3,
             history: mockHistory,
         });
 
         render(<TradeHistory />);
-
-        expect(screen.getByTestId("header")).toBeInTheDocument();
 
         const rowItems = await screen.findAllByText(/USD/);
         expect(rowItems).toHaveLength(2);

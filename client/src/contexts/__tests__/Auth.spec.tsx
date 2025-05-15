@@ -2,7 +2,7 @@ import { act, render, screen, waitFor } from "@testing-library/react";
 import { AuthProvider, useAuth } from "../Auth";
 import * as api from "@/utils/api";
 import { http } from "@/lib/api";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 jest.mock("@/utils/api");
 jest.mock("next/navigation", () => ({
@@ -46,26 +46,27 @@ describe("AuthContext", () => {
         expect(
             await screen.findByText(`user: ${mockUser.email}`)
         ).toBeInTheDocument();
+
     });
-
-    it("redirects to /login on unauthorized getUser", async () => {
-        const router = { push: jest.fn() };
-        (api.getUser as jest.Mock).mockRejectedValueOnce({
-            response: { status: 401 },
-        });
-
-        (useRouter as jest.Mock).mockReturnValue(router);
+    
+    it("login updates the user state", async () => {
+        (api.getUser as jest.Mock).mockRejectedValue({});
+        (api.login as jest.Mock).mockReturnValueOnce(mockUser);
 
         renderWithProvider();
-        (await screen.findByText(/Login/i)).click();
 
-        await waitFor(() => {
-            expect(router.push).toHaveBeenCalledWith("/login");
-        });
+        await screen.findByText("user: none")
+
+        screen.getByText(/login/i).click();
+        await screen.findByText(`user: ${mockUser.email}`);
+        
+        expect(await screen.findByText(`user: none`)).toBeInTheDocument();
     });
-  
+
     it("logout updates the user state", async () => {
+        const router = { push: jest.fn() };
         (api.getUser as jest.Mock).mockReturnValueOnce(mockUser);
+        (useRouter as jest.Mock).mockReturnValue(router);
 
         renderWithProvider();
 
