@@ -1,4 +1,4 @@
-import { Exchange, Rates, TimeSeries } from "../types/exchange";
+import { Exchange, LatestRateItem, Rates, TimeSeries } from "../types/exchange";
 import { User, Wallet } from "../types/user";
 import { Currency } from "./currency";
 import { http } from "../lib/api";
@@ -99,6 +99,11 @@ export const getExchangeRates = async (base: Currency): Promise<Rates> => {
     const res = await http.get<Rates>(`/rates?base=${base}`);
     return res.data;
 };
+
+export const getLatestRates = async (base: Currency): Promise<LatestRateItem[]> => {
+    const res = await http.get<LatestRateItem[]>(`/latest-rates?base=${base}`);
+    return res.data
+}
 
 export const getTimeSeries = async (
     from: Currency, 

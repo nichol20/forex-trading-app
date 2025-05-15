@@ -15,6 +15,11 @@ export interface Exchange {
     exchangedAt: string;
 }
 
+export interface LatestRateItem {
+    time: number
+    rates: Rates
+}
+
 export type TimeSeries = {
     [key in Currency]?: {
         [data: string]: number;

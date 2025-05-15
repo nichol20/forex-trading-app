@@ -1,13 +1,13 @@
 import { Request, Response } from "express";
 
 import { addToWallet } from "./addToWallet";
-import { BadRequestError, InternalServerError } from "../../helpers/apiError";
+import { BadRequestError } from "../../helpers/apiError";
 import { validUser } from "../../../jest.setup-env";
-import { findUserByEmail } from "../../repositories/userRepository";
-import { createDealWithContactAssociation } from "../../services/hubspotApi";
+import { findUserByEmail, addToWallet as addToWalletQuery } from "../../repositories/userRepository";
 
-jest.mock("../../services/hubspotApi", () => ({
-    createDealWithContactAssociation: jest.fn()
+jest.mock("../../repositories/userRepository", () => ({
+    ...jest.requireActual("../../repositories/userRepository"),
+    addToWallet: jest.fn()
 }))
 
 const mockRequest = (body: any, userId: string): Partial<Request> => ({
@@ -33,6 +33,10 @@ describe("addToWallet controller", () => {
     });
 
     it("should update wallet and respond with updated wallet", async () => {
+        (addToWalletQuery as jest.Mock).mockImplementationOnce((...args) => {
+            return jest.requireActual("../../repositories/userRepository")
+                .addToWallet(...args, false)
+        })
         const user = await findUserByEmail(validUser.email)
         expect(user).not.toBeFalsy();
 

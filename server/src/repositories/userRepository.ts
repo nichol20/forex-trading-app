@@ -1,3 +1,5 @@
+import db from "../config/db";
+import { createDealWithContactAssociation } from "../services/hubspotApi";
 import { User, UserRow, Wallet } from "../types/user";
 import { Currency } from "../utils/currency";
 import { runQuery } from "../utils/db";
@@ -42,10 +44,33 @@ const addToWalletQuery = `
     RETURNING *;
 `
 
-export const addToWallet = async (currency: Currency, amount: number, userId: string): Promise<UserRow> => {
-    const rows = await runQuery<UserRow>(
+export const addToWallet = async (
+    currency: Currency, 
+    amount: number, 
+    userId: string, 
+    updateHubspot: boolean=true
+): Promise<UserRow> => {
+    const client = await db.connectAClient();
+
+    await client.query("BEGIN");
+    
+    const { rows } = await client.query<UserRow>(
         addToWalletQuery, 
         [[currency.toString()], currency.toString(), amount, userId]
     );
+
+    if(updateHubspot) {
+        await createDealWithContactAssociation(rows[0].hubspot_contact_id, {
+            amount,
+            dealname: `${rows[0].name} added funds`,
+            dealstage: "funds_received",
+            pipeline: "default",
+        });
+    }
+
+    await client.query("COMMIT");
+    
+    db.release(client);
+
     return rows[0];
 }

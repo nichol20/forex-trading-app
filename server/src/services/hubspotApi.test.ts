@@ -1,13 +1,6 @@
 import { createContact, getAllStages, createDealWithContactAssociation } from "./hubspotApi";
 import { hubspotClient } from "../utils/http";
 
-jest.mock("../utils/http", () => ({
-    hubspotClient: {
-        get: jest.fn(),
-        post: jest.fn(),
-    },
-}));
-
 describe("Hubspot API Service", () => {
     it("should return stage data for a given objectType and pipelineId", async () => {
         const mockStages = { results: [{ id: "1", label: "stage" }] };

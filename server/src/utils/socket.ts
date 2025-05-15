@@ -5,7 +5,16 @@ import { getList, pushToList } from "./redis";
 import { Rates } from "../types/exchangeRateApi";
 import { checkIf1MinuteHasPassed } from "./date";
 
-const examples = [
+const gbpExamples = [
+    { GBP: 1, USD: 1.32685 },
+    { GBP: 1, USD: 1.32311 },
+    { GBP: 1, USD: 1.32899 },
+    { GBP: 1, USD: 1.32732 },
+    { GBP: 1, USD: 1.32532 },
+    { GBP: 1, USD: 1.32432 },
+    { GBP: 1, USD: 1.32600 },
+];
+const usdExamples = [
     { USD: 1, GBP: 0.829115 },
     { USD: 1, GBP: 0.828709 },
     { USD: 1, GBP: 0.828709 },
@@ -33,6 +42,7 @@ const broadcastRate = async (io: Server, currency: Currency) => {
         // io.emit(`exchange-rates:${currency}`, data.rates);
         // console.log(data.rates);
 
+        const examples = currency === Currency.USD ? usdExamples : gbpExamples
         const rates = examples[Math.floor(Math.random() * examples.length)];
 
         let rateList = await getList(keyName);
@@ -50,7 +60,7 @@ const broadcastRate = async (io: Server, currency: Currency) => {
 
         io.emit(keyName, {
             rates,
-            lastRates: rateList.map(r => JSON.parse(r))
+            latestRates: rateList.map(r => JSON.parse(r))
         });
         setTimeout(() => broadcastRate(io, currency), 5_000); // 5s
     } catch (error: any) {

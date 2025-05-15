@@ -27,14 +27,17 @@ export default function Dashboard() {
     const toast = useToast();
     const { user, updateUser } = useAuth();
     const chartParentRef = useRef<HTMLDivElement>(null);
+
     const [chartWidth, setChartWidth] = useState(0);
     const [chartHeight, setChartHeight] = useState(350)
-    const [lastRatesDates, setLastRatesDates] = useState<string[]>([])
-    const [lastRatesValues, setLastRatesValues] = useState<number[]>([])
+
+    const [latestRatesDates, setLatestRatesDates] = useState<string[]>([])
+    const [latestRatesValues, setLatestRatesValues] = useState<number[]>([])
+
     const [showAddFundsForm, setShowAddForms] = useState(false);
     const [exchangeFrom, setExchangeFrom] = useState<Currency>(Currency.USD);
     const [addFundsTo, setAddFundsTo] = useState<Currency>(Currency.USD);
-    const [USDBasedRates, setUSDBasedRates] = useState<Rates>();
+    const [liveExchangeRates, setLiveExchangeRates] = useState<Rates>();
     const [amountToExchange, setAmountToExchange] = useState<number>(100);
     const toCurrency = exchangeFrom === Currency.USD ? Currency.GBP : Currency.USD;
     const [isProcessing, setIsProcessing] = useState(false)
@@ -76,42 +79,52 @@ export default function Dashboard() {
     };
 
     const getReferenceValue = () => {
-        if (!USDBasedRates) return 0;
+        if (!liveExchangeRates) return 0;
 
         if (exchangeFrom === Currency.USD) {
-            return (amountToExchange * USDBasedRates.GBP).toFixed(6);
+            return (amountToExchange * liveExchangeRates.GBP).toFixed(6);
         };
 
-        return (amountToExchange * getInvertedRate(USDBasedRates.GBP)).toFixed(6);
+        return (amountToExchange * liveExchangeRates.USD).toFixed(6);
     }
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const exchangeRates = await api.getExchangeRates(Currency.USD);
-                setUSDBasedRates(exchangeRates);
+                const exchangeRates = await api.getExchangeRates(exchangeFrom);
+                const latestRates = await api.getLatestRates(exchangeFrom)
+                setLiveExchangeRates(exchangeRates);
+                setLatestRatesValues(latestRates.map(r => exchangeFrom === Currency.USD ? r.rates.GBP : r.rates.USD));
+                setLatestRatesDates(latestRates.map(r => new Date(r.time).toLocaleTimeString()));
             } catch (error: any) {
                 console.log("erro fetching data: ", error.message)
             }
         };
 
         fetchData();
-    } ,[])
+    } ,[exchangeFrom])
 
     useEffect(() => {
         socket.connect();
         socket.on("exchange-rates:USD", (data: ExchangeRatesEventResponse) => {
-            console.log(data)
-            setUSDBasedRates(data.rates);
-            setLastRatesValues(data.lastRates.map(r => r.rates.GBP))
-            setLastRatesDates(data.lastRates.map(r => new Date(r.time).toLocaleTimeString()))
+            if(exchangeFrom !== Currency.USD) return 
+            setLiveExchangeRates(data.rates);
+            setLatestRatesValues(data.latestRates.map(r => r.rates.GBP))
+            setLatestRatesDates(data.latestRates.map(r => new Date(r.time).toLocaleTimeString()))
+        });
+        socket.on("exchange-rates:GBP", (data: ExchangeRatesEventResponse) => {
+            if(exchangeFrom !== Currency.GBP) return 
+            setLiveExchangeRates(data.rates);
+            setLatestRatesValues(data.latestRates.map(r => r.rates.USD))
+            setLatestRatesDates(data.latestRates.map(r => new Date(r.time).toLocaleTimeString()))
         });
 
         return () => {
             socket.off("exchange-rates:USD");
+            socket.off("exchange-rates:GBP");
             socket.disconnect();
         };
-    }, []);
+    }, [exchangeFrom]);
 
     useEffect(() => {
         const parent = chartParentRef.current;
@@ -183,16 +196,18 @@ export default function Dashboard() {
 
                     <div className={styles.chartContainer} ref={chartParentRef}>
                         <TimeSeriesChart
-                            data={lastRatesValues} 
-                            labels={lastRatesDates} 
+                            data={latestRatesValues} 
+                            labels={latestRatesDates} 
                             width={chartWidth} 
                             height={chartHeight} 
                         />
                     </div>
 
                     <span className={styles.rate}>
-                        {USDBasedRates
-                            ? `${USDBasedRates.USD} USD = ${USDBasedRates.GBP} GBP`
+                        {liveExchangeRates
+                            ? exchangeFrom === Currency.USD 
+                                ? `${liveExchangeRates.USD} USD = ${liveExchangeRates.GBP} GBP`
+                                : `${liveExchangeRates.GBP} GBP = ${liveExchangeRates.USD} USD`
                             : "..."}
                     </span>
                 </section>

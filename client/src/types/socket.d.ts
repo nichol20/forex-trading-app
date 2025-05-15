@@ -1,11 +1,6 @@
-import { Rates } from "./exchange"
-
-export interface RateItem {
-    time: number
-    rates: Rates
-}
+import { LatestRateItem, Rates } from "./exchange"
 
 export interface ExchangeRatesEventResponse {
     rates: Rates,
-    lastRates: RateItem[]
+    latestRates: LatestRateItem[]
 }

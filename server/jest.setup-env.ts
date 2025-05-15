@@ -6,9 +6,20 @@ dotenv.config({
     path: path.resolve(__dirname, ".env.test")
 })
 
+jest.mock("./src/utils/http", () => ({
+    hubspotClient: {
+        get: jest.fn(),
+        post: jest.fn(),
+    },
+    exchangeRateAPIClient: {
+        get: jest.fn(),
+        post: jest.fn(),
+    }
+}));
+
 import db from "./src/config/db";
 import { UserRow } from "./src/types/user";
-import { Exchange, ExchangeRow } from "./src/types/exchange";
+import { Exchange } from "./src/types/exchange";
 import { Currency } from "./src/utils/currency";
 import { createUser } from "./src/repositories/userRepository";
 import { createExchange } from "./src/repositories/exchangeRepository";

@@ -3,7 +3,8 @@
 .tradeHistoryPage {
     @include display-flex(flex-start);
     width: 100%;
-    height: 100vh;
+    height: 90vh;
+    min-height: 300px;
     padding: 20px;
     padding-top: 0;
     flex-direction: column;

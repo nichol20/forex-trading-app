@@ -95,7 +95,6 @@ export default function TradeHistory() {
 
     return (
         <div className={styles.tradeHistoryPage}>
-            <Header />
             <main className={styles.content}>
                 <section className={`${styles.filterContainer} ${styles.section}`}>
                     <button className={styles.filterBtn} onClick={() => setShowFilters(prev => !prev)}>
