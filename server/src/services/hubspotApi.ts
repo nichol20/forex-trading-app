@@ -10,7 +10,6 @@ import {
 } from "../types/hubspotApi";
 
 export const getAllStages = async (objectType: ObjectType, pipelineId: string) => {
-    console.log(hubspotClient)
     const { data } = await hubspotClient.get<GetAllStagesResponse>(`/crm/v3/pipelines/${objectType}/${pipelineId}/stages`);
     return data;
 }
