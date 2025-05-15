@@ -3,6 +3,7 @@ import { Queue } from "../config/queue";
 import { Currency } from "./currency";
 import { createExchange } from "../repositories/exchangeRepository";
 import { redisClient } from "../config/redis";
+import { Exchange } from "../types/exchange";
 
 interface ExchangePayload {
     fromCurrency: Currency;
@@ -30,11 +31,21 @@ export const startExchangeQueue = (io: Server) => {
                 fromAmount: payload.amount,
                 exchangeRate: payload.rate,
             }) 
-
-            io.to(socketId).emit(`exchange-made`, exchangeRow)
+            
+            io.to(socketId).emit(`exchange-made`, {
+                id: exchangeRow.id,
+                userId: exchangeRow.user_id,
+                exchangedAt: exchangeRow.exchanged_at,
+                fromCurrency: exchangeRow.from_currency,
+                toCurrency: exchangeRow.to_currency,
+                fromAmount: parseFloat(exchangeRow.from_amount),
+                toAmount: parseFloat(exchangeRow.to_amount),
+                exchangeRate: parseFloat(exchangeRow.exchange_rate),
+                hubspotDealId: exchangeRow.hubspot_deal_id
+            } as Exchange)
         } catch (error) {
-            io.to(socketId).emit(`exchange-failed`, null)
-            console.error("", error)
+            io.to(socketId).emit(`exchange-failed`, "exchangeFailed")
+            console.error("Failed exchange", error)
         }
     })
 }

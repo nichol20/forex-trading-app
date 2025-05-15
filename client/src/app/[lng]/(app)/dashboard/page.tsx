@@ -13,7 +13,7 @@ import { Currency, getSign } from "@/utils/currency";
 import { useAuth } from "@/contexts/Auth";
 import { InputField } from "@/components/InputField";
 import { useToast } from "@/contexts/Toast";
-import { Rates } from "@/types/exchange";
+import { Exchange, Rates } from "@/types/exchange";
 import { AddFundsForm } from "@/components/AddFundsForm";
 import { getInvertedRate } from "@/utils/exchange";
 import { TimeSeriesChart } from "@/components/TimeSeriesChart";
@@ -50,6 +50,8 @@ export default function Dashboard() {
         const formData = new FormData(event.currentTarget);
         const amount = formData.get("amount") as string;
 
+        if(isProcessing) return
+
         try {
             setIsProcessing(true)
             await exchangeCurrencies(
@@ -57,8 +59,7 @@ export default function Dashboard() {
                 toCurrency,
                 parseFloat(amount)
             );
-            updateUser();
-            toast({ message: t("exchange-made-message"), status: "success" });
+            toast({ message: "exchange queued", status: "success" });
         } catch (error: any) {
             if (
                 error?.response?.data?.message?.includes("Insufficient amount")
@@ -70,8 +71,6 @@ export default function Dashboard() {
                 return;
             }
             toast({ message: t("error.unknown"), status: "error" });
-        } finally {
-            setIsProcessing(false)
         }
     };
 
@@ -108,6 +107,13 @@ export default function Dashboard() {
 
     useEffect(() => {
         socket.connect();
+
+        return () => {
+            socket.disconnect();
+        }
+    }, [])
+
+    useEffect(() => {
         socket.on("exchange-rates:USD", (data: ExchangeRatesEventResponse) => {
             if(exchangeFrom !== Currency.USD) return 
             setLiveExchangeRates(data.rates);
@@ -124,9 +130,25 @@ export default function Dashboard() {
         return () => {
             socket.off("exchange-rates:USD");
             socket.off("exchange-rates:GBP");
-            socket.disconnect();
         };
-    }, [exchangeFrom]);
+    }, [exchangeFrom, toast]);
+
+    useEffect(() => {
+        socket.on("exchange-failed", () => {
+            toast({ message: "something went wrong!", status: "error" });
+            setIsProcessing(false)
+        })
+        socket.on("exchange-made", async (exchange: Exchange) => {
+            toast({ message: "Exchange made", status: "success" });
+            setIsProcessing(false)
+            await updateUser();
+        })
+
+        return () => {
+            socket.off("exchange-failed")
+            socket.off("exchange-made")
+        }
+    }, [])
 
     useEffect(() => {
         const parent = chartParentRef.current;
@@ -290,7 +312,7 @@ export default function Dashboard() {
                         </div>
                     </form>
 
-                    <button form="myform" type="submit" className={styles.exchangeBtn}>
+                    <button form="myform" type="submit" className={styles.exchangeBtn} disabled={isProcessing}>
                         {!isProcessing ? t("exchange-btn") : `${seconds}s`}
                     </button>
                     <a href="/trade-history">{t("see-history-link")}</a>
