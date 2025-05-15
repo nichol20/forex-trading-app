@@ -47,3 +47,7 @@ export let ExchangeQueue: Queue<ExchangePayload>
 export const startExchangeQueue = () => {
     ExchangeQueue = new Queue("exchanges")
 }
+
+export const stopExchangeQueue = async () => {
+    await ExchangeQueue.shutdown()
+}
