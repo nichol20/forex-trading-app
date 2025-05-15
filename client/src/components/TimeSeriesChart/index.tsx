@@ -34,7 +34,7 @@ export const TimeSeriesChart = ({
     min -= min * (1/1000)
     const yRange = max - min;
     const getX = useCallback(
-        (i: number) => pad + (i / (data.length - 1)) * (width - 40 * 2), 
+        (i: number) => pad + (i / (data.length - 1)) * (width - pad * 2), 
         [data, width]
     );
     const getY = useCallback(
