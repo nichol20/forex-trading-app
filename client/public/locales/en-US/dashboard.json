@@ -4,5 +4,5 @@
     "exchange-btn": "Exchange",
     "see-history-link": "See history",
     "insufficient-amount-error": "Insufficient amount for exchange",
-    "exchange-made-message": "Intercambio realizado: {{amount}}{{from}} → {{output}}{{to}}"
+    "exchange-made-message": "Exchange made: {{amount}}{{from}} → {{output}}{{to}}"
 }
