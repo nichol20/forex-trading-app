@@ -52,8 +52,9 @@ export default function Dashboard() {
                 exchangeTo,
                 parseFloat(amount)
             );
-            toast({ message: "exchange queued", status: "success" });
+            toast({ message: t("exchange-queued-message"), status: "success" });
         } catch (error: any) {
+            setIsProcessing(false);
             if (
                 error?.response?.data?.message?.includes("Insufficient amount")
             ) {
@@ -74,16 +75,15 @@ export default function Dashboard() {
     }
 
     const handleDropdownChange = (currency: Currency, state: "from" | "to") => {
-        const differentCurrency = currency === Currency.GBP ? Currency.USD : Currency.GBP
         if(state === "from") {
             if(currency === exchangeTo) {
-                setExchangeTo(differentCurrency)
+                setExchangeTo(exchangeFrom)
             }
             return setExchangeFrom(currency)
         }
 
         if(currency === exchangeFrom) {
-            setExchangeFrom(differentCurrency)
+            setExchangeFrom(exchangeTo)
         }
         return setExchangeTo(currency)
     }
@@ -254,7 +254,7 @@ export default function Dashboard() {
                             selectName="fromCurrency"
                             inputName="amount"
                             onSelectChange={c => handleDropdownChange(c, "from")}
-                            defaultCurrencyValue={exchangeFrom}
+                            value={exchangeFrom}
                             defaultAmountValue={amountToExchange}
                             onInputChange={setAmountToExchange}
                             inputTestId="currency-dropdown-input"
@@ -267,7 +267,7 @@ export default function Dashboard() {
                         <CurrencyDropdown
                             selectName="toCurrency"
                             onSelectChange={c => handleDropdownChange(c, "to")}
-                            defaultCurrencyValue={exchangeTo}
+                            value={exchangeTo}
                             amountValue={getReferenceValue()}
                             inputTestId="reference-input"
                             inputReadOnly

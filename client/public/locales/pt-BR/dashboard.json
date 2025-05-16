@@ -4,5 +4,6 @@
     "exchange-btn": "Trocar",
     "see-history-link": "Ver histórico",
     "insufficient-amount-error": "Valor insuficiente para troca",
-    "exchange-made-message": "Troca realizada: {{amount}}{{from}} → {{output}}{{to}}"
+    "exchange-made-message": "Troca realizada: {{amount}}{{from}} → {{output}}{{to}}",
+    "exchange-queued-message": "A troca está na fila"
 }

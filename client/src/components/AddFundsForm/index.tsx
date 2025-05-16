@@ -68,7 +68,7 @@ export const AddFundsForm = ({ close, defaultValue = Currency.USD }: AddFundsFor
                     selectTestId="currency-select"
                     inputName="amount"
                     inputTestId="amount-input"
-                    defaultCurrencyValue={addFundsTo}
+                    value={addFundsTo}
                     onSelectChange={setAddFundsTo}
                 />
                 <button className={styles.submitBtn} disabled={isProcessing}>

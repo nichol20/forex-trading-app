@@ -12,7 +12,74 @@
   View detailed records of exchanges.
 * **Responsive UI**
   Seamless experience on desktop and mobile devices.
+* **Hubspot Integration**
+  see exchanges made and funds added for each customer with hubspot
 
+# How to use
+
+## Login or Signup
+
+Create a counter or join an existing one
+
+> **Login & Signup**
+>
+> <img src="./images/login.png" alt="Login Screen" width="300" height="400" />  
+> <img src="./images/signup.png" alt="Signup Screen" width="300" height="400" />  
+
+---
+
+## Dashboard Walkthrough
+
+After logging in, you’ll land on the **Dashboard**, which shows:
+
+* **Portfolio Overview**: Balance per currency
+* **Value Chart**: Interactive graph of each currency’s latest value
+
+> **Portfolio Dashboard**
+>
+> <img src="./images/dashboard.png" alt="Dashboard Overview" width="600" />  
+
+---
+
+## Adding Funds
+
+Click the **Add Funds** button next to any currency to top up your wallet:
+
+1. Enter the **amount** in the form.
+2. Click **Add** to update your portfolio balance.
+
+> **Add Funds Form**
+>
+> <img src="./images/add-funds-form.png" alt="Add Funds Form" width="600" />  
+
+---
+## Currency Exchange
+
+Use the **Exchange** section to convert between two currencies:
+
+1. Select the **source** and **target** currencies.
+2. Enter the **amount** to convert.
+3. Click **Exchange** to execute the trade at the current rate.
+
+> **Exchange Section**
+>
+> <img src="./images/exchange-section.png" alt="Currency Exchange Section" width="600" /> 
+
+---
+## Trade History
+
+Navigate to **Trade History** to see all your past transactions:
+
+* **Filter** by date, currency pair, or trade type (add funds vs. exchange).
+* **Sort** by date or amount to quickly find specific trades.
+
+> **Trade History**
+>
+> <img src="./images/trade-history.png" alt="Trade History Table" width="600" />  
+
+---
+
+# How to run
 ## Prerequisites
 
 * [Docker](https://www.docker.com/)

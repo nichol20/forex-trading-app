@@ -30,7 +30,7 @@ export const Wallets = () => {
 
     return (
         <div className={styles.wallets}>
-            <h3 className={styles.title}>Wallets</h3>
+            <h3 className={styles.title}>{t("wallets")}</h3>
             <div className={styles.content}>
                 {getAllCurrencies().map(c => (
                     <div className={styles.wallet} key={c}>

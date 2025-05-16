@@ -69,8 +69,9 @@ const examplesMap: Record<Currency, Rates[]> = {
 };
 
 export const startBroadcasts = async (io: Server) => {
-    broadcastRate(io, Currency.GBP);
-    broadcastRate(io, Currency.USD);
+    for (const currency of getAllCurrencies()) {
+        broadcastRate(io, currency);
+    }
 };
 
 interface RateItem {
@@ -105,7 +106,7 @@ const broadcastRate = async (io: Server, currency: Currency) => {
             rates,
             latestRates: rateList.map(r => JSON.parse(r))
         });
-        setTimeout(() => broadcastRate(io, currency), 5_000); // 5s
+        setTimeout(() => broadcastRate(io, currency), 10_000); // 5s
     } catch (error: any) {
         // console.error(`Failed to fetch exchange rate for ${currency}:`, error);
         setTimeout(() => broadcastRate(io, currency), 10_000); // retry after 10s

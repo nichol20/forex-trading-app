@@ -5,15 +5,14 @@ import { useToast } from "@/contexts/Toast";
 import * as api from "@/utils/api";
 import { Currency } from "@/utils/currency";
 
-// Mock modules
 jest.mock("@/contexts/Auth");
 jest.mock("@/contexts/Toast");
 jest.mock("@/utils/api");
 jest.mock("@/components/TimeSeriesChart", () => ({
     TimeSeriesChart: () => <div data-testid="chart" />,
 }));
-jest.mock("@/components/AddFundsForm", () => ({
-    AddFundsForm: () => <div data-testid="add-funds-form" />,
+jest.mock("@/components/Wallets", () => ({
+    Wallets: () => <div data-testid="wallets" />,
 }));
   
 jest.mock("@/socket", () => ({
@@ -43,46 +42,30 @@ describe("Dashboard", () => {
     })
 
     beforeEach(() => {
-        (useAuth as jest.Mock).mockReturnValue({
-            user: {
-                wallet: { USD: 1500, GBP: 1000 }
-            },
-            updateUser: mockUpdateUser,
-        });
+        (useAuth as jest.Mock).mockReturnValue({ updateUser: mockUpdateUser });
 
         (useToast as jest.Mock).mockReturnValue(mockToast);
 
         (api.getExchangeRates as jest.Mock).mockResolvedValue({
             USD: 1,
-            GBP: 0.8,
+            EUR: 0.8,
+            GBP: 0.7,
+            JPY: 145.7,
+            BRL: 5.6
         });
-
-        (api.getTimeSeries as jest.Mock).mockResolvedValue({
-            [Currency.GBP]: {
-                "2023-01-01": 0.8,
-                "2023-01-02": 0.82,
-            }
-        });
+        (api.getLatestRates as jest.Mock).mockResolvedValue([]);
 
         (api.exchangeCurrencies as jest.Mock).mockResolvedValue({});
     });
 
     afterEach(() => {
         jest.clearAllMocks();
-    });
-
-    it("renders wallet balances", async () => {
-        render(<Dashboard />);
-
-        expect(await screen.findByText("usd-wallet-title")).toBeInTheDocument();
-        expect(screen.getByText("$1500.00")).toBeInTheDocument();
-        expect(screen.getByText("£1000.00")).toBeInTheDocument();
-    });
+    })
 
     it("renders chart and exchange rate", async () => {
         render(<Dashboard />);
         expect(await screen.findByTestId("chart")).toBeInTheDocument();
-        expect(await screen.findByText(/1 USD = 0.8 GBP/)).toBeInTheDocument();
+        expect(await screen.findByText(/1 USD = 0.7 GBP/)).toBeInTheDocument();
     });
 
     it("handles successful currency exchange", async () => {
@@ -92,7 +75,7 @@ describe("Dashboard", () => {
 
         fireEvent.change(input, { target: { value: "100" } });
         await waitFor(() => {
-            expect(referenceInput).toHaveValue(100 * 0.8)
+            expect(referenceInput).toHaveValue(100 * 0.7)
         })
 
         const button = screen.getByText("exchange-btn");
@@ -101,15 +84,14 @@ describe("Dashboard", () => {
         await waitFor(() => {
             expect(api.exchangeCurrencies).toHaveBeenCalledWith(Currency.USD, Currency.GBP, 100);
         });
-        expect(mockUpdateUser).toHaveBeenCalled();
         expect(mockToast).toHaveBeenCalledWith({
-            message: "exchange-made-message",
+            message: "exchange-queued-message",
             status: "success"
         });
     });
 
     it("shows error toast on exchange failure", async () => {
-        (api.exchangeCurrencies as jest.Mock).mockRejectedValue({
+        (api.exchangeCurrencies as jest.Mock).mockRejectedValueOnce({
             response: { data: { message: "Insufficient amount" } }
         });
 
@@ -124,12 +106,4 @@ describe("Dashboard", () => {
             });
         });
     });
-
-    it("should show add funds form", async () => {
-        render(<Dashboard />);
-        const button = await screen.findByTestId("add-funds-btn-usd");
-        fireEvent.click(button);
-
-        expect(screen.getByTestId("add-funds-form")).toBeInTheDocument();
-    })
 });

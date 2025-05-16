@@ -4,5 +4,6 @@
     "exchange-btn": "Cambiar",
     "see-history-link": "Ver historial",
     "insufficient-amount-error": "Monto insuficiente para el cambio",
-    "exchange-made-message": "Intercambio realizado: {{amount}}{{from}} → {{output}}{{to}}"
+    "exchange-made-message": "Intercambio realizado: {{amount}}{{from}} → {{output}}{{to}}",
+    "exchange-queued-message": "El intercambio está en cola"
 }

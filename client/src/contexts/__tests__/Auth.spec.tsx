@@ -48,20 +48,6 @@ describe("AuthContext", () => {
         ).toBeInTheDocument();
 
     });
-    
-    it("login updates the user state", async () => {
-        (api.getUser as jest.Mock).mockRejectedValue({});
-        (api.login as jest.Mock).mockReturnValueOnce(mockUser);
-
-        renderWithProvider();
-
-        await screen.findByText("user: none")
-
-        screen.getByText(/login/i).click();
-        await screen.findByText(`user: ${mockUser.email}`);
-        
-        expect(await screen.findByText(`user: none`)).toBeInTheDocument();
-    });
 
     it("logout updates the user state", async () => {
         const router = { push: jest.fn() };

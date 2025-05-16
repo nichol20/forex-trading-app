@@ -94,15 +94,14 @@ export const FiltersDesktop = ({ isOpen }: FiltersDesktopProps) => {
     const handleCurrencyDropdownChange = (currency: Currency | "", type: "from" | "to") => {
         setFilters(prev => {
             const newFilters = {...prev}        
-            const differentCurrency = currency === Currency.GBP ? Currency.USD : Currency.GBP
 
             if(type === "from") {
-                if(currency === newFilters.to) newFilters.to = differentCurrency
+                if(currency === newFilters.to) newFilters.to = newFilters.from
                 newFilters.from = currency ? currency : null
             }
 
             if(type === "to") {
-                if(currency === newFilters.from) newFilters.from = differentCurrency
+                if(currency === newFilters.from) newFilters.from = newFilters.to
                 newFilters.to = currency ? currency : null
             }
 

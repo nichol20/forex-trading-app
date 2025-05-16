@@ -21,16 +21,12 @@ describe('fetchExchangeRate', () => {
     it('returns rates when API responds with valid data', async () => {
         mockedGetEnv.mockReturnValue({ EXCHANGERATE_API_KEY: 'test-key' });
 
-        const mockResponse: ExchangeRateResponse = {
+        const mockResponse = {
             base: Currency.USD,
             ms: 1,
             updated: "",
             results: {
-                "USD": 1,
-                "EUR": 0.89507,
-                "GBP": 0.7525,
-                "JPY": 145.70246,
-                "BRL": 5.67107
+                "GBP": 0.75
             }
         };
 

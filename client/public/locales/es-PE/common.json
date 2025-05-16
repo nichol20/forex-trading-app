@@ -5,5 +5,8 @@
     "error": {
         "unknown": "¡Algo salió mal!"
     },
-    "language-dropdown-title": "Cambiar idioma"
+    "language-dropdown-title": "Cambiar idioma",
+    "processing": "Procesando...",
+    "balance": "Saldo",
+    "wallets": "Monederos"
 }

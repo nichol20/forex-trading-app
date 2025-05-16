@@ -18,7 +18,7 @@ interface BaseProps {
     selectClassName?: string;
     inputId?: string;
     inputTestId?: string;
-    value?: string | number | readonly string[] | null;
+    value?: Currency | null
     onInputChange?: (amount: number) => void
     showInput?: boolean
 }
@@ -53,13 +53,8 @@ export const CurrencyDropdown = ({
     onInputChange,
     showInput = true
 }: Props) => {
-    const [currentCurrency, setCurrency] = useState<Currency | "">(
-        defaultCurrencyValue ? defaultCurrencyValue : ""
-    );
-
     const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const currency = event.target.value as Currency
-        setCurrency(currency)
         if (onSelectChange) onSelectChange(currency)
     }
 
@@ -76,7 +71,9 @@ export const CurrencyDropdown = ({
             <select
                 name={selectName}
                 id={selectId}
-                value={value ?? undefined}
+                value={optionToNull 
+                        ? value ?? "" 
+                        : value ?? undefined}
                 className={`${styles.select} ${showInput ? "" : styles.onlySelect} ${selectClassName}`}
                 defaultValue={defaultCurrencyValue ?? undefined}
                 onChange={handleSelectChange}
@@ -93,7 +90,7 @@ export const CurrencyDropdown = ({
                 className={styles.currencyInput}
                 type="number"
                 name={inputName}
-                prefix={currentCurrency ? currencyToSignMap[currentCurrency] : ""}
+                prefix={value ? currencyToSignMap[value] : ""}
                 value={amountValue}
                 defaultValue={defaultAmountValue}
                 min="0.01"

@@ -4,6 +4,12 @@ import { BadRequestError } from "../../helpers/apiError";
 import { validUser } from "../../../jest.setup-env";
 import { Currency } from "../../utils/currency";
 
+jest.mock("../../utils/queue", () => ({
+    ExchangeQueue: {
+        enqueue: jest.fn()
+    }
+}))
+
 jest.mock("../../services/exchangeRateApi", () => ({
     fetchExchangeRate: jest.fn()
 }));
@@ -107,11 +113,7 @@ describe("exchangeCurrency controller", () => {
 
         expect(res.status).toHaveBeenCalledWith(200);
         expect(res.json).toHaveBeenCalledWith(
-            expect.objectContaining({
-                exchangeRate: testGBPRate,
-                fromAmount: amount,
-                toAmount: amount * testGBPRate,
-            })
+            expect.objectContaining({"message": "Exchange queued successfully"})
         );
-    }, 10_000);
+    });
 });
