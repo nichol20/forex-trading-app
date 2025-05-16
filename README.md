@@ -70,8 +70,8 @@ Use the **Exchange** section to convert between two currencies:
 
 Navigate to **Trade History** to see all your past transactions:
 
-* **Filter** by date, currency pair, or trade type (add funds vs. exchange).
-* **Sort** by date or amount to quickly find specific trades.
+* **Filter** by date, currency pair, amount, output and rate.
+* **Sort** by date, amount, rate or output to quickly find specific trades.
 
 > **Trade History**
 >
