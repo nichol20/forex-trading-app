@@ -1,0 +1,8 @@
+{
+    "live-exchange-rate-section-title": "リアルタイム為替レート",
+    "exchange-currency-section-title": "通貨を交換",
+    "exchange-btn": "交換する",
+    "see-history-link": "履歴を見る",
+    "insufficient-amount-error": "交換に必要な金額が不足しています",
+    "exchange-made-message": "交換完了: {{amount}}{{from}} → {{output}}{{to}}"
+}

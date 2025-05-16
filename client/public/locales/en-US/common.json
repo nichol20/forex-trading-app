@@ -6,5 +6,6 @@
         "unknown": "Something went wrong!"
     },
     "language-dropdown-title": "Change language",
-    "processing": "Processing..."
+    "processing": "Processing...",
+    "balance": "Balance"
 }

@@ -1,27 +1,26 @@
 {
     "title": "Cadastro",
     "field": {
-      "name": {
-        "name": "Nome",
-        "placeholder": "Digite seu nome"
-      },
-      "email": {
-        "name": "E-mail",
-        "placeholder": "Digite seu e-mail",
-        "already-exists-error": "Este e-mail já existe!",
-        "invalid-format-error": "Formato de e-mail inválido."
-      },
-      "password": {
-        "name": "Senha",
-        "password-mismatch-error": "As senhas devem ser iguais",
-        "weak-password-error": "A senha deve ter no mínimo 6 caracteres"
-      },
-      "confirmation-password": {
-        "name": "Confirmar senha"
-      }
+        "name": {
+            "name": "Nome",
+            "placeholder": "Digite seu nome"
+        },
+        "email": {
+            "name": "E-mail",
+            "placeholder": "Digite seu e-mail",
+            "already-exists-error": "Este e-mail já existe!",
+            "invalid-format-error": "Formato de e-mail inválido."
+        },
+        "password": {
+            "name": "Senha",
+            "password-mismatch-error": "As senhas devem ser iguais",
+            "weak-password-error": "A senha deve ter no mínimo 6 caracteres"
+        },
+        "confirmation-password": {
+            "name": "Confirmar senha"
+        }
     },
     "signup-btn": "Cadastrar",
     "account-question": "Já tem uma conta? ",
     "login-link": "entrar"
-  }
-  
+}

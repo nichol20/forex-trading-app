@@ -1,9 +1,8 @@
 {
-    "usd-wallet-title": "Carteira em USD",
-    "gbp-wallet-title": "Carteira em GBP",
     "live-exchange-rate-section-title": "Cotação ao vivo",
     "exchange-currency-section-title": "Trocar moeda",
     "exchange-btn": "Trocar",
-    "see-history-link": "Ver histórico"
-  }
-  
+    "see-history-link": "Ver histórico",
+    "insufficient-amount-error": "Valor insuficiente para troca",
+    "exchange-made-message": "Troca realizada: {{amount}}{{from}} → {{output}}{{to}}"
+}

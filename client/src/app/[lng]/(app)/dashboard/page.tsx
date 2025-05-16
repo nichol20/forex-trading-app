@@ -131,11 +131,16 @@ export default function Dashboard() {
 
     useEffect(() => {
         socket.on("exchange-failed", () => {
-            toast({ message: "something went wrong!", status: "error" });
+            toast({ message: t("error.unknown"), status: "error" });
             setIsProcessing(false)
         })
         socket.on("exchange-made", async (exchange: Exchange) => {
-            toast({ message: "Exchange made", status: "success" });
+            toast({ message: t("exchange-made-message", {
+                from: exchange.fromCurrency,
+                to: exchange.toCurrency,
+                amount: exchange.fromAmount,
+                output: exchange.toAmount
+            }), status: "success" });
             setIsProcessing(false)
             await updateUser();
         })
@@ -144,7 +149,7 @@ export default function Dashboard() {
             socket.off("exchange-failed")
             socket.off("exchange-made")
         }
-    }, [toast])
+    }, [toast, t])
 
     useEffect(() => {
         const parent = chartParentRef.current;
@@ -249,7 +254,7 @@ export default function Dashboard() {
                             selectName="fromCurrency"
                             inputName="amount"
                             onSelectChange={c => handleDropdownChange(c, "from")}
-                            value={exchangeFrom}
+                            defaultCurrencyValue={exchangeFrom}
                             defaultAmountValue={amountToExchange}
                             onInputChange={setAmountToExchange}
                             inputTestId="currency-dropdown-input"
@@ -262,7 +267,7 @@ export default function Dashboard() {
                         <CurrencyDropdown
                             selectName="toCurrency"
                             onSelectChange={c => handleDropdownChange(c, "to")}
-                            value={exchangeTo}
+                            defaultCurrencyValue={exchangeTo}
                             amountValue={getReferenceValue()}
                             inputTestId="reference-input"
                             inputReadOnly

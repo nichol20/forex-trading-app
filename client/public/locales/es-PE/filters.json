@@ -1,11 +1,10 @@
 {
     "title": {
-      "modal": "Filtros",
-      "from": "De",
-      "to": "A",
-      "amount-output-rate": "Monto / Salida / Tasa"
+        "modal": "Filtros",
+        "from": "De",
+        "to": "A",
+        "amount-output-rate": "Monto / Salida / Tasa"
     },
     "apply-filters-btn": "Aplicar filtros",
     "clear-all-btn": "Limpiar todo"
-  }
-  
+}

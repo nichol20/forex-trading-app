@@ -1,27 +1,26 @@
 {
     "title": "Registrarse",
     "field": {
-      "name": {
-        "name": "Nombre",
-        "placeholder": "Escribe tu nombre"
-      },
-      "email": {
-        "name": "Correo electrónico",
-        "placeholder": "Escribe tu correo electrónico",
-        "already-exists-error": "¡Este correo ya existe!",
-        "invalid-format-error": "Formato de correo inválido."
-      },
-      "password": {
-        "name": "Contraseña",
-        "password-mismatch-error": "Las contraseñas deben coincidir",
-        "weak-password-error": "La contraseña debe tener al menos 6 caracteres"
-      },
-      "confirmation-password": {
-        "name": "Confirmar contraseña"
-      }
+        "name": {
+            "name": "Nombre",
+            "placeholder": "Escribe tu nombre"
+        },
+        "email": {
+            "name": "Correo electrónico",
+            "placeholder": "Escribe tu correo electrónico",
+            "already-exists-error": "¡Este correo ya existe!",
+            "invalid-format-error": "Formato de correo inválido."
+        },
+        "password": {
+            "name": "Contraseña",
+            "password-mismatch-error": "Las contraseñas deben coincidir",
+            "weak-password-error": "La contraseña debe tener al menos 6 caracteres"
+        },
+        "confirmation-password": {
+            "name": "Confirmar contraseña"
+        }
     },
     "signup-btn": "Registrarse",
     "account-question": "¿Ya tienes una cuenta? ",
     "login-link": "iniciar sesión"
-  }
-  
+}

@@ -4,7 +4,6 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { useT } from "@/i18n/client";
 
-import { Header } from "@/components/Header";
 import { Exchange } from "@/types/exchange";
 import { getExchangeHistory } from "@/utils/api";
 import { Pagination } from "@/components/Pagination";
@@ -18,9 +17,13 @@ import styles from "./styles.module.scss";
 export default function TradeHistory() {
     const { t } = useT("history-page");
     const router = useRouter();
-    const columns: string[] = [
-        t("columns.date"), t("columns.from"), t("columns.to"),
-        t("columns.amount"), t("columns.rate"), t("columns.output")
+    const columns = [
+        { name: t("columns.date"), value: "date" }, 
+        { name: t("columns.from"), value: "from" }, 
+        { name: t("columns.to"), value: "to" }, 
+        { name: t("columns.amount"), value: "amount" }, 
+        { name: t("columns.rate"), value: "rate" }, 
+        { name: t("columns.output"), value: "output" }, 
     ]
     const searchParams = useSearchParams();
     const pathname = usePathname();
@@ -108,10 +111,10 @@ export default function TradeHistory() {
                     <div className={styles.table}>
                         <div className={styles.header}>
                             {columns.map(col => (
-                                <div className={styles.col} key={col} onClick={() => changeOrderBy(col)}>
-                                    <span className={styles.name}>{col}</span>
+                                <div className={styles.col} key={col.value} onClick={() => changeOrderBy(col.value)}>
+                                    <span className={styles.name}>{col.name}</span>
                                     {
-                                        sortBy === col.toLocaleLowerCase()
+                                        sortBy === col.value.toLocaleLowerCase()
                                         && <div className={`${styles.triangle} ${styles[sortOrder]}`}></div>
                                     }
                                 </div>

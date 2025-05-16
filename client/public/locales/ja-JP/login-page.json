@@ -1,0 +1,9 @@
+{
+    "title": "ログイン",
+    "email-field-name": "メールアドレス",
+    "email-field-placeholder": "メールアドレスを入力",
+    "password-field-name": "パスワード",
+    "login-btn": "ログイン",
+    "account-question": "アカウントをお持ちでないですか？ ",
+    "signup-link": "サインアップ"
+}

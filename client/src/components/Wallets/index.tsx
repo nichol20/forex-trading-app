@@ -38,7 +38,7 @@ export const Wallets = () => {
                             <Image src={currencyToImage[c]} width={42} height={42} alt={c} />
                             <div className={styles.currencyNameBox}>
                                 <span className={styles.name}>{c}</span>
-                                <span className={styles.balance}>balance</span>
+                                <span className={styles.balance}>{t("balance")}</span>
                             </div>
                         </div>
 

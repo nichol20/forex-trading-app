@@ -1,0 +1,10 @@
+{
+    "title": {
+        "modal": "フィルター",
+        "from": "送金通貨",
+        "to": "受取通貨",
+        "amount-output-rate": "金額 / 受取額 / レート"
+    },
+    "apply-filters-btn": "フィルターを適用",
+    "clear-all-btn": "すべてクリア"
+}

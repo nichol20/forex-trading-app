@@ -2,7 +2,7 @@ export enum LanguageCode {
     PT_BR = "pt-BR",
     ES_PE = "es-PE",
     EN_US = "en-US",
-    // JA_JP = "ja-JP"
+    JA_JP = "ja-JP"
 }
 
 export interface Language {
@@ -20,7 +20,7 @@ export const supportedLngs: Languages = [
       name: {
         "pt-BR": "Inglês",
         "en-US": "English",
-        // "ja-JP": "英語",
+        "ja-JP": "英語",
         "es-PE": "Inglés"
       },
     },
@@ -29,25 +29,25 @@ export const supportedLngs: Languages = [
       name: {
         "pt-BR": "Português",
         "en-US": "Portuguese",
-        // "ja-JP": "ポルトガル語",
+        "ja-JP": "ポルトガル語",
         "es-PE": "Portugués"
       },
     },
-    // {
-    //   code: LanguageCode.JA_JP,
-    //   name: {
-    //     "pt-BR": "Japonês",
-    //     "en-US": "Japanese",
-    //     "ja-JP": "日本語",
-    //     "es-PE": ""
-    //   },
-    // },
+    {
+      code: LanguageCode.JA_JP,
+      name: {
+        "pt-BR": "Japonês",
+        "en-US": "Japanese",
+        "ja-JP": "日本語",
+        "es-PE": "japonés"
+      },
+    },
     {
       code: LanguageCode.ES_PE,
       name: {
         "pt-BR": "Espanhol",
         "en-US": "Spanish",
-        // "ja-JP": "",
+        "ja-JP": "スペイン語",
         "es-PE": "Español"
       },
     },

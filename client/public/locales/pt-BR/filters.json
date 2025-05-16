@@ -1,11 +1,10 @@
 {
     "title": {
-      "modal": "Filtros",
-      "from": "De",
-      "to": "Para",
-      "amount-output-rate": "Quantidade / Saída / Taxa"
+        "modal": "Filtros",
+        "from": "De",
+        "to": "Para",
+        "amount-output-rate": "Quantidade / Saída / Taxa"
     },
     "apply-filters-btn": "Aplicar filtros",
     "clear-all-btn": "Limpar tudo"
-  }
-  
+}

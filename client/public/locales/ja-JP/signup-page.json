@@ -1,0 +1,26 @@
+{
+    "title": "サインアップ",
+    "field": {
+        "name": {
+            "name": "氏名",
+            "placeholder": "氏名を入力"
+        },
+        "email": {
+            "name": "メールアドレス",
+            "placeholder": "メールアドレスを入力",
+            "already-exists-error": "このメールアドレスは既に登録されています！",
+            "invalid-format-error": "メール形式が無効です。"
+        },
+        "password": {
+            "name": "パスワード",
+            "password-mismatch-error": "パスワードが一致しません",
+            "weak-password-error": "パスワードは6文字以上である必要があります"
+        },
+        "confirmation-password": {
+            "name": "パスワード（確認）"
+        }
+    },
+    "signup-btn": "サインアップ",
+    "account-question": "すでにアカウントをお持ちですか？ ",
+    "login-link": "ログイン"
+}

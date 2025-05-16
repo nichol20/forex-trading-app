@@ -1,12 +1,11 @@
 {
     "title": "Historial de transacciones",
     "columns": {
-      "date": "Fecha",
-      "from": "De",
-      "to": "A",
-      "amount": "Monto",
-      "rate": "Tasa",
-      "output": "Salida"
+        "date": "Fecha",
+        "from": "De",
+        "to": "A",
+        "amount": "Monto",
+        "rate": "Tasa",
+        "output": "Salida"
     }
-  }
-  
+}
