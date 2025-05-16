@@ -11,7 +11,7 @@
     text-align: left;
     background-color: $colors-bg-primary;
 
-    @include media("phone") {
+    @include media("phone-lg") {
         font-size: 1.2em;
     }
 

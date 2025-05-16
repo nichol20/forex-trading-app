@@ -35,6 +35,12 @@
             margin-bottom: 0px;
         }
     }
+
+    @include media("phone") {
+        &.active {
+            padding: 0 10px;
+        }
+    }
 }
 
 .sections {
