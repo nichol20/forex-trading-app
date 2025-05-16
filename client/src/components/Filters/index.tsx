@@ -7,7 +7,7 @@ import { CurrencyDropdown } from "@/components/CurrencyDropdown";
 import { DoubleSlider } from "@/components/DoubleSlider";
 import { Modal } from "@/components/Modal";
 import { Filters as IFilters } from "@/utils/api";
-import { Currency, getSign } from "@/utils/currency";
+import { Currency, currencyToSignMap } from "@/utils/currency";
 import { toUtcDateString } from "@/utils/date";
 
 import styles from "./styles.module.scss";
@@ -25,8 +25,8 @@ const INITIAL_FILTERS: IFilters = {
     maxOutput: null,
     minRate: null,
     maxRate: null,
-    from: Currency.USD,
-    to: Currency.GBP
+    from: null,
+    to: null
 }
 
 export const FiltersDesktop = ({ isOpen }: FiltersDesktopProps) => {
@@ -91,19 +91,19 @@ export const FiltersDesktop = ({ isOpen }: FiltersDesktopProps) => {
         }))
     }
 
-    const handleCurrencyDropdownChange = (currency: Currency, type: "from" | "to") => {
+    const handleCurrencyDropdownChange = (currency: Currency | "", type: "from" | "to") => {
         setFilters(prev => {
-            const newFilters = {...prev}
-            if(type === "from" && currency === newFilters.to) {
-                newFilters.from = currency
-                if(currency === Currency.USD) newFilters.to = Currency.GBP
-                else newFilters.to = Currency.USD
+            const newFilters = {...prev}        
+            const differentCurrency = currency === Currency.GBP ? Currency.USD : Currency.GBP
+
+            if(type === "from") {
+                if(currency === newFilters.to) newFilters.to = differentCurrency
+                newFilters.from = currency ? currency : null
             }
 
-            if(type === "to" && currency === newFilters.from) {
-                newFilters.to = currency
-                if(currency === Currency.USD) newFilters.from = Currency.GBP
-                else newFilters.from = Currency.USD
+            if(type === "to") {
+                if(currency === newFilters.from) newFilters.from = differentCurrency
+                newFilters.to = currency ? currency : null
             }
 
             return newFilters
@@ -139,6 +139,7 @@ export const FiltersDesktop = ({ isOpen }: FiltersDesktopProps) => {
                         <CurrencyDropdown
                             showInput={false}
                             onSelectChange={c => handleCurrencyDropdownChange(c, "from")}
+                            optionToNull
                             value={filters.from}
                         />
                     </div>
@@ -153,6 +154,7 @@ export const FiltersDesktop = ({ isOpen }: FiltersDesktopProps) => {
                         <CurrencyDropdown
                             showInput={false}
                             onSelectChange={c => handleCurrencyDropdownChange(c, "to")}
+                            optionToNull
                             value={filters.to}
                         />
                     </div>
@@ -169,7 +171,7 @@ export const FiltersDesktop = ({ isOpen }: FiltersDesktopProps) => {
                             minAmount: v[0],
                             maxAmount: v[1]
                         }))}
-                        prefix={filters.from ? getSign(filters.from) : ""}
+                        prefix={filters.from ? currencyToSignMap[filters.from] : ""}
                         step={10}
                     />
                     <DoubleSlider
@@ -181,7 +183,7 @@ export const FiltersDesktop = ({ isOpen }: FiltersDesktopProps) => {
                             minOutput: v[0],
                             maxOutput: v[1]
                         }))}
-                        prefix={filters.to ? getSign(filters.to) : ""}
+                        prefix={filters.to ? currencyToSignMap[filters.to] : ""}
                         step={10}
                     />
                     <DoubleSlider

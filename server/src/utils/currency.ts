@@ -1,6 +1,9 @@
 export enum Currency {
     GBP = "GBP",
     USD = "USD",
+    BRL = "BRL",
+    EUR = "EUR",
+    JPY = "JPY"
 }
 
 export const getAllCurrencies = (): Currency[] => {

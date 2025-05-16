@@ -29,9 +29,12 @@ export const fetchExchangeRate = async (
     // data.results[base] = 1;
 
     return {
-        rates: {
-            USD: 1,
-            GBP: 0.75
+        rates:{
+            "USD": 1,
+            "EUR": 0.89507,
+            "GBP": 0.7525,
+            "JPY": 145.70246,
+            "BRL": 5.67107
         }
     };
 };

@@ -26,8 +26,11 @@ describe('fetchExchangeRate', () => {
             ms: 1,
             updated: "",
             results: {
-                USD: 1,
-                GBP: 0.75,
+                "USD": 1,
+                "EUR": 0.89507,
+                "GBP": 0.7525,
+                "JPY": 145.70246,
+                "BRL": 5.67107
             }
         };
 

@@ -5,5 +5,6 @@
     "error": {
         "unknown": "Something went wrong!"
     },
-    "language-dropdown-title": "Change language"
+    "language-dropdown-title": "Change language",
+    "processing": "Processing..."
 }

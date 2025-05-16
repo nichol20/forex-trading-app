@@ -1,15 +1,18 @@
 import { useState } from "react";
 
 import { InputField } from "../InputField";
-import { Currency, getAllCurrencies, getSign } from "../../utils/currency";
+import { Currency, currencyToSignMap, getAllCurrencies } from "../../utils/currency";
 import styles from "./styles.module.scss";
 
-interface CurrencyDropdownProps {
+interface BaseProps {
     selectName?: string;
     inputName?: string;
     onSelectChange?: (currency: Currency) => void;
     defaultCurrencyValue?: Currency | null;
+    optionToNull?: boolean
     defaultAmountValue?: number;
+    amountValue?: number | string;
+    inputReadOnly?: boolean
     selectId?: string;
     selectTestId?: string;
     selectClassName?: string;
@@ -20,6 +23,18 @@ interface CurrencyDropdownProps {
     showInput?: boolean
 }
 
+interface CurrencyDropdownProps extends BaseProps {
+    onSelectChange?: (currency: Currency) => void;
+    optionToNull?: false
+}
+
+interface CurrencyDropdownPropsWithNullOption extends BaseProps{
+    onSelectChange?: (currency: Currency | "") => void;
+    optionToNull: true
+}
+
+type Props = CurrencyDropdownPropsWithNullOption | CurrencyDropdownProps
+
 export const CurrencyDropdown = ({
     selectName,
     selectId,
@@ -29,13 +44,18 @@ export const CurrencyDropdown = ({
     inputTestId,
     value,
     inputName,
+    inputReadOnly,
+    optionToNull,
     defaultCurrencyValue,
     defaultAmountValue,
+    amountValue,
     onSelectChange,
     onInputChange,
     showInput = true
-}: CurrencyDropdownProps) => {
-    const [currentCurrency, setCurrency] = useState<Currency>(defaultCurrencyValue ?? Currency.USD)
+}: Props) => {
+    const [currentCurrency, setCurrency] = useState<Currency | "">(
+        defaultCurrencyValue ? defaultCurrencyValue : ""
+    );
 
     const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const currency = event.target.value as Currency
@@ -62,6 +82,7 @@ export const CurrencyDropdown = ({
                 onChange={handleSelectChange}
                 data-testid={selectTestId}
             >
+                {optionToNull && <option value="">-----</option>}
                 {getAllCurrencies().map((c) => (
                     <option key={c} value={c}>
                         {c}
@@ -72,13 +93,15 @@ export const CurrencyDropdown = ({
                 className={styles.currencyInput}
                 type="number"
                 name={inputName}
-                prefix={getSign(currentCurrency)}
+                prefix={currentCurrency ? currencyToSignMap[currentCurrency] : ""}
+                value={amountValue}
                 defaultValue={defaultAmountValue}
                 min="0.01"
                 step="0.01"
                 onChange={handleMoneyInputChange}
                 inputId={inputId}
                 testId={inputTestId}
+                readOnly={inputReadOnly}
             />}
         </div>
     );

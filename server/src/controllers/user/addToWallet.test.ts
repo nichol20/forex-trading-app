@@ -50,8 +50,8 @@ describe("addToWallet controller", () => {
 
         expect(res.status).toHaveBeenCalledWith(200);
         expect(res.json).toHaveBeenCalledWith({
+            ...user!.wallet,
             USD: user!.wallet.USD + 100,
-            GBP: user!.wallet.GBP,
         });
     });
 });

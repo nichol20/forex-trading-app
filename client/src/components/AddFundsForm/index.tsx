@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Currency, isCurrency } from "../../utils/currency";
+import { Currency, currencyToSignMap, isCurrency } from "../../utils/currency";
 import { CurrencyDropdown } from "../CurrencyDropdown"
 import { Modal } from "../Modal"
 
@@ -7,6 +7,8 @@ import styles from "./styles.module.scss"
 import { addToWallet } from "../../utils/api";
 import { useAuth } from "../../contexts/Auth";
 import { useToast } from "../../contexts/Toast";
+import { useT } from "@/i18n/client";
+import { InputField } from "../InputField";
 
 interface AddFundsFormProps {
     close: () => void
@@ -14,15 +16,19 @@ interface AddFundsFormProps {
 }
 
 export const AddFundsForm = ({ close, defaultValue = Currency.USD }: AddFundsFormProps) => {
-    const { updateUser } = useAuth()
-    const toast = useToast()
+    const { t } = useT("funds-form");
+    const { updateUser, user } = useAuth();
+    const toast = useToast();
     const [addFundsTo, setAddFundsTo] = useState<Currency>(defaultValue);
+    const [isProcessing, setIsProcessing] = useState(false)
 
     const handleAddFundsForm = async (
         event: React.FormEvent<HTMLFormElement>
     ) => {
         event.preventDefault();
+        if(isProcessing) return
 
+        setIsProcessing(true)
         const formData = new FormData(event.currentTarget);
 
         const amount = formData.get("amount") as string;
@@ -33,10 +39,12 @@ export const AddFundsForm = ({ close, defaultValue = Currency.USD }: AddFundsFor
         try {
             await addToWallet(parseFloat(amount), currency);
             updateUser();
-            toast({ message: "Funds added successfully", status: "success" });
+            toast({ message: t("funds-added-successfully"), status: "success" });
             close();
         } catch (error: any) {
-            toast({ message: "Something went wrong", status: "error" });
+            toast({ message: t("errors.unknown"), status: "error" });
+        } finally {
+            setIsProcessing(false)
         }
     };
 
@@ -47,6 +55,13 @@ export const AddFundsForm = ({ close, defaultValue = Currency.USD }: AddFundsFor
                 onSubmit={handleAddFundsForm}
             >
                 <h3>Add funds</h3>
+                <InputField
+                    type="number" 
+                    prefix={currencyToSignMap[addFundsTo]}
+                    title={t("balance-input-title")} 
+                    value={user!.wallet[addFundsTo]} 
+                    readOnly 
+                />
                 <CurrencyDropdown
                     selectName="currency"
                     selectId="currency-select"
@@ -54,10 +69,10 @@ export const AddFundsForm = ({ close, defaultValue = Currency.USD }: AddFundsFor
                     inputName="amount"
                     inputTestId="amount-input"
                     defaultCurrencyValue={addFundsTo}
-                    onSelectChange={() => setAddFundsTo}
+                    onSelectChange={setAddFundsTo}
                 />
-                <button className={styles.submitBtn}>
-                    Add
+                <button className={styles.submitBtn} disabled={isProcessing}>
+                    {isProcessing ? t("processing") :  t("add-btn")}
                 </button>
             </form>
         </Modal>

@@ -13,82 +13,14 @@
 }
 
 .walletContainer {
-    @include display-flex();
+    @include light-box-shadow();
     gap: 20px;
     max-width: 1000px;
     width: 100%;
-    
-    @include media("phone-lg") {
-        gap: 10px;
-    }
-    
-    @include media("phone") {
-        flex-direction: column;
-    }
-}
-
-.wallet {
-    @include display-flex(flex-start);
-    @include light-box-shadow();
-    flex-direction: column;
     background-color: $colors-bg-secondary;
-    padding: 20px;
     border-radius: 5px;
-    max-width: 500px;
-    width: 100%;
+    padding: 20px;
     border: 1px solid $colors-stroke;
-    
-    .amount {
-        font-size: 2.5em;
-        
-        @include media("tablet") {
-            font-size: 1.7em;
-        }
-        
-        @include media("phone-lg") {
-            font-size: 1.2em;
-        }
-        
-        @include media("phone") {
-            font-size: 1.5em;
-        }
-    }
-    
-    .type {
-        color: $colors-text-secondary;
-        font-size: 1.2em;
-        margin-top: 10px;
-        
-        @include media("tablet") {
-            font-size: 1em;
-        }
-        
-        @include media("phone-lg") {
-            font-size: .8em;
-        }
-        
-        @include media("phone") {
-            font-size: 1em;
-        }
-    }
-    
-    .addFundsBtn {
-        @include button-primary();
-        padding: 15px 78px;
-        font-size: 1.2em;
-        font-weight: bold;
-        margin-top: 40px;
-        
-        @include media("tablet") {
-            padding: 12px 40px;
-            font-size: 1em;
-        }
-        
-        @include media("phone-lg") {
-            padding: 12px 20px;
-            font-size: .8em;
-        }
-    }
 }
 
 .liveExchangeRateBox {

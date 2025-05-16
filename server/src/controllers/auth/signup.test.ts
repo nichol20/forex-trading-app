@@ -85,7 +85,7 @@ describe("signup controller", () => {
         expect(res.status).toHaveBeenCalledWith(201);
         expect(res.json).toHaveBeenCalledWith(
             expect.objectContaining({
-                wallet: { GBP: 0, USD: 0 },
+                "wallet": {"BRL": 0, "EUR": 0, "GBP": 0, "JPY": 0, "USD": 0},
             })
         );
     });

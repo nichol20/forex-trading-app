@@ -4,6 +4,7 @@ import signupPage from "./signup-page.json";
 import loginPage from "./login-page.json";
 import filters from "./filters.json";
 import common from "./common.json";
+import fundsForm from "./funds-form.json"
 
 export default {
   common,
@@ -11,5 +12,6 @@ export default {
   filters,
   "history-page": historyPage,
   "login-page": loginPage,
-  "signup-page": signupPage
+  "signup-page": signupPage,
+  "funds-form": fundsForm
 };

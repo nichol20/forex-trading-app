@@ -24,7 +24,7 @@ import { Currency } from "./src/utils/currency";
 import { createUser } from "./src/repositories/userRepository";
 import { createExchange } from "./src/repositories/exchangeRepository";
 import { connectToRedis, disconnectFromRedis } from "./src/config/redis";
-import { startExchangeQueue } from "./src/config/queue";
+
 
 export let validUser: Omit<UserRow, "wallet">;
 export let validExchangeHistory: Exchange[];
@@ -36,6 +36,9 @@ export const createValidUser = (): Omit<UserRow, "id" | "hubspot_contact_id" | "
     wallet: {
         GBP: 1000,
         USD: 1000,
+        EUR: 1000,
+        JPY: 1000,
+        BRL: 1000,
     }
 });
 
@@ -80,7 +83,6 @@ export const createExchangeHistory = (userId: string): Omit<Exchange, "id" | "ex
 beforeAll(async () => {
     await db.connectToServer();
     await connectToRedis();
-    startExchangeQueue();
 });
 
 beforeEach(async () => {

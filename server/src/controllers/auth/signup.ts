@@ -34,6 +34,9 @@ export const signup = async (req: Request, res: Response<User>) => {
         wallet: {
             GBP: 0,
             USD: 0,
+            EUR: 0,
+            BRL: 0,
+            JPY: 0
         },
         hubspot_contact_id: contactInfo.id
     })

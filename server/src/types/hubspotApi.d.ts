@@ -108,8 +108,8 @@ interface CreateEnumerationPropertySchema extends PropertyBase {
     type: "enumeration";
     fieldType: "select";
     options: {
-        label: string;
-        value: string;
+        label: Currency;
+        value: Currency;
     }[];
 }
 

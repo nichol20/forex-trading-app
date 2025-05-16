@@ -1,0 +1,73 @@
+@use "../../styles/" as *;
+
+.wallets {
+    @include display-flex();
+    flex-direction: column;
+    width: 100%;
+
+    > h3 {
+        align-self: flex-start;
+        font-size: 1.5em;
+    }
+}
+
+.content {
+    @include display-flex();
+    gap: 20px;
+    flex-wrap: wrap;
+    width: 100%;
+
+}
+
+.wallet {
+    @include display-flex(space-between);
+    width: 100%;
+    max-width: 320px;
+    border: 1px solid $colors-stroke;
+    border-radius: 5px;
+    padding: 4px 10px;
+}
+
+.flagBox {
+    @include display-flex();
+    gap: 10px;
+    
+    .currencyNameBox {
+        @include display-flex(center, flex-start);
+        flex-direction: column;
+
+        .name {
+            font-size: 1.2  em;
+            font-weight: bold;
+        }
+        
+        .balance {
+            font-size: 1em;
+            color: $colors-text-secondary;
+        }
+    }
+}
+
+.amount {
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+.addFundsBtn {
+    @include button-primary();
+    padding: 10px 60px;
+    font-size: 1em;
+    font-weight: bold;
+    margin-top: 20px;
+
+    
+    @include media("tablet") {
+        padding: 10px 40px;
+        font-size: 1em;
+    }
+    
+    @include media("phone-lg") {
+        padding: 10px 20px;
+        font-size: .8em;
+    }
+}

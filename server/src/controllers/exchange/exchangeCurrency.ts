@@ -32,10 +32,7 @@ export const exchangeCurrency = async (req: Request, res: Response) => {
     const data = await fetchExchangeRate(fromCurrency, getAllCurrencies());
     const currentRate = data.rates[toCurrency];
 
-
-    console.log("test")
     await ExchangeQueue.enqueue(user.id, {...parsed.data, rate: currentRate});
-    console.log("test")
     
     res.status(200).json({ message: "Exchange queued successfully" });
     return

@@ -6,26 +6,22 @@ import { useT } from "@/i18n/client";
 import * as api from "@/utils/api";
 import { socket } from "@/socket";
 import { rightArrow } from "@/assets";
-import { Header } from "@/components/Header";
 import { CurrencyDropdown } from "@/components/CurrencyDropdown";
 import { exchangeCurrencies } from "@/utils/api";
-import { Currency, getSign } from "@/utils/currency";
+import { Currency } from "@/utils/currency";
 import { useAuth } from "@/contexts/Auth";
-import { InputField } from "@/components/InputField";
 import { useToast } from "@/contexts/Toast";
-import { Exchange, Rates } from "@/types/exchange";
-import { AddFundsForm } from "@/components/AddFundsForm";
-import { getInvertedRate } from "@/utils/exchange";
+import { Exchange, LatestRateItem, Rates } from "@/types/exchange";
 import { TimeSeriesChart } from "@/components/TimeSeriesChart";
-import { toUtcDateString } from "@/utils/date";
 
 import styles from "./styles.module.scss";
 import { ExchangeRatesEventResponse } from "@/types/socket";
+import { Wallets } from "@/components/Wallets";
 
 export default function Dashboard() {
     const { t } = useT("dashboard");
     const toast = useToast();
-    const { user, updateUser } = useAuth();
+    const { updateUser } = useAuth();
     const chartParentRef = useRef<HTMLDivElement>(null);
 
     const [chartWidth, setChartWidth] = useState(0);
@@ -33,15 +29,12 @@ export default function Dashboard() {
 
     const [seconds, setSeconds] = useState(0); 
 
-    const [latestRatesDates, setLatestRatesDates] = useState<string[]>([])
-    const [latestRatesValues, setLatestRatesValues] = useState<number[]>([])
-
-    const [showAddFundsForm, setShowAddForms] = useState(false);
+    const [latestRates, setLatestRates] = useState<LatestRateItem[]>([])
     const [exchangeFrom, setExchangeFrom] = useState<Currency>(Currency.USD);
-    const [addFundsTo, setAddFundsTo] = useState<Currency>(Currency.USD);
+    const [exchangeTo, setExchangeTo] = useState<Currency>(Currency.GBP)
+
     const [liveExchangeRates, setLiveExchangeRates] = useState<Rates>();
     const [amountToExchange, setAmountToExchange] = useState<number>(100);
-    const toCurrency = exchangeFrom === Currency.USD ? Currency.GBP : Currency.USD;
     const [isProcessing, setIsProcessing] = useState(false)
 
     const handleExchangeForm = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -56,7 +49,7 @@ export default function Dashboard() {
             setIsProcessing(true)
             await exchangeCurrencies(
                 exchangeFrom,
-                toCurrency,
+                exchangeTo,
                 parseFloat(amount)
             );
             toast({ message: "exchange queued", status: "success" });
@@ -74,19 +67,25 @@ export default function Dashboard() {
         }
     };
 
-    const handleAddFundsButtonClick = (currency: Currency) => {
-        setShowAddForms(true);
-        setAddFundsTo(currency);
-    };
-
     const getReferenceValue = () => {
         if (!liveExchangeRates) return 0;
 
-        if (exchangeFrom === Currency.USD) {
-            return (amountToExchange * liveExchangeRates.GBP).toFixed(6);
-        };
+        return (amountToExchange * liveExchangeRates[exchangeTo]).toFixed(6)
+    }
 
-        return (amountToExchange * liveExchangeRates.USD).toFixed(6);
+    const handleDropdownChange = (currency: Currency, state: "from" | "to") => {
+        const differentCurrency = currency === Currency.GBP ? Currency.USD : Currency.GBP
+        if(state === "from") {
+            if(currency === exchangeTo) {
+                setExchangeTo(differentCurrency)
+            }
+            return setExchangeFrom(currency)
+        }
+
+        if(currency === exchangeFrom) {
+            setExchangeFrom(differentCurrency)
+        }
+        return setExchangeTo(currency)
     }
 
     useEffect(() => {
@@ -95,8 +94,7 @@ export default function Dashboard() {
                 const exchangeRates = await api.getExchangeRates(exchangeFrom);
                 const latestRates = await api.getLatestRates(exchangeFrom)
                 setLiveExchangeRates(exchangeRates);
-                setLatestRatesValues(latestRates.map(r => exchangeFrom === Currency.USD ? r.rates.GBP : r.rates.USD));
-                setLatestRatesDates(latestRates.map(r => new Date(r.time).toLocaleTimeString()));
+                setLatestRates(latestRates)
             } catch (error: any) {
                 console.log("erro fetching data: ", error.message)
             }
@@ -117,21 +115,19 @@ export default function Dashboard() {
         socket.on("exchange-rates:USD", (data: ExchangeRatesEventResponse) => {
             if(exchangeFrom !== Currency.USD) return 
             setLiveExchangeRates(data.rates);
-            setLatestRatesValues(data.latestRates.map(r => r.rates.GBP))
-            setLatestRatesDates(data.latestRates.map(r => new Date(r.time).toLocaleTimeString()))
+            setLatestRates(data.latestRates);
         });
         socket.on("exchange-rates:GBP", (data: ExchangeRatesEventResponse) => {
             if(exchangeFrom !== Currency.GBP) return 
             setLiveExchangeRates(data.rates);
-            setLatestRatesValues(data.latestRates.map(r => r.rates.USD))
-            setLatestRatesDates(data.latestRates.map(r => new Date(r.time).toLocaleTimeString()))
+            setLatestRates(data.latestRates);
         });
 
         return () => {
             socket.off("exchange-rates:USD");
             socket.off("exchange-rates:GBP");
         };
-    }, [exchangeFrom, toast]);
+    }, [exchangeFrom]);
 
     useEffect(() => {
         socket.on("exchange-failed", () => {
@@ -148,7 +144,7 @@ export default function Dashboard() {
             socket.off("exchange-failed")
             socket.off("exchange-made")
         }
-    }, [])
+    }, [toast])
 
     useEffect(() => {
         const parent = chartParentRef.current;
@@ -189,37 +185,7 @@ export default function Dashboard() {
         <div className={styles.dashboardPage}>
             <div className={styles.content}>
                 <section className={styles.walletContainer}>
-                    <div className={styles.wallet}>
-                        <h2 className={styles.amount}>
-                            {getSign(Currency.USD)}{user ? user.wallet.USD.toFixed(2) : "0.00"}
-                        </h2>
-                        <span className={styles.type}>{t("usd-wallet-title")}</span>
-                        <button
-                            className={styles.addFundsBtn}
-                            onClick={() => handleAddFundsButtonClick(Currency.USD)}
-                            data-testid="add-funds-btn-usd"
-                        >
-                            {t("button.add-funds")}
-                        </button>
-                    </div>
-                    <div className={styles.wallet}>
-                        <h2 className={styles.amount}>
-                            {getSign(Currency.GBP)}{user ? user.wallet.GBP.toFixed(2) : "0.00"}
-                        </h2>
-                        <span className={styles.type}>{t("gbp-wallet-title")}</span>
-                        <button
-                            className={styles.addFundsBtn}
-                            onClick={() => handleAddFundsButtonClick(Currency.GBP)}
-                        >
-                            {t("button.add-funds")}
-                            </button>
-                    </div>
-                    {showAddFundsForm && (
-                        <AddFundsForm
-                            close={() => setShowAddForms(false)}
-                            defaultValue={addFundsTo}
-                        />
-                    )}
+                    <Wallets />
                 </section>
 
                 <section className={styles.liveExchangeRateBox}>
@@ -236,7 +202,7 @@ export default function Dashboard() {
                             <CurrencyDropdown
                                 selectClassName={styles.chartDropdownSelect}
                                 value={exchangeFrom}
-                                onSelectChange={setExchangeFrom}
+                                onSelectChange={c => handleDropdownChange(c, "from")}
                                 showInput={false} 
                             />
                             <Image
@@ -249,18 +215,16 @@ export default function Dashboard() {
                             <CurrencyDropdown
                                 selectClassName={styles.chartDropdownSelect}
                                 showInput={false} 
-                                value={toCurrency}
-                                onSelectChange={c => c === Currency.USD 
-                                    ? setExchangeFrom(Currency.GBP)
-                                    : setExchangeFrom(Currency.USD)}
+                                value={exchangeTo}
+                                onSelectChange={c => handleDropdownChange(c, "to")}
                             />
                         </div>
                     </div>
 
                     <div className={styles.chartContainer} ref={chartParentRef}>
                         <TimeSeriesChart
-                            data={latestRatesValues} 
-                            labels={latestRatesDates} 
+                            data={latestRates.map(r => r.rates[exchangeTo])} 
+                            labels={latestRates.map(r => new Date(r.time).toLocaleTimeString())} 
                             width={chartWidth} 
                             height={chartHeight} 
                         />
@@ -268,9 +232,7 @@ export default function Dashboard() {
 
                     <span className={styles.rate}>
                         {liveExchangeRates
-                            ? exchangeFrom === Currency.USD 
-                                ? `${liveExchangeRates.USD} USD = ${liveExchangeRates.GBP} GBP`
-                                : `${liveExchangeRates.GBP} GBP = ${liveExchangeRates.USD} USD`
+                            ? `1 ${exchangeFrom} = ${liveExchangeRates[exchangeTo]} ${exchangeTo}`
                             : "..."}
                     </span>
                 </section>
@@ -286,8 +248,8 @@ export default function Dashboard() {
                         <CurrencyDropdown
                             selectName="fromCurrency"
                             inputName="amount"
-                            onSelectChange={setExchangeFrom}
-                            defaultCurrencyValue={exchangeFrom}
+                            onSelectChange={c => handleDropdownChange(c, "from")}
+                            value={exchangeFrom}
                             defaultAmountValue={amountToExchange}
                             onInputChange={setAmountToExchange}
                             inputTestId="currency-dropdown-input"
@@ -297,19 +259,14 @@ export default function Dashboard() {
                             alt="arrow"
                             className={styles.arrowImg}
                         />
-                        <div className={styles.referenceInputBox}>
-                            <div className={styles.toCurrency}>
-                                {toCurrency}
-                            </div>
-                            <InputField
-                                className={styles.referenceInput}
-                                type="number"
-                                prefix={getSign(toCurrency)}
-                                value={getReferenceValue()}
-                                testId="reference-input"
-                                readOnly
-                            />
-                        </div>
+                        <CurrencyDropdown
+                            selectName="toCurrency"
+                            onSelectChange={c => handleDropdownChange(c, "to")}
+                            value={exchangeTo}
+                            amountValue={getReferenceValue()}
+                            inputTestId="reference-input"
+                            inputReadOnly
+                        />
                     </form>
 
                     <button form="myform" type="submit" className={styles.exchangeBtn} disabled={isProcessing}>

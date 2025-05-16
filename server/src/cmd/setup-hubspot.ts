@@ -11,6 +11,7 @@ import {
     StageInfo,
 } from "../types/hubspotApi";
 import { hubspotClient } from "../utils/http";
+import { getAllCurrencies } from "../utils/currency";
 
 const createPropertyGroupIfDoesNotExist = async (
     objectType: ObjectType,
@@ -84,10 +85,7 @@ const customDealProperties: CreatePropertySchema[] = [
         type: "enumeration",
         fieldType: "select",
         groupName: "forex_trading",
-        options: [
-            { label: "USD", value: "USD" },
-            { label: "GBP", value: "GBP" },
-        ],
+        options: getAllCurrencies().map(c => ({ label: c, value: c })),
     },
     {
         name: "to_currency",
@@ -95,10 +93,7 @@ const customDealProperties: CreatePropertySchema[] = [
         type: "enumeration",
         fieldType: "select",
         groupName: "forex_trading",
-        options: [
-            { label: "USD", value: "USD" },
-            { label: "GBP", value: "GBP" },
-        ],
+        options: getAllCurrencies().map(c => ({ label: c, value: c })),
     },
     {
         name: "exchange_rate",
