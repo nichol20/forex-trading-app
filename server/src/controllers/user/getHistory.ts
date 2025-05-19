@@ -17,9 +17,10 @@ export const getHistory = async (req: Request, res: Response) => {
 
     const { page, limit, start, end } = parsed.data;
 
+    end?.setDate(end.getDate() + 1)
     const { rows, totalItems } = await getExchanges(userId!, {...parsed.data}, {
         ...parsed.data, 
-        start: start?.toISOString(), 
+        start: start?.toISOString(),
         end: end?.toISOString()
     })
 

@@ -57,7 +57,9 @@ describe("getHistory controller", () => {
             minOutput: "80",
             maxAmount: "100",
             maxRate: "0.8",
-            maxOutput: "80"
+            maxOutput: "80",
+            start: new Date().toISOString().split("T")[0],
+            end: new Date().toISOString().split("T")[0]
         }) as Request;
         const res = mockResponse() as Response;
 

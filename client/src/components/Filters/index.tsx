@@ -8,7 +8,7 @@ import { DoubleSlider } from "@/components/DoubleSlider";
 import { Modal } from "@/components/Modal";
 import { Filters as IFilters } from "@/utils/api";
 import { Currency, currencyToSignMap } from "@/utils/currency";
-import { toUtcDateString } from "@/utils/date";
+import { formatDate, toUtcDateString } from "@/utils/date";
 
 import styles from "./styles.module.scss";
 
@@ -17,8 +17,8 @@ interface FiltersDesktopProps {
 }
 
 const INITIAL_FILTERS: IFilters = {
-    end: null,
     start: null,
+    end: null,
     minAmount: null,
     maxAmount: null,
     minOutput: null,
@@ -52,7 +52,11 @@ export const FiltersDesktop = ({ isOpen }: FiltersDesktopProps) => {
         Object.keys(f).forEach(k => {
             const key = k as keyof IFilters
             if (f[key]) {
-                params.set(key, String(f[key]));
+                if(key === "start" || key === "end") {
+                    params.set(key, f[key].split("T")[0])
+                } else {
+                    params.set(key, String(f[key]));
+                }
             }
         });
 
@@ -62,6 +66,7 @@ export const FiltersDesktop = ({ isOpen }: FiltersDesktopProps) => {
     const clearAll = (shouldReturnParams?: boolean) => {
         const params = new URLSearchParams(searchParams.toString());
         
+        params.set("page", "1")
         Object.keys(filters).forEach(k => {
             const key = k as keyof IFilters
             params.delete(key);
@@ -133,7 +138,7 @@ export const FiltersDesktop = ({ isOpen }: FiltersDesktopProps) => {
                             type="date"
                             onChange={e => handleDateInput(e, "start")}
                             testId="date-input-from"
-                            value={filters.start ? toUtcDateString(new Date(filters.start)) : ""}
+                            value={filters.start ? toUtcDateString(filters.start) : ""}
                         />
                         <CurrencyDropdown
                             showInput={false}
@@ -148,7 +153,7 @@ export const FiltersDesktop = ({ isOpen }: FiltersDesktopProps) => {
                             type="date"
                             onChange={e => handleDateInput(e, "end")}
                             testId="date-input-to"
-                            value={filters.end ? toUtcDateString(new Date(filters.end)): ""}
+                            value={filters.end ? toUtcDateString(filters.end) : ""}
                         />
                         <CurrencyDropdown
                             showInput={false}

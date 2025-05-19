@@ -58,8 +58,8 @@ const main = async () => {
             console.log(`Server running at http://localhost:${port}`);
         });
 
-        // Force‐exit after 10s
-        const FORCE_TIMEOUT = 10_000;
+        // Force‐exit after 30s
+        const FORCE_TIMEOUT = 30_000;
         const onSignal = (sig: NodeJS.Signals) => {
             shutdown(sig, httpServer, io).catch(console.error);
             setTimeout(() => {

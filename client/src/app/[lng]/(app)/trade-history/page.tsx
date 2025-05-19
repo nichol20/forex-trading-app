@@ -13,6 +13,7 @@ import { Filters } from "@/components/Filters";
 import { Currency } from "@/utils/currency";
 
 import styles from "./styles.module.scss";
+import { formatDate } from "@/utils/date";
 
 export default function TradeHistory() {
     const { t } = useT("history-page");
@@ -121,42 +122,43 @@ export default function TradeHistory() {
                             ))}
                         </div>
                         <div className={styles.rows} data-testid="rows">
-                            {history.map((exchange) => (
-                                <div key={exchange.id} className={styles.row}>
-                                    <div className={styles.item}>
-                                        <span className={styles.value}>
-                                            {new Date(
-                                                exchange.exchangedAt
-                                            ).toLocaleDateString()}
-                                        </span>
+                            {
+                                history.length === 0
+                                ? <span className={styles.emptyMessage}>{t("empty-history-message")}</span>
+                                : history.map((exchange) => (
+                                    <div key={exchange.id} className={styles.row}>
+                                        <div className={styles.item}>
+                                            <span className={styles.value}>
+                                                {exchange.exchangedAt.split("T")[0]}
+                                            </span>
+                                        </div>
+                                        <div className={styles.item}>
+                                            <span className={styles.value}>
+                                                {exchange.fromCurrency}
+                                            </span>
+                                        </div>
+                                        <div className={styles.item}>
+                                            <span className={styles.value}>
+                                                {exchange.toCurrency}
+                                            </span>
+                                        </div>
+                                        <div className={styles.item}>
+                                            <span className={styles.value}>
+                                                {exchange.fromAmount.toFixed(2)}
+                                            </span>
+                                        </div>
+                                        <div className={styles.item}>
+                                            <span className={styles.value}>
+                                                {exchange.exchangeRate}
+                                            </span>
+                                        </div>
+                                        <div className={styles.item}>
+                                            <span className={styles.value}>
+                                                {exchange.toAmount.toFixed(6)}
+                                            </span>
+                                        </div>
                                     </div>
-                                    <div className={styles.item}>
-                                        <span className={styles.value}>
-                                            {exchange.fromCurrency}
-                                        </span>
-                                    </div>
-                                    <div className={styles.item}>
-                                        <span className={styles.value}>
-                                            {exchange.toCurrency}
-                                        </span>
-                                    </div>
-                                    <div className={styles.item}>
-                                        <span className={styles.value}>
-                                            {exchange.fromAmount.toFixed(2)}
-                                        </span>
-                                    </div>
-                                    <div className={styles.item}>
-                                        <span className={styles.value}>
-                                            {exchange.exchangeRate}
-                                        </span>
-                                    </div>
-                                    <div className={styles.item}>
-                                        <span className={styles.value}>
-                                            {exchange.toAmount.toFixed(6)}
-                                        </span>
-                                    </div>
-                                </div>
-                            ))}
+                                ))}
                         </div>
                     </div>
                     <Pagination currentPage={page} lastPage={totalPages} />

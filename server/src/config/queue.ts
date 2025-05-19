@@ -5,13 +5,11 @@ export class Queue<T> {
     private queueName: string;
     private processingQueue: string;
     private running = false;
-    private io: Server
     private client: RedisClientType
 
     constructor(io: Server, queueName: string) {
         this.queueName = queueName;
         this.processingQueue = `${queueName}:processing`;
-        this.io = io
 
         this.client = redisClient.duplicate();
     }

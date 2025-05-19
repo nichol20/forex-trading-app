@@ -76,6 +76,7 @@
 .table {
     @include display-flex();
     width: 100%;
+    height: 100%;
     flex-direction: column;
     
     @include media("tablet") {
@@ -95,6 +96,19 @@
         grid-template-rows: 30px; 
         display: grid;
         gap: 16px;
+    }
+    
+    .rows {
+        @include display-flex(flex-start);
+        flex-direction: column;
+        height: 100%;
+        
+        .emptyMessage {
+            font-size: 2em;
+            color: $colors-text-tertiary;
+            margin-top: auto;
+            margin-bottom: auto;
+        }
     }
 
     .col {

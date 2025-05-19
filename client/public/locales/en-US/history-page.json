@@ -7,5 +7,6 @@
         "amount": "Amount",
         "rate": "Rate",
         "output": "Output"
-    }
+    },
+    "empty-history-message": "Nothing to show here.😕"
 }

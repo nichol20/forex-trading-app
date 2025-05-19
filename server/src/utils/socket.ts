@@ -82,9 +82,8 @@ interface RateItem {
 const broadcastRate = async (io: Server, currency: Currency) => {
     try {
         const keyName = `exchange-rates:${currency}`
+        
         // const data = await fetchExchangeRate(currency, getAllCurrencies());
-
-        // io.emit(`exchange-rates:${currency}`, data.rates);
         // console.log(data.rates);
         
         const examples = examplesMap[currency]
@@ -98,12 +97,12 @@ const broadcastRate = async (io: Server, currency: Currency) => {
         ) {
             rateList = await pushToList(keyName, JSON.stringify({
                 time: Date.now(),
-                rates
+                rates: rates
             }), 15)
         }
 
         io.emit(keyName, {
-            rates,
+            rates: rates,
             latestRates: rateList.map(r => JSON.parse(r))
         });
         setTimeout(() => broadcastRate(io, currency), 10_000); // 5s
